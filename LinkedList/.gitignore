@@ -1,0 +1,94 @@
+# Compiled object files
+*.o
+*.obj
+*.lo
+
+# Libraries
+*.lib
+*.dll
+*.so
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug  files
+*.dSYM
+*.pdb
+
+# Build directories
+build/
+Debug/
+Release/
+x64/
+build64/
+cmake-build-debug/
+cmake-build-release/
+(add more build directory names as needed)
+
+# IDE-specific files
+*.suo
+*.VC.db
+*.VC.opendb
+*.user
+*.sln
+*.aps
+*.ncb
+*.sdf
+*.opensdf
+*.log
+*.pidb
+*.ipch
+*.tlog
+*.pch
+*.opt
+*.ilk
+
+# Other generated files
+*.bak
+*.tmp
+*.swp
+*~
+
+# Configuration files
+*.conf
+*.ini
+*.cfg
+
+# Dependency management
+*.lock
+package-lock.json
+yarn.lock
+Podfile.lock
+
+# Documentation (if generated)
+docs/html/
+docs/_build/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE specific files (Visual Studio)
+*.vcxproj
+*.vcxproj.filters
+
+# IDE specific files (Xcode)
+*.xcodeproj
+*.xcworkspace
+
+# IDE specific files (CLion)
+*.idea
+
+# CMake files (if not tracking them)
+CMakeCache.txt
+CMakeFiles/
+
+# Generated documentation
+docs/
+
+# Temporary file
+*.log
+*.tmp
