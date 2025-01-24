@@ -14,7 +14,7 @@
 *.out
 *.app
 
-# Debug files
+# Debug  files
 *.dSYM
 *.pdb
 
@@ -89,6 +89,6 @@ CMakeFiles/
 # Generated documentation
 docs/
 
-# Temporary files
+# Temporary file
 *.log
 *.tmp
