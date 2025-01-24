@@ -5,16 +5,20 @@
 using namespace std;
 class ArraysAlgo
 {
-private:
-    int [] array;
-    int size;
-    string indicator;
+    private:
+        int * arr=NULL;
+        int size;
+        string indicator;
 
-public:
-    void InsertionSort(){}
-    void MergeSort(){}
-    void BubbleSort(){}
-    void QuickSort(){}
+    public:
+        ArraysAlgo(){
+            size=1;
+            arr=new int[size];
+        }
+        void InsertionSort(){}
+        void MergeSort(){}
+        void BubbleSort(){}
+        void QuickSort(){}
 };
 
 
