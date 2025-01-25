@@ -1,5 +1,5 @@
-#ifndef Algorithms_hpp
-#define Algoirthms_hpp
+#ifndef Arrays_HPP
+#define Arrays_HPP
 
 #include <iostream>
 using namespace std;
@@ -16,10 +16,10 @@ class ArraysAlgo
             arr=new int[size];
         }
         void InsertionSort(){}
-        void MergeSort(){}
+        void MergeSort(int* arr, int left, int right){}
         void BubbleSort(){}
         void QuickSort(){}
-};
+};  
 
 
 
