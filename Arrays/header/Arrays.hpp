@@ -18,6 +18,7 @@ class ArraysAlgo
         void QuickSort(){}
         void fillingarrays(){}
         void displayrrays(){}
+        
 };  
 
 
