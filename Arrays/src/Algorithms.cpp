@@ -1,4 +1,4 @@
-#include "Arrays.hpp";
+#include "Arrays.hpp"
 //bubble sort algorithm by akira
 //merge sort ahorithm by ahemed
 void Merge(int * arr, int LEFT, int MID, int RIGHT){

@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.rmd": "markdown",
+        "limits": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
+}
