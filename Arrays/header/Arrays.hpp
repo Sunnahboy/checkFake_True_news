@@ -11,18 +11,14 @@ class ArraysAlgo
         string indicator;
 
     public:
-        ArraysAlgo(){
-            size=1;
-            arr=new int[size];
-        }
+        ArraysAlgo(){}
         void InsertionSort(){}
         void MergeSort(int* arr, int left, int right){}
         void BubbleSort(){}
         void QuickSort(){}
+        void fillingarrays(){}
+        void displayrrays(){}
 };  
-
-
-
 
 
 #endif
