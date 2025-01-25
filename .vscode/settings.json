@@ -3,7 +3,9 @@
         "*.rmd": "markdown",
         "limits": "cpp",
         "iostream": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "iosfwd": "cpp",
+        "*.tcc": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
