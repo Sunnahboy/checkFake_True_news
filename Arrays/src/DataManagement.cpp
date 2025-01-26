@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
-#define MAX 100000
+#define MAX 21418
 class dataManagement
 {
     private:
@@ -57,6 +57,98 @@ class dataManagement
                 i++;
             }
         }
+        int monthToNumber(string month) {
+            if (month == "January") return 1;
+            if (month == "February") return 2;
+            if (month == "March") return 3;
+            if (month == "April") return 4;
+            if (month == "May") return 5;
+            if (month == "June") return 6;
+            if (month == "July") return 7;
+            if (month == "August") return 8;
+            if (month == "September") return 9;
+            if (month == "October") return 10;
+            if (month == "November") return 11;
+            if (month == "December") return 12;
+            return -1; // Invalid month
+        }
+        void DataTransformation(string** arr) {
+            for(size_t i = 1; i < MAX; i++) {
+                string date = arr[i][3];
+                string cleanDate = "";
+                string field = "";
+                int month = 0, day = 0, year = 0;
+                int parseStage = 0;
+
+                // Manual quote removal and parsing
+                for (char c : date) {
+                    if (c == '"') continue;
+                    
+                    if (c == ' ' || c == ',') {
+                        switch(parseStage) {
+                            case 0: 
+                                month = monthToNumber(field);
+                                break;
+                        case 1:
+                            day = convertStringToInt(field);
+                            break;
+                        case 2:
+                                cleanDate=field; //to get the space leading the year
+                                break;     
+                        case 3:
+                            while (!field.empty() && field[field.length()-1] == ' ') 
+                                field.erase(field.length()-1);
+                            year = convertStringToInt(field);
+                            break;
+                        }
+                        field = "";
+                        parseStage++;
+                    } else {
+                        field += c;
+                    }
+                }
+                // Handle last field (year)
+                int finaldate = year * 10000 + month * 100 + day;
+                arr[i][3]=to_string(finaldate);
+            }
+        }
+
+        // Helper function to convert string to int without stoi
+        int convertStringToInt(string& str) {
+            int result = 0;
+            for (char c : str) {
+                result = result * 10 + (c - '0');
+            }
+            return result;
+        }        
+        // void DataTransformation(string** arr){
+        //     for(size_t i=1; i<5; i++){
+        //     string field="";
+        //     int month=0, day=0, year=0;
+        //     bool flag1=false, flag2=false;
+        //         string date=arr[i][3];
+        //         for (size_t j=0; j <date.length(); j++){
+        //             char c=date[j];
+        //             if(c =='"') continue;
+        //             field +=c;                     
+        //             if(c == ' '){
+        //                 flag1=!flag1;
+        //             }
+        //             else if(c==','){
+        //                 flag2=!flag2;
+        //                 field="";
+        //             }
+        //             if(!flag1){
+        //                 month=monthToNumber(field);
+        //                 cout <<month;  
+        //                 cout << field;
+        //             }
+
+        //         }
+        //         field="";
+                    
+        //         }
+        // }
 
 
         ~dataManagement(){
@@ -75,10 +167,10 @@ class dataManagement
         }
        void head(string ** arr, int rows){
             for(int i=1; i<=rows; i++){
-                cout << i << " Row"<<endl;
-                cout << "Title: " <<arr[i][0]<<endl; 
-                cout << "Text: " <<arr[i][1]<<endl<<endl; 
-                cout << "Subject: " <<arr[i][2]<<endl; 
+                // cout << i << " Row"<<endl;
+                // cout << "Title: " <<arr[i][0]<<endl; 
+                // cout << "Text: " <<arr[i][1]<<endl<<endl; 
+                // cout << "Subject: " <<arr[i][2]<<endl; 
                 cout << "Date: " <<arr[i][3]<<endl; 
                 cout << string(180,'=');
                 cout <<endl;
@@ -99,8 +191,9 @@ int main(){
     //a crucial step to set the columns of the array to 4 
     //the loop goes to every line of the 2D array and set the memory to 4
     
-    int row=20;//you can set the number of rows as you want
+    int row=10;//you can set the number of rows as you want
     data.ReadToArray(array, data.getTrueData());
+    data.DataTransformation(array);
     data.head(array, row);
     
 

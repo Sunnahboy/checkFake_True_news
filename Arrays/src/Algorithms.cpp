@@ -61,7 +61,6 @@ void ArraysAlgo::MergeSort(int* arr, int left, int right){
     Merge(arr, left, mid, right);
 }
 
-
 //quick sort algorithm by abu
 //insertion sort algorithm by kashave
 //selection sort algorithm by akira
