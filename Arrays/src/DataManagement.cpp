@@ -57,6 +57,16 @@ class dataManagement
                 i++;
             }
         }
+
+        // an integer method that converts the strings to integers
+        int convertStringToInt(string& str) {
+            int result = 0;
+            for (char c : str) {
+                result = result * 10 + (c - '0');
+            }
+            return result;
+        }
+
         int monthToNumber(string month) {
             if (month == "January") return 1;
             if (month == "February") return 2;
@@ -72,6 +82,7 @@ class dataManagement
             if (month == "December") return 12;
             return -1; // Invalid month
         }
+
         void DataTransformation(string** arr) {
             for(size_t i = 1; i < MAX; i++) {
                 string date = arr[i][3];
@@ -113,43 +124,10 @@ class dataManagement
             }
         }
 
-        // Helper function to convert string to int without stoi
-        int convertStringToInt(string& str) {
-            int result = 0;
-            for (char c : str) {
-                result = result * 10 + (c - '0');
-            }
-            return result;
-        }        
-        // void DataTransformation(string** arr){
-        //     for(size_t i=1; i<5; i++){
-        //     string field="";
-        //     int month=0, day=0, year=0;
-        //     bool flag1=false, flag2=false;
-        //         string date=arr[i][3];
-        //         for (size_t j=0; j <date.length(); j++){
-        //             char c=date[j];
-        //             if(c =='"') continue;
-        //             field +=c;                     
-        //             if(c == ' '){
-        //                 flag1=!flag1;
-        //             }
-        //             else if(c==','){
-        //                 flag2=!flag2;
-        //                 field="";
-        //             }
-        //             if(!flag1){
-        //                 month=monthToNumber(field);
-        //                 cout <<month;  
-        //                 cout << field;
-        //             }
-
-        //         }
-        //         field="";
-                    
-        //         }
-        // }
-
+        //A method to convert the 2D array to 1D array
+        int* ArrayConversion(int** arr){
+            for (int i=0; i<)
+        }
 
         ~dataManagement(){
             if (TrueData.is_open()) {
@@ -191,7 +169,7 @@ int main(){
     //a crucial step to set the columns of the array to 4 
     //the loop goes to every line of the 2D array and set the memory to 4
     
-    int row=10;//you can set the number of rows as you want
+    int row=MAX;//you can set the number of rows as you want
     data.ReadToArray(array, data.getTrueData());
     data.DataTransformation(array);
     data.head(array, row);
