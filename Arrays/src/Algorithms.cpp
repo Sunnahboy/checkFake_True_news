@@ -57,7 +57,7 @@ void Merge(int*& arr, int LEFT, int MID, int RIGHT){
     delete[] rightArr;
 }
 
-void ArraysAlgo::MergeSort(int* arr, int left, int right){
+void ArraysAlgo::MergeSort(int*& arr, int left, int right){
     if(left==right)return;
     int mid=(left+right)/2;
     MergeSort(arr, left, mid);
