@@ -134,6 +134,7 @@ class dataManagement
             for (int i=0; i<TRUEMAX; i++){
                 array1D[i]= StringToInt(arr[i][3]);
             }
+            algo.MergeSort(array1D, 0, TRUEMAX-1);
             return array1D;
         }
 
@@ -163,14 +164,8 @@ class dataManagement
                 cout <<endl;
             }
        }
-        void ApplySort(string** array){ 
-            int *arr=ArrayConversion(array);
-            algo.MergeSort(arr, 0, TRUEMAX-1);
-            for(int i=0; i< TRUEMAX; i++){
-                cout << arr[i] <<endl;
-            }
-
-        }
+        // void ApplySort(string** array){ 
+        // }
 
         /*
         We can add more functions here in this point
@@ -191,7 +186,12 @@ int main() {
 
     data.DataTransformation(array);
 
-    data.ApplySort(array);
+    int *arr=data.ArrayConversion(array);
+    for(int i=0; i< TRUEMAX; i++){
+        cout << arr[i] <<endl;
+    }
+
+    // data.ApplySort(array);
 
     for (int i = 0; i < TRUEMAX; i++) {
         delete[] array[i];

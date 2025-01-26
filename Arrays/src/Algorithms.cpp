@@ -49,7 +49,7 @@ void Merge(int*& arr, int LEFT, int MID, int RIGHT){
     while(j < R){
         arr[k]=rightArr[j];
         j++;
-        k++;
+        k++; 
     }
 
     //now we delete both temporary arrays
