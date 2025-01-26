@@ -1,10 +1,13 @@
 #include <iostream>
 #include <fstream>
+#include "header/Arrays.hpp"
 using namespace std;
-#define MAX 21418
+#define TRUEMAX 21418
+#define FALSEMAX 23503
 class dataManagement
 {
     private:
+        ArraysAlgo algo;
         ifstream TrueData;
         ifstream FakeData;
     public:
@@ -59,7 +62,7 @@ class dataManagement
         }
 
         // an integer method that converts the strings to integers
-        int convertStringToInt(string& str) {
+        int StringToInt(string& str) {
             int result = 0;
             for (char c : str) {
                 result = result * 10 + (c - '0');
@@ -84,7 +87,7 @@ class dataManagement
         }
 
         void DataTransformation(string** arr) {
-            for(size_t i = 1; i < MAX; i++) {
+            for(size_t i = 1; i < TRUEMAX; i++) {
                 string date = arr[i][3];
                 string cleanDate = "";
                 string field = "";
@@ -101,7 +104,7 @@ class dataManagement
                                 month = monthToNumber(field);
                                 break;
                         case 1:
-                            day = convertStringToInt(field);
+                            day = StringToInt(field);
                             break;
                         case 2:
                                 cleanDate=field; //to get the space leading the year
@@ -109,7 +112,7 @@ class dataManagement
                         case 3:
                             while (!field.empty() && field[field.length()-1] == ' ') 
                                 field.erase(field.length()-1);
-                            year = convertStringToInt(field);
+                            year = StringToInt(field);
                             break;
                         }
                         field = "";
@@ -124,9 +127,13 @@ class dataManagement
             }
         }
 
-        //A method to convert the 2D array to 1D array
-        int* ArrayConversion(int** arr){
-            for (int i=0; i<)
+        // A method to convert the 2D array to 1D array
+        int* ArrayConversion(string** arr){
+            int * array1D= new int[TRUEMAX];
+            for (int i=0; i<TRUEMAX; i++){
+                array1D[i]= StringToInt(arr[i][3]);
+            }
+            return array1D;
         }
 
         ~dataManagement(){
@@ -143,37 +150,52 @@ class dataManagement
         ifstream& getFakeData(){
             return FakeData;
         }
+
        void head(string ** arr, int rows){
-            for(int i=1; i<=rows; i++){
+            for(int i=1; i<rows; i++){
                 // cout << i << " Row"<<endl;
                 // cout << "Title: " <<arr[i][0]<<endl; 
                 // cout << "Text: " <<arr[i][1]<<endl<<endl; 
                 // cout << "Subject: " <<arr[i][2]<<endl; 
-                cout << "Date: " <<arr[i][3]<<endl; 
-                cout << string(180,'=');
+                cout <<arr[i][3]<<endl; 
+                cout << string(166,'=');
                 cout <<endl;
             }
        }
+        void ApplySort(string** array){ 
+            int *arr=ArrayConversion(array);
+            algo.MergeSort(arr, 0, TRUEMAX-1);
+            for(int i=0; i< TRUEMAX; i++){
+                cout << arr[i] <<endl;
+            }
+
+        }
+
         /*
         We can add more functions here in this point
         */
 };
 
-int main(){
+int main() {
     dataManagement data;
-    string** array=new string*[MAX];
-    
-    for(int i=0; i< MAX; i++){
-        array[i]=new string[4];
+    string** array = new string*[TRUEMAX];
+
+    // Allocate memory for the 2D array
+    for (int i = 0; i < TRUEMAX; i++) {
+        array[i] = new string[4];
     }
-    //a crucial step to set the columns of the array to 4 
-    //the loop goes to every line of the 2D array and set the memory to 4
-    
-    int row=MAX;//you can set the number of rows as you want
+
+    // Read data into the array
     data.ReadToArray(array, data.getTrueData());
+
     data.DataTransformation(array);
-    data.head(array, row);
-    
+
+    data.ApplySort(array);
+
+    for (int i = 0; i < TRUEMAX; i++) {
+        delete[] array[i];
+    }
+    delete[] array;
 
     return 0;
 }

@@ -1,7 +1,11 @@
-#include "Arrays.hpp"
+#include <iostream>
+#include <limits>
+#include "header/Arrays.hpp"
+
+using namespace std;
 //bubble sort algorithm by akira
 //merge sort ahorithm by ahemed
-void Merge(int * arr, int LEFT, int MID, int RIGHT){
+void Merge(int*& arr, int LEFT, int MID, int RIGHT){
     
     int L=MID-LEFT +1;
     int R=RIGHT-MID;
@@ -64,4 +68,3 @@ void ArraysAlgo::MergeSort(int* arr, int left, int right){
 //quick sort algorithm by abu
 //insertion sort algorithm by kashave
 //selection sort algorithm by akira
-
