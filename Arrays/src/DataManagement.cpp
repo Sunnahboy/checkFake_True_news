@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "header/Arrays.hpp"
+#include "Algorithms.cpp"
 using namespace std;
 #define TRUEMAX 21418
 #define FALSEMAX 23503
