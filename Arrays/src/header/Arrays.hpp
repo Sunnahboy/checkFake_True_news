@@ -12,12 +12,12 @@ class ArraysAlgo
 
     public:
         ArraysAlgo(){}
-        void InsertionSort(){}
-        void MergeSort(int* arr, int left, int right){}
-        void BubbleSort(){}
-        void QuickSort(){}
-        void fillingarrays(){}
-        void displayrrays(){}
+        void InsertionSort();
+        void MergeSort(int* arr, int left, int right);
+        void BubbleSort();
+        void QuickSort();
+        void fillingarrays();
+        void displayrrays();
         
 };  
 
