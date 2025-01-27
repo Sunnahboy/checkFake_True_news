@@ -5,53 +5,70 @@
 using namespace std;
 
 // Helper function for Merge Sort
-void Merge(int*& arr, int LEFT, int MID, int RIGHT) {
+void Merge(int*& arr, int LEFT, int MID, int RIGHT, int*& temp) {
     int L = MID - LEFT + 1;
     int R = RIGHT - MID;
 
-    // Creating two temporary arrays for sorting
+    // Creating two temporary arrays for sorting and two for getting the index
     int* leftArr = new int[L];
     int* rightArr = new int[R];
+    int* leftindex = new int[L];
+    int* rightindex = new int[R];
 
     // Fill temporary arrays
     for (int i = 0; i < L; i++) {
         leftArr[i] = arr[i + LEFT];
+        leftindex[i] = temp[i + LEFT];
     }
     for (int j = 0; j < R; j++) {
         rightArr[j] = arr[MID + 1 + j];
+        rightindex[j] = temp[MID + 1 + j];
     }
 
     // Merge back into the main array
     int i = 0, j = 0, k = LEFT;
     while (i < L && j < R) {
         if (leftArr[i] <= rightArr[j]) {
-            arr[k++] = leftArr[i++];
+            arr[k] = leftArr[i];
+            temp[k]=leftindex[i];;
+            i++;
         } else {
-            arr[k++] = rightArr[j++];
+            arr[k] = rightArr[j];
+            temp[k]=rightindex[j];
+            j++;
         }
+        k++;
     }
 
     // Copy remaining elements
     while (i < L) {
-        arr[k++] = leftArr[i++];
+        arr[k] = leftArr[i];
+        temp[k]=leftindex[i];
+        i++;
+        k++;
     }
     while (j < R) {
-        arr[k++] = rightArr[j++];
+        arr[k] = rightArr[j];
+        temp[k]=rightindex[j];
+        j++;
+        k++;
     }
 
     // Clean up temporary arrays
     delete[] leftArr;
     delete[] rightArr;
+    delete[] leftindex;
+    delete[] rightindex;
 }
 
 // Merge Sort Implementation
-void ArraysAlgo::MergeSort(int*& arr, int left, int right) {
+void ArraysAlgo::MergeSort(int*& arr, int left, int right,int*& temp) {
     if (left >= right) return;
 
     int mid = left + (right - left) / 2;
-    MergeSort(arr, left, mid);
-    MergeSort(arr, mid + 1, right);
-    Merge(arr, left, mid, right);
+    MergeSort(arr, left, mid, temp);
+    MergeSort(arr, mid + 1, right, temp);
+    Merge(arr, left, mid, right, temp);
 }
 
 // Custom String Comparison Function
@@ -80,19 +97,20 @@ void ArraysAlgo::BubbleSort() {
     }
 }
 
+//There is no need for this code
 // Display All Articles
-void ArraysAlgo::displayarrays() {
-    for (int i = 0; i < size; i++) {
-        cout << "Title: " << articles[i].title << endl;
-        cout << "Content: " << articles[i].content << endl;
-        cout << "Category: " << articles[i].category << endl;
-        cout << "Publication Date: "
-             << articles[i].publicationYear << "-"
-             << articles[i].publicationMonth << "-"
-             << articles[i].publicationDay << endl;
-        cout << "---------------------------------" << endl;
-    }
-}
+// void ArraysAlgo::displayarrays() {
+//     for (int i = 0; i < size; i++) {
+//         cout << "Title: " << articles[i].title << endl;
+//         cout << "Content: " << articles[i].content << endl;
+//         cout << "Category: " << articles[i].category << endl;
+//         cout << "Publication Date: "
+//              << articles[i].publicationYear << "-"
+//              << articles[i].publicationMonth << "-"
+//              << articles[i].publicationDay << endl;
+//         cout << "---------------------------------" << endl;
+//     }
+// }
 
 // Binary Search by Year
 void ArraysAlgo::binarysearchYear(int year) const {
@@ -100,7 +118,7 @@ void ArraysAlgo::binarysearchYear(int year) const {
     bool found = false;
 
     while (left <= right) {
-        int mid = left + (right - left) / 2;
+        int mid = left + (right - left) / 2; //this should be (left+right)/2
 
         if (articles[mid].publicationYear == year) {
             // Match found; display article
@@ -121,6 +139,8 @@ void ArraysAlgo::binarysearchYear(int year) const {
                 temp++;
             }
             break;
+
+            //the above portion of code can be ignored if we sort the complete date including the year
         }
 
         if (articles[mid].publicationYear < year) {
@@ -135,6 +155,7 @@ void ArraysAlgo::binarysearchYear(int year) const {
     }
 }
 
+//the Parameter should be flexible any field can be compared
 // Linear Search by Category
 // void LinearsearchByCategory(const char* category) {
 //     bool found = false;
@@ -160,19 +181,21 @@ void ArraysAlgo::binarysearchYear(int year) const {
 //     }
 // }
 
-// Filling Articles Array
-void ArraysAlgo::fillingarrays() {
-    size = 5; // Set the size of articles
-    articles = new NewsArticle[size]; // Allocate memory for articles
+//No need for this code delete it
 
-    for (int i = 0; i < size; i++) {
-        articles[i] = {
-            "Title " + to_string(i + 1),
-            "Content " + to_string(i + 1),
-            "Category " + to_string(i % 3 + 1),
-            2025,
-            1,
-            i + 1
-        };
-    }
+// Filling Articles Array
+// void ArraysAlgo::fillingarrays() {
+//     size = 5; // Set the size of articles
+//     articles = new NewsArticle[size]; // Allocate memory for articles
+
+//     for (int i = 0; i < size; i++) {
+//         articles[i] = {
+//             "Title " + to_string(i + 1),
+//             "Content " + to_string(i + 1),
+//             "Category " + to_string(i % 3 + 1),
+//             2025,
+//             1,
+//             i + 1
+//         };
+//     }
 }

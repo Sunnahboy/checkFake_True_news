@@ -9,11 +9,12 @@ class dataManagement
 {
     private:
         ArraysAlgo algo;
-        NewsArticle article;
+        NewsArticle* article;
         ifstream TrueData;
         ifstream FakeData;
     public:
         dataManagement(){
+            article=new NewsArticle[TRUEMAX];
             TrueData.open("dataSets/true.csv");
             FakeData.open("dataSets/fake.csv");
             if(!TrueData.is_open() || !FakeData.is_open()){
@@ -21,9 +22,9 @@ class dataManagement
             }
         }
 
-        void ReadToArray(string**& arr, ifstream& file){
+        void ReadData(ifstream& file){
             bool QuotedFlag=false;
-            string CurrentField, Title, Text, Date, Subject, Line;
+            string Line, CurrentField, Date;
             int i=0; //To add elements into the 2D array
             while(getline(file, Line)){
                 //we create the index to parse the elements inside the file
@@ -31,8 +32,8 @@ class dataManagement
                 //current field is initially set to none
                 CurrentField="";
                 //we make a loop to read the data and parse each character
-                for(size_t i=0; i < Line.length(); i++){
-                    char c=Line[i];
+                for(size_t j=0; j < Line.length(); j++){
+                    char c=Line[j];
 
                     if(c=='"'){
                         //if we found a quote the flag set to True
@@ -41,11 +42,11 @@ class dataManagement
                     }else if(c==',' && !QuotedFlag){
                         //if we encouter a comma after the quates then we will specify each field based on the index
                         if(index==0){
-                            article.title=CurrentField;
+                            article[i].title=CurrentField;
                         }else if(index==1){
-                            article.content=CurrentField;
+                            article[i].content=CurrentField;
                         }else if (index==2){
-                            article.category=CurrentField;
+                            article[i].category=CurrentField;
                         }
                         CurrentField=""; //we have to reset the current field
                         index++;
@@ -54,30 +55,27 @@ class dataManagement
                         CurrentField+=c;
                     }
                 } 
-                Date=CurrentField;
-                string field = "", basket="";
-                int Month = 0, Day = 0, Year = 0;
-                int parseStage = 0;
+                Date= CurrentField;
+                // Handle last field (year)
+                ParseDate(Date, article[i].publicationYear, article[i].publicationMonth, article[i].publicationDay);
+                i++;
+                if (i >= TRUEMAX) break; // Prevent overflow
+            }
+        }
 
+        void ParseDate(string& Date, int& year, int& month, int& day){
+
+                string field = "", basket="";
+                int parseStage = 0;
                 // Manual quote removal and parsing
                 for (char c : Date) {
                     if (c == '"') continue;
                     if (c == ' ' || c == ',') {
                         switch(parseStage) {
-                            case 0: 
-                                Month = monthToNumber(field);
-                                break;
-                        case 1:
-                            Day = StringToInt(field);
-                            break;
-                        case 2:
-                                basket=field; //to get the space leading the year
-                                break;     
-                        case 3:
-                            while (!field.empty() && field[field.length()-1] == ' ') 
-                                field.erase(field.length()-1);
-                            Year = StringToInt(field);
-                            break;
+                            case 0: month = monthToNumber(field);break;
+                            case 1: day = StringToInt(field); break;
+                            case 2: basket=field; break;// remove leading space from the year field     
+                            case 3: while (!field.empty() && field[field.length()-1] == ' ') field.erase(field.length()-1); year = StringToInt(field); break;
                         }
                         field = "";
                         parseStage++;
@@ -85,18 +83,25 @@ class dataManagement
                         field += c;
                     }
                 }
-                // Handle last field (year)
-                article.publicationYear=Year;
-                article.publicationMonth=Month;
-                article.publicationDay=Day;
-                arr[i][0]=article.title;
-                arr[i][1]=article.content;
-                arr[i][2]=article.category;
-                arr[i][3]=to_string(article.publicationYear);
-                arr[i][4]=to_string(article.publicationMonth);
-                arr[i][5]=to_string(article.publicationDay);
-                i++;
+        }
+
+
+        string** StoreToArray(int size, int* temp) {
+            string** arr = new string*[size];
+            for (int i = 0; i < size; i++) {
+                arr[i] = new string[6];  // Allocate 6 columns for each row
             }
+            
+            for (int i = 0; i < size; i++) {
+                int index=temp[i];
+                arr[i][0] = article[index].title;
+                arr[i][1] = article[index].content;
+                arr[i][2] = article[index].category;
+                arr[i][3] = to_string(article[index].publicationYear);
+                arr[i][4] = to_string(article[index].publicationMonth);
+                arr[i][5] = to_string(article[index].publicationDay);
+            }
+            return arr;
         }
 
         // an integer method that converts the strings to integers
@@ -124,58 +129,8 @@ class dataManagement
             return -1; // Invalid month
         }
 
-        // void DataTransformation(string** arr) {
-        //     for(size_t i = 1; i < TRUEMAX; i++) {
-        //         string date = arr[i][3];
-        //         string cleanDate = "";
-        //         string field = "";
-        //         int month = 0, day = 0, year = 0;
-        //         int parseStage = 0;
-
-        //         // Manual quote removal and parsing
-        //         for (char c : date) {
-        //             if (c == '"') continue;
-                    
-        //             if (c == ' ' || c == ',') {
-        //                 switch(parseStage) {
-        //                     case 0: 
-        //                         month = monthToNumber(field);
-        //                         break;
-        //                 case 1:
-        //                     day = StringToInt(field);
-        //                     break;
-        //                 case 2:
-        //                         cleanDate=field; //to get the space leading the year
-        //                         break;     
-        //                 case 3:
-        //                     while (!field.empty() && field[field.length()-1] == ' ') 
-        //                         field.erase(field.length()-1);
-        //                     year = StringToInt(field);
-        //                     break;
-        //                 }
-        //                 field = "";
-        //                 parseStage++;
-        //             } else {
-        //                 field += c;
-        //             }
-        //         }
-        //         // Handle last field (year)
-        //         int finaldate = year * 10000 + month * 100 + day;
-        //         arr[i][3]=to_string(finaldate);
-        //     }
-        // }
-
-        // A method to convert the 2D array to 1D array
-        // int* ArrayConversion(string** arr){
-        //     int * array1D= new int[TRUEMAX];
-        //     for (int i=0; i<TRUEMAX; i++){
-        //         array1D[i]= StringToInt(arr[i][3]);
-        //     }
-        //     algo.MergeSort(array1D, 0, TRUEMAX-1);
-        //     return array1D;
-        // }
-
         ~dataManagement(){
+            delete[] article;
             if (TrueData.is_open()) {
                 TrueData.close();
             }
@@ -192,7 +147,7 @@ class dataManagement
 
        void head(string ** arr, int rows){
             for(int i=1; i<rows; i++){
-                cout << i << " Row"<<endl;
+                cout << " Row Number: " <<i <<endl;
                 cout << "Title: " <<arr[i][0]<<endl; 
                 cout << "Text: " <<arr[i][1]<<endl<<endl; 
                 cout << "Subject: " <<arr[i][2]<<endl; 
@@ -203,9 +158,40 @@ class dataManagement
                 cout <<endl;
             }
        }
-        // void ApplySort(string** array){ 
-        // }
+       //a void to view the contents of the struct created
+       void displayStruct(int rows){
+            for(int i=1; i<rows; i++){
+                cout << " Row Number: " <<i <<endl;
+                cout << "Title: " <<article[i].title<<endl; 
+                cout << "Text: " <<article[i].content<<endl<<endl; 
+                cout << "Subject: " <<article[i].category<<endl; 
+                cout <<"Year: "<< article[i].publicationYear<<endl; 
+                cout <<"Month: "<< article[i].publicationMonth<<endl; 
+                cout <<"Day: "<< article[i].publicationDay<<endl; 
+                cout << string(166,'=');
+                cout <<endl;
+            }
+       }
 
+        void ApplySort(int size){
+            int* newYear= new int[size];
+            int* index=new int[size];
+            for (int i=0; i<size; i++){
+                newYear[i]=article[i].publicationYear;
+                index[i]=i;
+            }
+            algo.MergeSort(newYear, 0, size-1, index);
+            // for (int i=0; i<size; i++){
+            //     cout << index[i]<<endl;
+            // }
+            string** arr=StoreToArray(size-1, index);
+            head(arr, 10);
+            for (int i = 0; i < TRUEMAX; i++) {
+                delete[] array[i];
+            }
+            delete[] array;
+
+        }
         /*
         We can add more functions here in this point
         */
@@ -213,29 +199,11 @@ class dataManagement
 
 int main() {
     dataManagement data;
-    string** array = new string*[TRUEMAX];
+    data.ReadData(data.getTrueData());
+    // data.displayStruct(TRUEMAX);
 
-    // Allocate memory for the 2D array
-    for (int i = 0; i < TRUEMAX; i++) {
-        array[i] = new string[6];
-    }
+    data.ApplySort(TRUEMAX);
 
-    // Read data into the array
-    data.ReadToArray(array, data.getTrueData());
-    data.head(array, 10);
-    // data.DataTransformation(array);
-
-    // int *arr=data.ArrayConversion(array);
-    // for(int i=0; i< TRUEMAX; i++){
-    //     cout << arr[i] <<endl;
-    // }
-
-    // data.ApplySort(array);
-
-    for (int i = 0; i < TRUEMAX; i++) {
-        delete[] array[i];
-    }
-    delete[] array;
 
     return 0;
 }
