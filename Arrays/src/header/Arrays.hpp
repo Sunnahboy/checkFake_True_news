@@ -10,9 +10,9 @@ struct NewsArticle {
     string title;         // Pointer to dynamically allocated memory
     string content;
     string category;
-    int publicationYear;
-    int publicationMonth;
-    int publicationDay;
+    int publicationYear=0;
+    int publicationMonth=0;
+    int publicationDay=0;
 };
 
 class ArraysAlgo {
@@ -39,7 +39,7 @@ public:
 
     // Sorting algorithms
     void InsertionSort();
-    void MergeSort(int*& arr, int left, int right);
+    void MergeSort(int*& arr, int left, int right, int*& temp);
     void BubbleSort();
     void QuickSort();
     void binarysearchYear(int year)const;
