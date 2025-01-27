@@ -54,10 +54,43 @@ class dataManagement
                     }
                 } 
                 Date=CurrentField;
+                string field = "";
+                int month = 0, day = 0, year = 0;
+                int parseStage = 0;
+
+                // Manual quote removal and parsing
+                for (char c : Date) {
+                    if (c == '"') continue;
+                    
+                    if (c == ' ' || c == ',') {
+                        switch(parseStage) {
+                            case 0: 
+                                month = monthToNumber(field);
+                                break;
+                        case 1:
+                            day = StringToInt(field);
+                            break;
+                        case 2:
+                                cleanDate=field; //to get the space leading the year
+                                break;     
+                        case 3:
+                            while (!field.empty() && field[field.length()-1] == ' ') 
+                                field.erase(field.length()-1);
+                            year = StringToInt(field);
+                            break;
+                        }
+                        field = "";
+                        parseStage++;
+                    } else {
+                        field += c;
+                    }
+                }
+                // Handle last field (year)
+                int finaldate = year * 10000 + month * 100 + day;
                 arr[i][0]=Title;
                 arr[i][1]=Text;
                 arr[i][2]=Subject;
-                arr[i][3]=Date;
+                arr[i][3]=to_string(finaldate);
                 i++;
             }
         }
@@ -183,8 +216,8 @@ int main() {
 
     // Read data into the array
     data.ReadToArray(array, data.getTrueData());
-
-    data.DataTransformation(array);
+    data.head(array, 10);
+    // data.DataTransformation(array);
 
     int *arr=data.ArrayConversion(array);
     for(int i=0; i< TRUEMAX; i++){
