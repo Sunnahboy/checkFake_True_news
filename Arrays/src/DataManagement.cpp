@@ -9,6 +9,7 @@ class dataManagement
 {
     private:
         ArraysAlgo algo;
+        NewsArticle article;
         ifstream TrueData;
         ifstream FakeData;
     public:
@@ -20,7 +21,7 @@ class dataManagement
             }
         }
 
-        void ReadToArray(string** arr, ifstream& file){
+        void ReadToArray(string**& arr, ifstream& file){
             bool QuotedFlag=false;
             string CurrentField, Title, Text, Date, Subject, Line;
             int i=0; //To add elements into the 2D array
@@ -40,11 +41,11 @@ class dataManagement
                     }else if(c==',' && !QuotedFlag){
                         //if we encouter a comma after the quates then we will specify each field based on the index
                         if(index==0){
-                            Title=CurrentField;
+                            article.title=CurrentField;
                         }else if(index==1){
-                            Text=CurrentField;
+                            article.content=CurrentField;
                         }else if (index==2){
-                            Subject=CurrentField;
+                            article.category=CurrentField;
                         }
                         CurrentField=""; //we have to reset the current field
                         index++;
@@ -54,29 +55,28 @@ class dataManagement
                     }
                 } 
                 Date=CurrentField;
-                string field = "";
-                int month = 0, day = 0, year = 0;
+                string field = "", basket="";
+                int Month = 0, Day = 0, Year = 0;
                 int parseStage = 0;
 
                 // Manual quote removal and parsing
                 for (char c : Date) {
                     if (c == '"') continue;
-                    
                     if (c == ' ' || c == ',') {
                         switch(parseStage) {
                             case 0: 
-                                month = monthToNumber(field);
+                                Month = monthToNumber(field);
                                 break;
                         case 1:
-                            day = StringToInt(field);
+                            Day = StringToInt(field);
                             break;
                         case 2:
-                                cleanDate=field; //to get the space leading the year
+                                basket=field; //to get the space leading the year
                                 break;     
                         case 3:
                             while (!field.empty() && field[field.length()-1] == ' ') 
                                 field.erase(field.length()-1);
-                            year = StringToInt(field);
+                            Year = StringToInt(field);
                             break;
                         }
                         field = "";
@@ -86,11 +86,15 @@ class dataManagement
                     }
                 }
                 // Handle last field (year)
-                int finaldate = year * 10000 + month * 100 + day;
-                arr[i][0]=Title;
-                arr[i][1]=Text;
-                arr[i][2]=Subject;
-                arr[i][3]=to_string(finaldate);
+                article.publicationYear=Year;
+                article.publicationMonth=Month;
+                article.publicationDay=Day;
+                arr[i][0]=article.title;
+                arr[i][1]=article.content;
+                arr[i][2]=article.category;
+                arr[i][3]=to_string(article.publicationYear);
+                arr[i][4]=to_string(article.publicationMonth);
+                arr[i][5]=to_string(article.publicationDay);
                 i++;
             }
         }
@@ -120,56 +124,56 @@ class dataManagement
             return -1; // Invalid month
         }
 
-        void DataTransformation(string** arr) {
-            for(size_t i = 1; i < TRUEMAX; i++) {
-                string date = arr[i][3];
-                string cleanDate = "";
-                string field = "";
-                int month = 0, day = 0, year = 0;
-                int parseStage = 0;
+        // void DataTransformation(string** arr) {
+        //     for(size_t i = 1; i < TRUEMAX; i++) {
+        //         string date = arr[i][3];
+        //         string cleanDate = "";
+        //         string field = "";
+        //         int month = 0, day = 0, year = 0;
+        //         int parseStage = 0;
 
-                // Manual quote removal and parsing
-                for (char c : date) {
-                    if (c == '"') continue;
+        //         // Manual quote removal and parsing
+        //         for (char c : date) {
+        //             if (c == '"') continue;
                     
-                    if (c == ' ' || c == ',') {
-                        switch(parseStage) {
-                            case 0: 
-                                month = monthToNumber(field);
-                                break;
-                        case 1:
-                            day = StringToInt(field);
-                            break;
-                        case 2:
-                                cleanDate=field; //to get the space leading the year
-                                break;     
-                        case 3:
-                            while (!field.empty() && field[field.length()-1] == ' ') 
-                                field.erase(field.length()-1);
-                            year = StringToInt(field);
-                            break;
-                        }
-                        field = "";
-                        parseStage++;
-                    } else {
-                        field += c;
-                    }
-                }
-                // Handle last field (year)
-                int finaldate = year * 10000 + month * 100 + day;
-                arr[i][3]=to_string(finaldate);
-            }
-        }
+        //             if (c == ' ' || c == ',') {
+        //                 switch(parseStage) {
+        //                     case 0: 
+        //                         month = monthToNumber(field);
+        //                         break;
+        //                 case 1:
+        //                     day = StringToInt(field);
+        //                     break;
+        //                 case 2:
+        //                         cleanDate=field; //to get the space leading the year
+        //                         break;     
+        //                 case 3:
+        //                     while (!field.empty() && field[field.length()-1] == ' ') 
+        //                         field.erase(field.length()-1);
+        //                     year = StringToInt(field);
+        //                     break;
+        //                 }
+        //                 field = "";
+        //                 parseStage++;
+        //             } else {
+        //                 field += c;
+        //             }
+        //         }
+        //         // Handle last field (year)
+        //         int finaldate = year * 10000 + month * 100 + day;
+        //         arr[i][3]=to_string(finaldate);
+        //     }
+        // }
 
         // A method to convert the 2D array to 1D array
-        int* ArrayConversion(string** arr){
-            int * array1D= new int[TRUEMAX];
-            for (int i=0; i<TRUEMAX; i++){
-                array1D[i]= StringToInt(arr[i][3]);
-            }
-            algo.MergeSort(array1D, 0, TRUEMAX-1);
-            return array1D;
-        }
+        // int* ArrayConversion(string** arr){
+        //     int * array1D= new int[TRUEMAX];
+        //     for (int i=0; i<TRUEMAX; i++){
+        //         array1D[i]= StringToInt(arr[i][3]);
+        //     }
+        //     algo.MergeSort(array1D, 0, TRUEMAX-1);
+        //     return array1D;
+        // }
 
         ~dataManagement(){
             if (TrueData.is_open()) {
@@ -188,11 +192,13 @@ class dataManagement
 
        void head(string ** arr, int rows){
             for(int i=1; i<rows; i++){
-                // cout << i << " Row"<<endl;
-                // cout << "Title: " <<arr[i][0]<<endl; 
-                // cout << "Text: " <<arr[i][1]<<endl<<endl; 
-                // cout << "Subject: " <<arr[i][2]<<endl; 
-                cout <<arr[i][3]<<endl; 
+                cout << i << " Row"<<endl;
+                cout << "Title: " <<arr[i][0]<<endl; 
+                cout << "Text: " <<arr[i][1]<<endl<<endl; 
+                cout << "Subject: " <<arr[i][2]<<endl; 
+                cout <<"Year: "<< arr[i][3]<<endl; 
+                cout <<"Month: "<< arr[i][4]<<endl; 
+                cout <<"Day: "<< arr[i][5]<<endl; 
                 cout << string(166,'=');
                 cout <<endl;
             }
@@ -211,7 +217,7 @@ int main() {
 
     // Allocate memory for the 2D array
     for (int i = 0; i < TRUEMAX; i++) {
-        array[i] = new string[4];
+        array[i] = new string[6];
     }
 
     // Read data into the array
@@ -219,10 +225,10 @@ int main() {
     data.head(array, 10);
     // data.DataTransformation(array);
 
-    int *arr=data.ArrayConversion(array);
-    for(int i=0; i< TRUEMAX; i++){
-        cout << arr[i] <<endl;
-    }
+    // int *arr=data.ArrayConversion(array);
+    // for(int i=0; i< TRUEMAX; i++){
+    //     cout << arr[i] <<endl;
+    // }
 
     // data.ApplySort(array);
 

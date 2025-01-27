@@ -1,25 +1,51 @@
-#ifndef Arrays_HPP
-#define Arrays_HPP
+#ifndef ARRAYS_HPP
+#define ARRAYS_HPP
 
 #include <iostream>
+#include <string>
+
 using namespace std;
-class ArraysAlgo
-{
-    private:
-        int * arr=NULL;
-        int size;
-        string indicator;
 
-    public:
-        ArraysAlgo(){}
-        void InsertionSort();
-        void MergeSort(int*& arr, int left, int right);
-        void BubbleSort();
-        void QuickSort();
-        void fillingarrays();
-        void displayrrays();
-        
-};  
+struct NewsArticle {
+    string title;         // Pointer to dynamically allocated memory
+    string content;
+    string category;
+    int publicationYear;
+    int publicationMonth;
+    int publicationDay;
+};
 
+class ArraysAlgo {
+private:
+    int capacity;          // Capacity of the array
+    int size;              // Current number of articles in the array
+    int* arr;              // Pointer to an integer array
+    string indicator;
+
+    // Function to resize the integer array when needed
+    void resizeArray(int*& array, int newCapacity);
+
+public:
+    NewsArticle* articles; // Dynamic array of NewsArticle
+
+    // Constructor
+    ArraysAlgo(){}
+
+    // Destructor
+    ~ArraysAlgo(){}
+    int getsize(){
+        return size;
+    }
+
+    // Sorting algorithms
+    void InsertionSort();
+    void MergeSort(int*& arr, int left, int right);
+    void BubbleSort();
+    void QuickSort();
+    void binarysearchYear(int year)const;
+    // Utility methods
+    void fillingarrays();
+    void displayarrays();
+};
 
 #endif
