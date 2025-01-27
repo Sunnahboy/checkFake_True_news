@@ -63,18 +63,32 @@ void ArraysAlgo::MergeSort(int* arr, int left, int right){
 
 
 
+//Custom String Comparison Function
+bool ArrayAlgo::customStringCompare(const char* str1, const char* str2) {
+    int i = 0;
+    while (str1[i] != '\0' && str2[i] != '\0') {
+        if (str1[i] != str2[i]) {
+            return false; // Mismatch found
+        }
+        i++;
+    }
+    // Both strings should end at the same position
+    return (str1[i] == '\0' && str2[i] == '\0');
+}
 
-// Function to perform Bubble Sort
-void  ArraysAlgo::bubbleSort(int arr[], int n) {
-    for (int i = 0; i < n - 1; i++) {
-        bool swapped = false; // Flag to check if any swapping occurred
-        for (int j = 0; j < n - i - 1; j++) {
-            if (arr[j] > arr[j + 1]) {
-                // Swap arr[j] and arr[j + 1]
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
-                swapped = true; // Set the flag to true
+
+
+void ArraysAlgo::sortByYear() {
+    // Perform Bubble Sort on the articles array
+    for (int i = 0; i < size - 1; i++) {
+        bool swapped = false;
+        for (int j = 0; j < size - i - 1; j++) {
+            if (articles[j].publicationYear > articles[j + 1].publicationYear) {
+                // Swap articles[j] and articles[j + 1]
+                NewsArticle temp = articles[j];
+                articles[j] = articles[j + 1];
+                articles[j + 1] = temp;
+                swapped = true;
             }
         }
         // If no two elements were swapped in the inner loop, then the array is sorted
@@ -84,48 +98,94 @@ void  ArraysAlgo::bubbleSort(int arr[], int n) {
     }
 }
 
-bool ArraysAlgo::binarySearch(string** arr, int rows, int targetDate) {
-    int left = 1; // Start from 1 to skip the header row
-    int right = rows - 1; // Adjust for zero-based indexing
+
+//Display the Entire List in Ascending Order
+void ArraysAlgo::displayArticles() const {
+    for (int i = 0; i < size; i++) {
+        // Print each article's details
+        cout<<("Title: %s\n", articles[i].title);
+        cout <<("Content: %s\n", articles[i].content);
+        cout<<("Category: %s\n", articles[i].category);
+        cout<<("Publication Date: %d-%02d-%02d\n",
+            articles[i].publicationYear,
+            articles[i].publicationMonth,
+            articles[i].publicationDay);
+        cout<<("---------------------------------\n");
+    }
+}
+
+
+void ArraysAlgo::binarysearchYear(int year) const {
+    int left = 0, right = size - 1;
+    bool found = false;
 
     while (left <= right) {
         int mid = left + (right - left) / 2;
-        int midDate = (arr[mid][3]); // assuming Date is in the 4th column
 
-        if (midDate == targetDate) {
-            return true; // Found the target date
-        } else if (midDate < targetDate) {
-            left = mid + 1; // Search in the right half
-        } else {
-            right = mid - 1; // Search in the left half
+        if (articles[mid].publicationYear == year) {
+            // Match found; display article
+            cout("Match Found:\n");
+            displayArticle(articles[mid]);
+            found = true;
+
+            // Check for duplicates in both directions
+            int temp = mid - 1;
+            while (temp >= 0 && articles[temp].publicationYear == year) {
+                displayArticle(articles[temp]);
+                temp--;
+            }
+
+            temp = mid + 1;
+            while (temp < size && articles[temp].publicationYear == year) {
+                displayArticle(articles[temp]);
+                temp++;
+            }
+            break;
+        }
+
+        if (articles[mid].publicationYear < year) {
+            left = mid + 1;
+        }
+        else {
+            right = mid - 1;
         }
     }
-    return false; // Target date not found
+
+    if (!found) {
+        printf("No articles found for the year: %d\n", year);
+    }
 }
 
 
-bool  ArraysAlgo::linearSearch(string** arr, int rows, int targetDate) {
-    for (int i = 1; i < rows; i++) { // Start from 1 to skip the header row
-        int currentDate = (arr[i][3]); // assuming Date is in the 4th column
-        if (currentDate == targetDate) {
-            return true; // Found the target date
+void ArrayAlgo::LinearsearchByCategory(const char* category) {
+    bool found = false;
+
+    for (int i = 0; i < size; i++) {
+        if (customStringCompare(articles[i].category, category)) {
+            // Match found; display the article
+            printf("Match Found:\n");
+            displayArticle(articles[i]);
+            found = true;
+
+            // Perform transposition to move the article closer to the start
+            if (i > 0) {
+                NewsArticle temp = articles[i];
+                articles[i] = articles[i - 1];
+                articles[i - 1] = temp;
+            }
+
+            // Continue searching for other matches
         }
     }
-    return false; // Target date not found
+
+    if (!found) {
+        cout<<("No articles found in category: %s\n", category);
+    }
 }
 
-// Example usage of binary search
-    int targetDate = 20170115; // Example date to search for (YYYYMMDD)
-    bool found = binarySearch(array, row, targetDate);
-    cout << "Date " << targetDate << " found: " << (found ? "Yes" : "No") << endl;
-
-
-    int targetDate = 20230115; // Example date to search for (YYYYMMDD)
-    bool found = linearSearch(array, row, targetDate);
-    cout << "Date " << targetDate << " found: " << (found ? "Yes" : "No") << endl;
 
 
 //quick sort algorithm by abu
 //insertion sort algorithm by kashave
-//selection sort algorithm by akira
+
 
