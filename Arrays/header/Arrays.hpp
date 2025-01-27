@@ -18,6 +18,8 @@ class ArraysAlgo
         void QuickSort(){}
         void fillingarrays(){}
         void displayrrays(){}
+        bool binarysearch(){}
+        bool linearsearch(){}
         
 };  
 
