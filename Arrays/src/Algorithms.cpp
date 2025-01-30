@@ -155,6 +155,48 @@ void ArraysAlgo::binarysearchYear(int year) const {
     }
 }
 
+
+//Insertion Sort
+void ArraysAlgo::InsertionSort(string** arr, int size) {
+        for (int i = 1; i < size; i++) {
+            string temp[6];
+            // Copy the current row to a temporary array for comparison
+            for (int j = 0; j < 6; j++) {
+                temp[j] = arr[i][j];
+            }
+            
+            int j = i - 1;
+            
+            // Compare the current row’s date (year, month, day) with previous rows
+            while (j >= 0) {
+                int year1 = stoi(arr[j][3]);
+                int month1 = stoi(arr[j][4]);
+                int day1 = stoi(arr[j][5]);
+                int year2 = stoi(temp[3]);
+                int month2 = stoi(temp[4]);
+                int day2 = stoi(temp[5]);
+
+                // Compare dates (year, month, day)
+                if (year1 > year2 || (year1 == year2 && (month1 > month2 || (month1 == month2 && day1 > day2)))) {
+                    // If the previous row’s date is later, shift it right
+                    for (int k = 0; k < 6; k++) {
+                        arr[j + 1][k] = arr[j][k];
+                    }
+                } else {
+                    break;
+                }
+                j--;
+            }
+            
+            // Place the current row in its correct position
+            for (int k = 0; k < 6; k++) {
+                arr[j + 1][k] = temp[k];
+            }
+        }
+    }
+
+
+
 //the Parameter should be flexible any field can be compared
 // Linear Search by Category
 // void LinearsearchByCategory(const char* category) {
@@ -198,4 +240,4 @@ void ArraysAlgo::binarysearchYear(int year) const {
 //             i + 1
 //         };
 //     }
-}
+// }
