@@ -38,7 +38,7 @@ public:
     }
 
     // Sorting algorithms
-    void InsertionSort();
+    void InsertionSort(string** arr, int size);
     void MergeSort(int*& arr, int left, int right, int*& temp);
     void BubbleSort();
     void QuickSort();
