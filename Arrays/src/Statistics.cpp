@@ -1,6 +1,6 @@
 #include <iostream>
 #include <iomanip>
-#include "NewsArticle.h"
+
 
 using namespace std;
 
@@ -12,7 +12,7 @@ void calculateFakeNewsPercentage(string** trueNews, int trueSize, string** fakeN
     // Loop through true news stored in 2D array
     for (int i = 0; i < trueSize; i++) {
         if (stoi(trueNews[i][3]) > 2016) break;  // Convert year from string to int
-        if (stoi(trueNews[i][3]) == 2016 && trueNews[i][2] == "politics") {
+        if (stoi(trueNews[i][3]) == 2016 && trueNews[i][2] == "politicsNews") {
             truePolitical2016++;
         }
     }
@@ -20,7 +20,7 @@ void calculateFakeNewsPercentage(string** trueNews, int trueSize, string** fakeN
     // Loop through fake news stored in 2D array
     for (int i = 0; i < fakeSize; i++) {
         if (stoi(fakeNews[i][3]) > 2016) break;  // Convert year from string to int
-        if (stoi(fakeNews[i][3]) == 2016 && fakeNews[i][2] == "politics") {
+        if (stoi(fakeNews[i][3]) == 2016 && fakeNews[i][2] == "politicsNews") {
             fakePolitical2016++;
         }
     }
@@ -52,7 +52,7 @@ void displayFakeNewsPercentageByMonth(string** trueNews, int trueSize, string** 
     for (int i = 0; i < trueSize; i++) {
         int year = stoi(trueNews[i][3]);  
         if (year > 2016) break;  
-        if (year == 2016 && trueNews[i][2] == "politics") {
+        if (year == 2016 && trueNews[i][2] == "politicsNews") {
             int month = stoi(trueNews[i][4]);  
             if (month >= 1 && month <= 12) {
                 truePolitical2016[month - 1]++;
@@ -64,7 +64,7 @@ void displayFakeNewsPercentageByMonth(string** trueNews, int trueSize, string** 
     for (int i = 0; i < fakeSize; i++) {
         int year = stoi(fakeNews[i][3]);
         if (year > 2016) break;
-        if (year == 2016 && fakeNews[i][2] == "politics") {
+        if (year == 2016 && fakeNews[i][2] == "politicsNews") {
             int month = stoi(fakeNews[i][4]);
             if (month >= 1 && month <= 12) {
                 fakePolitical2016[month - 1]++;
@@ -81,7 +81,7 @@ void displayFakeNewsPercentageByMonth(string** trueNews, int trueSize, string** 
         cout << left << setw(10) << months[i] << " | ";
 
         if (totalPolitical == 0) {
-            cout << "No political news articles\n";
+            cout << "0%\n";
         } else {
             double percentage = (static_cast<double>(fakePolitical2016[i]) / totalPolitical) * 100;
             int stars = static_cast<int>(percentage);  
