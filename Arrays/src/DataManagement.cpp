@@ -2,6 +2,8 @@
 #include <fstream>
 #include "header/Arrays_Manipulation.hpp"
 #include "header/Arrays.hpp"
+
+#include "Algorithms.cpp"
 using namespace std;
 #define TRUEMAX 21418
 #define FALSEMAX 23503
@@ -89,7 +91,7 @@ void dataManagement::ParseDate(string& Date, int& year, int& month, int& day){
 }
 
 
-string** dataManagement::StoreToArray(int size, int* temp) {
+string** dataManagement::SortToArray(int size, int* temp) {
     string** arr = new string*[size];
     for (int i = 0; i < size; i++) {
         arr[i] = new string[6];  // Allocate 6 columns for each row
@@ -103,6 +105,23 @@ string** dataManagement::StoreToArray(int size, int* temp) {
         arr[i][3] = to_string(article[index].publicationYear);
         arr[i][4] = to_string(article[index].publicationMonth);
         arr[i][5] = to_string(article[index].publicationDay);
+    }
+    return arr;
+}
+
+string** dataManagement::StoreToArray(int size) {
+    string** arr = new string*[size];
+    for (int i = 0; i < size; i++) {
+        arr[i] = new string[6];  // Allocate 6 columns for each row
+    }
+    
+    for (int i = 0; i < size; i++) {
+        arr[i][0] = article[i].title;
+        arr[i][1] = article[i].content;
+        arr[i][2] = article[i].category;
+        arr[i][3] = to_string(article[i].publicationYear);
+        arr[i][4] = to_string(article[i].publicationMonth);
+        arr[i][5] = to_string(article[i].publicationDay);
     }
     return arr;
 }
@@ -177,18 +196,18 @@ void dataManagement::displayStruct(int rows){
 }
 
 void dataManagement::ApplySort(int size){
-    
+    dataManagement data;
     int* newYear= new int[size];
     int* index=new int[size];
     for (int i=0; i<size; i++){
         newYear[i]=article[i].publicationYear;
         index[i]=i;
     }
-    dataManagement::algo.MergeSort(newYear, 0, size-1, index);
+    algo.MergeSort(newYear, 0, size-1, index);
     // for (int i=0; i<size; i++){
     //     cout << index[i]<<endSl;
     // }
-    string** arr=StoreToArray(size-1, index);
+    string** arr=SortToArray(size-1, index);
     head(arr, 10);
     for (int i = 0; i < TRUEMAX; i++) {
         delete[] arr[i];
@@ -196,17 +215,66 @@ void dataManagement::ApplySort(int size){
     delete[] arr;
 
 }
+
+bool RegInput(int value){
+            return (value==3||value==2||value==1);
+}
+
+bool RegInput2(int value){
+    return (value==5 ||value==4||value==3||value==2||value==1);
+}
+
+bool RegInput3(int value){
+    return (value==6||value==5 ||value==4||value==3||value==2||value==1);
+}
+
+
 /*
 We can add more functions here in this point
 */
 
 int main() {
-    dataManagement data;
-    data.ReadData(data.getTrueData());
-    data.displayStruct(46);
-
+    dataManagement Data;
+    ArraysAlgo algo;
+    // data.ReadData(data.getTrueData());
+    // data.displayStruct(46);
 // data.ApplySort(TRUEMAX);
+    Data.ReadData(Data.getTrueData());
+            string** arr=Data.StoreToArray(TRUEMAX);
+            int choice;
+            int choice2;
+            string field;
+            cout << " Select Searching Algorithm" << endl;
+            cout << "1. Linear Search" << endl;
+            cout << "2. Binary Search" << endl;
+            cout << "3. Return to Arrays Menu" << endl;
+            cout << "Please Enter your choice.... ";
+            while(!(cin>>choice)|| !(RegInput2(choice))){
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid.. Please Enter your choice again.... ";
+            }
+            cout << "Chose a field to search for"<<endl;
+            cout << "1. Title "<<endl;
+            cout << "2. Text "<<endl;
+            cout << "3. Subject "<<endl;
+            cout << "4. Year "<<endl;
+            cout << "5. Month "<<endl;
+            cout << "6. Day "<<endl;
+            cout << "Please Enter your choice.... ";
+            while(!(cin>>choice2)|| !(RegInput3(choice))){
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid.. Please Enter your choice again.... ";
+            }
+            cout << "Enter the keyword or value to search for: ";
+            cin >> field;
 
+            LinearSearch(arr, choice2-1, field);
+            for (int i = 0; i < TRUEMAX; ++i) {
+                delete[] arr[i];
+            }
+            delete[] arr;
 
     return 0;   
 }

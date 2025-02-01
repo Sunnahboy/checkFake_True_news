@@ -8,7 +8,8 @@
         "*.tcc": "cpp",
         "ostream": "cpp",
         "system_error": "cpp",
-        "new": "cpp"
+        "new": "cpp",
+        "variant": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

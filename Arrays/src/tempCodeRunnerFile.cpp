@@ -1,1 +1,3 @@
-#include "header/Arrays.hpp"
+ndl;
+    }
+    delete[] temp;
