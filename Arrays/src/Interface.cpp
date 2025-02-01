@@ -1,9 +1,13 @@
 #include <iostream>
 #include <limits>
-
+#include "DataManagement.cpp"
 using namespace std;
 class Interface
 {   
+    private:
+        ArraysAlgo algo;
+        dataManagement Data;
+    
     public:
         void columns(){
             for(int i=0; i<=80; i++){
@@ -50,13 +54,38 @@ class Interface
         }
         void SortData(){
             prinTable(2);
+            int choice;
             cout << " Select Sorting Algorithm" << endl;
             cout << "1. Insertion Sort" << endl;
             cout << "2. Bubble Sort" << endl;
             cout << "3. Quick Sort" << endl;
             cout << "4. Merge Sort" << endl;
             cout << "5. Return to Arrays Menu" << endl;
-            columns();     
+            columns(); 
+            while(!(cin >> choice)|| !(interface.RegInput(choice))){
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(),'\n');
+                    cout << "Invaliad Input... Enter Your choice Again: ";
+                }
+                switch(choice){
+                    case 1: 
+                        cout << "Nothing here yet";
+                        break;
+                    case 2: 
+                        cout << "Nothing here yet";
+                        break;
+                    case 3: 
+                        cout << "Nothing here yet";
+                        break;
+                    case 4: 
+                        Data.ReadToArray()
+                        break;
+                    case 5: 
+                        cout <<"Existing the program. GoodBye!";
+                        return 0;
+                    default: cout << "Invalid";
+                }
+                            
         }
 
         void SearchData(){

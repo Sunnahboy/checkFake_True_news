@@ -4,6 +4,7 @@
 
 using namespace std;
 
+//Using Struct
 void calculateFakeNewsPercentage(NewsArticle* trueNews, int trueSize, NewsArticle* fakeNews, int fakeSize) {
     int truePolitical2016 = 0;
     int fakePolitical2016 = 0;
@@ -39,7 +40,7 @@ void calculateFakeNewsPercentage(NewsArticle* trueNews, int trueSize, NewsArticl
 }
 
 
-
+//Using Arrays
 void calculateFakeNewsPercentage(string** trueNews, int trueSize, string** fakeNews, int fakeSize) {
     int truePolitical2016 = 0;
     int fakePolitical2016 = 0;
