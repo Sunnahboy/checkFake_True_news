@@ -46,6 +46,7 @@ public:
     // Utility methods
     void fillingarrays();
     void displayarrays();
+    void LinearSearch(int index);
 };
 
 #endif
