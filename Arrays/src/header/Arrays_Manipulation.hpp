@@ -19,7 +19,8 @@ class dataManagement
         void ReadData(ifstream& file);
         bool isEnglishWordCharacter(char c);
         void ParseDate(string& Date, int& year, int& month, int& day);
-        string** StoreToArray(int size, int* temp);
+        string** SortToArray(int size, int* temp);
+        string** StoreToArray(int size);
         int StringToInt(string& str);
         int monthToNumber(string month);
 
@@ -29,6 +30,6 @@ class dataManagement
 
        void head(string ** arr, int rows);
        void displayStruct(int rows);
-    //    void ApplySort(int size);
+       void ApplySort(int size);
 };
 #endif

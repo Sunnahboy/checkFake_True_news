@@ -41,12 +41,10 @@ public:
     void InsertionSort(string** arr, int size);
     void MergeSort(int*& arr, int left, int right, int*& temp);
     void BubbleSort();
-    void QuickSort();
-    void binarysearchYear(int year)const;
-    // Utility methods
-    void fillingarrays();
-    void displayarrays();
-    void LinearSearch(int index);
+    // void QuickSort();
+    // void binarysearchYear(int year)const;
+    // // Utility methods
+    // void LinearSearch(string** arr, int choice, string field);
 };
 
 #endif

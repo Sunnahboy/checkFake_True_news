@@ -1,8 +1,8 @@
 #include <iostream>
 #include <limits>
 #include "header/Arrays.hpp"
-
 using namespace std;
+#define TRUEMAX 21418
 
 // Helper function for Merge Sort
 void Merge(int*& arr, int LEFT, int MID, int RIGHT, int*& temp) {
@@ -97,63 +97,45 @@ void ArraysAlgo::BubbleSort() {
     }
 }
 
-//There is no need for this code
-// Display All Articles
-// void ArraysAlgo::displayarrays() {
-//     for (int i = 0; i < size; i++) {
-//         cout << "Title: " << articles[i].title << endl;
-//         cout << "Content: " << articles[i].content << endl;
-//         cout << "Category: " << articles[i].category << endl;
-//         cout << "Publication Date: "
-//              << articles[i].publicationYear << "-"
-//              << articles[i].publicationMonth << "-"
-//              << articles[i].publicationDay << endl;
-//         cout << "---------------------------------" << endl;
-//     }
-// }
 
 // Binary Search by Year
-void ArraysAlgo::binarysearchYear(int year) const {
-    int left = 0, right = size - 1;
-    bool found = false;
+// void ArraysAlgo::binarysearchYear(int year) const {
+//     int left = 0, right = size - 1;
+//     bool found = false;
 
-    while (left <= right) {
-        int mid = left + (right - left) / 2; //this should be (left+right)/2
+//     while (left <= right) {
+//         int mid = left + (right - left) / 2;
 
-        if (articles[mid].publicationYear == year) {
-            // Match found; display article
-            cout << "Match Found:\n";
-            cout << "Title: " << articles[mid].title << endl;
-            found = true;
+//         if (articles[mid].publicationYear == year) {
+//             // Match found; display the article
+//                 foufor
+//             nd = true;
 
-            // Check for duplicates in both directions
-            int temp = mid - 1;
-            while (temp >= 0 && articles[temp].publicationYear == year) {
-                cout << "Title: " << articles[temp].title << endl;
-                temp--;
-            }
+//             // Check for duplicates in both directions
+//             int temp = mid - 1;
+//             while (temp >= 0 && articles[temp].publicationYear == year)
+//                 temp--;for
+//             }
 
-            temp = mid + 1;
-            while (temp < size && articles[temp].publicationYear == year) {
-                cout << "Title: " << articles[temp].title << endl;
-                temp++;
-            }
-            break;
+//             temp = mid + 1;
+//             while (temp < size && articles[temp].publicationYear == year)                    
+            
+//                 temp++;for
+//             }
+//             break;
 
-            //the above portion of code can be ignored if we sort the complete date including the year
-        }
+//             //the above portion of code can be ignored if we sort the complete date including the year
+//         }
 
-        if (articles[mid].publicationYear < year) {
-            left = mid + 1;
-        } else {
-            right = mid - 1;
-        }
-    }
-
-    if (!found) {
-        cout << "No articles found for the year: " << year << endl;
-    }
-}
+//         if (articles[mid].publicationYear < year) {
+//             left = mid + 1;
+//         } else {
+//             right = mid - 1;
+//         }
+//      if(!found) {
+      
+//     }
+// }
 
 
 //Insertion Sort
@@ -207,19 +189,45 @@ void ArraysAlgo::InsertionSort(string** arr, int size) {
     delete[] index; // Clean up index array
 }
 
+void LinearSearch(string** arr, int indx, string value){
+    
+    int* temp=new int[TRUEMAX];
+    int count=0;
+    for (int i=0; i< TRUEMAX; i++){
+        if (arr[i][indx].find(value) != string::npos){
+            temp[count]=i;
+            count++;
+        }
+    }
+    if(count==0){
+        cout << "No Match Found!"<<endl;
+        return;
+    }   
+    for (int j=0; j< count; j++){
+        int index=temp[j];
+        cout << " Row Number: " <<index<<endl;
+        cout << "Title: " <<arr[index][0]<<endl; 
+        cout << "Text: " <<arr[index][1]<<endl<<endl; 
+        cout << "Subject: " <<arr[index][2]<<endl; 
+        cout <<"Year: "<< arr[index][3]<<endl; 
+        cout <<"Month: "<< arr[index][4]<<endl; 
+        cout <<"Day: "<< arr[index][5]<<endl; 
+        cout << string(166,'=');
+        cout <<endl;
+    }
+    delete[] temp;
+}
 
-
-//the Parameter should be flexible any field can be compared
+// the Parameter should be flexible any field can be compared
 // Linear Search by Category
 // void LinearsearchByCategory(const char* category) {
 //     bool found = false;
 //     ArraysAlgo algo;
 //     for (int i = 0; i < algo.getsize(); i++) {
 //         if (customStringCompare(articles[i].category.c_str(), category)) {
-//             // Match found; display the article
-//             cout << "Match Found:\n";
-//             cout << "Title: " << articles[i].title << endl;
-//             found = true;
+//             // Match found;6lay the article
+//                 foufor
+// nd = true;
 
 //             // Perform transposition to move the article closer to the start
 //             if (i > 0) {
@@ -230,26 +238,13 @@ void ArraysAlgo::InsertionSort(string** arr, int size) {
 //         }
 //     }
 
-//     if (!found) {
-//         cout << "No articles found in category: " << category << endl;
-//     }
+// 6  if (!found) {
+//  for   //     
+// }
 // }
 
-//No need for this code delete it
 
-// Filling Articles Array
-// void ArraysAlgo::fillingarrays() {
-//     size = 5; // Set the size of articles
-//     articles = new NewsArticle[size]; // Allocate memory for articles
 
-//     for (int i = 0; i < size; i++) {
-//         articles[i] = {
-//             "Title " + to_string(i + 1),
-//             "Content " + to_string(i + 1),
-//             "Category " + to_string(i % 3 + 1),
-//             2025,
-//             1,
-//             i + 1
-//         };
-//     }
-// }
+
+
+

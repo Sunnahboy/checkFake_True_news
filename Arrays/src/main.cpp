@@ -1,7 +1,8 @@
 #include <iostream>
 #include <limits>
 #include <fstream>
-#include "Interface.cpp"
+#include "Interface.hpp"
+
 
 using namespace std;
 int main(){ 
@@ -38,11 +39,8 @@ int main(){
             return 0;
         default: cout << "Invalid";
     }
+
     return 0;
-
-
-
-return 0;
 }
 
 
