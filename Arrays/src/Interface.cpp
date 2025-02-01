@@ -122,8 +122,9 @@ class Interface
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 cout << "Invalid.. Please Enter your choice again.... ";
             }
+            cin.ignore();
             cout << "Enter the keyword or value to search for: ";
-            cin >> field;
+            getline(cin, field);
 
             Data.LinearSearch(arr, choice2, field);
             for (int i = 0; i < TRUEMAX; ++i) {

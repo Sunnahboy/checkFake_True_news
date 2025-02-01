@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 #include "header/Arrays_Manipulation.hpp"
 #include "header/Arrays.hpp"
 
@@ -60,7 +61,7 @@ void dataManagement::ReadData(ifstream& file){
         i++;
         if (i >= TRUEMAX) break; // Prevent overflow
     }
-        cout << "Data Loading Complete!";
+        cout << "Data Loading Complete!"; 
 }
 
 
@@ -236,45 +237,10 @@ We can add more functions here in this point
 int main() {
     dataManagement Data;
     ArraysAlgo algo;
-    // data.ReadData(data.getTrueData());
-    // data.displayStruct(46);
-// data.ApplySort(TRUEMAX);
     Data.ReadData(Data.getTrueData());
-            string** arr=Data.StoreToArray(TRUEMAX);
-            int choice;
-            int choice2;
-            string field;
-            cout << " Select Searching Algorithm" << endl;
-            cout << "1. Linear Search" << endl;
-            cout << "2. Binary Search" << endl;
-            cout << "3. Return to Arrays Menu" << endl;
-            cout << "Please Enter your choice.... ";
-            while(!(cin>>choice)|| !(RegInput2(choice))){
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Invalid.. Please Enter your choice again.... ";
-            }
-            cout << "Chose a field to search for"<<endl;
-            cout << "1. Title "<<endl;
-            cout << "2. Text "<<endl;
-            cout << "3. Subject "<<endl;
-            cout << "4. Year "<<endl;
-            cout << "5. Month "<<endl;
-            cout << "6. Day "<<endl;
-            cout << "Please Enter your choice.... ";
-            while(!(cin>>choice2)|| !(RegInput3(choice))){
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Invalid.. Please Enter your choice again.... ";
-            }
-            cout << "Enter the keyword or value to search for: ";
-            cin >> field;
-
-            LinearSearch(arr, choice2-1, field);
-            for (int i = 0; i < TRUEMAX; ++i) {
-                delete[] arr[i];
-            }
-            delete[] arr;
+    // Data.displayStruct(6156);
+// data.ApplySort(TRUEMAX);
+    
 
     return 0;   
 }

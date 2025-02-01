@@ -188,17 +188,26 @@ void ArraysAlgo::InsertionSort(string** arr, int size) {
     delete[] sortedArr;
     delete[] index; // Clean up index array
 }
-
-void LinearSearch(string** arr, int indx, string value){
+// there should one linear search for the value and one for the keywords or two for loops
+void ArraysAlgo::LinearSearch(string** arr, int indx, string value){
     
     int* temp=new int[TRUEMAX];
     int count=0;
+    int matchExists=0;
     for (int i=0; i< TRUEMAX; i++){
-        if (arr[i][indx].find(value) != string::npos){
+        if(arr[i][indx]==value){
+            temp[matchExists]=i;
+            matchExists++;
+        }
+        else if (matchExists==0 && arr[i][indx].find(value) != string::npos){
             temp[count]=i;
             count++;
         }
     }
+    if(matchExists > 0 ) {
+        count = matchExists;
+    }
+
     if(count==0){
         cout << "No Match Found!"<<endl;
         return;
