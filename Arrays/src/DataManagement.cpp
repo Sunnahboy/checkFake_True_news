@@ -7,6 +7,7 @@
 #include "Algorithms.cpp"
 using namespace std;
 #define TRUEMAX 21418
+#define MAX 1000000
 #define FALSEMAX 23503
 
 
@@ -61,12 +62,12 @@ void dataManagement::ReadData(ifstream& file){
         i++;
         if (i >= TRUEMAX) break; // Prevent overflow
     }
-        cout << "Data Loading Complete!"; 
+        cout << "Data Loading Complete!" << endl; 
 }
 
 
 bool dataManagement::isEnglishWordCharacter(char c) {
-    return isalnum(c) || c == '"' || c == ',' || c==' ';
+    return isalnum(c) || c == '"' || c == ',' || c==' ' || c=='\'';
 }       
 
 void dataManagement::ParseDate(string& Date, int& year, int& month, int& day){
@@ -229,6 +230,55 @@ bool RegInput3(int value){
     return (value==6||value==5 ||value==4||value==3||value==2||value==1);
 }
 
+string* dataManagement::tokenizeWords(string** array) {
+    string *arr = new string[MAX];  
+    string filler_words[] = {"a", "the", "is", "it", "to", "and", "of", "on", 
+                             "for", "in", "at", "this", "that", "was", "were", "with", "between", "infront",
+                             "have", "had", "has", "been", "about", "into", "are"};    
+    int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
+    int j = 0; // Counter for storing words in arr[]
+    // Loop through the 2D array (articles)
+    for (int i = 0; i < TRUEMAX; i++) {
+        string text = array[i][1];  // Extract text from article
+        string word = ""; // Temporary string for building words
+ 
+        // Loop through each character in the text
+        for (char c : text) {
+            // Convert to lowercase
+            c = tolower(c);
+            // Check for word boundaries
+            if (isspace(c) || ispunct(c)) {
+                if (!word.empty()) { // If a word has been formed
+                    // Check if it's a filler word
+                     bool isFiller = false;
+                     for (int k = 0; k < filler_size; k++) {
+                        if (word == filler_words[k]) {
+                            isFiller = true;
+                            break;
+                        }
+                    }
+                    // Store word if not a filler
+                    if (!isFiller && j <MAX) {
+                        arr[j] = word;
+                        j++;
+                    }
+                    word = ""; 
+                }
+            } else {
+                word += c;
+            }
+        }
+    }
+    return arr;
+}
+
+void dataManagement::CountingFreq(string** arr){
+
+    string* 
+}
+
+
+
 
 /*
 We can add more functions here in this point
@@ -237,10 +287,47 @@ We can add more functions here in this point
 int main() {
     dataManagement Data;
     ArraysAlgo algo;
-    Data.ReadData(Data.getTrueData());
+    Data.ReadData(Data.getFakeData());
+    string** arr=Data.StoreToArray(TRUEMAX);
+    Data.tokenizeWords(arr);
     // Data.displayStruct(6156);
-// data.ApplySort(TRUEMAX);
-    
+    // Data.ApplySort(TRUEMAX);
+    // cout << arr[5][1] <<endl;
+    // int choice;
+    // int choice2;
+    // string field;
+    // cout << " Select Searching Algorithm" << endl;
+    // cout << "1. Linear Search" << endl;
+    // cout << "2. Binary Search" << endl;
+    // cout << "3. Return to Arrays Menu" << endl;
+    // cout << "Please Enter your choice.... ";
+    // while(!(cin>>choice)|| !(RegInput2(choice))){
+    //     cin.clear();
+    //     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    //     cout << "Invalid.. Please Enter your choice again.... ";
+    // }
+    // cout << "Chose a field to search for"<<endl;
+    // cout << "1. Title "<<endl; 
+    // cout << "2. Text "<<endl;
+    // cout << "3. Subject "<<endl;
+    // cout << "4. Year "<<endl;
+    // cout << "5. Month "<<endl;
+    // cout << "6. Day "<<endl;
+    // cout << "Please Enter your choice.... ";
+    // while(!(cin>>choice2)|| !(RegInput3(choice))){
+    //     cin.clear();
+    //     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    //     cout << "Invalid.. Please Enter your choice again.... ";
+    // }
+    // cin.ignore();
+    // cout << "Enter the keyword or value to search for: ";
+    // getline(cin, field);
+
+    // algo.LinearSearch(arr, choice2-1, field);
+    for (int i = 0; i < TRUEMAX; ++i) {
+        delete[] arr[i];
+    }
+    delete[] arr;
 
     return 0;   
 }

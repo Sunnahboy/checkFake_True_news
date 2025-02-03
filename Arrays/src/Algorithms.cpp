@@ -188,6 +188,8 @@ void ArraysAlgo::InsertionSort(string** arr, int size) {
     delete[] sortedArr;
     delete[] index; // Clean up index array
 }
+
+
 // there should one linear search for the value and one for the keywords or two for loops
 void ArraysAlgo::LinearSearch(string** arr, int indx, string value){
     
@@ -204,7 +206,7 @@ void ArraysAlgo::LinearSearch(string** arr, int indx, string value){
             count++;
         }
     }
-    if(matchExists > 0 ) {
+    if( matchExists > 0 ) {
         count = matchExists;
     }
 
