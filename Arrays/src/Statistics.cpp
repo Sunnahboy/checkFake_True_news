@@ -4,7 +4,7 @@
 
 using namespace std;
 
-//Using Arrays
+//Q2. Calculate Fake News % in 2016
 void calculateFakeNewsPercentage(string** trueNews, int trueSize, string** fakeNews, int fakeSize) {
     int truePolitical2016 = 0;
     int fakePolitical2016 = 0;
@@ -40,7 +40,7 @@ void calculateFakeNewsPercentage(string** trueNews, int trueSize, string** fakeN
 }
 
 
-
+//Q7 Percentage of Fake News by Month. Formatted
 void displayFakeNewsPercentageByMonth(string** trueNews, int trueSize, string** fakeNews, int fakeSize) {
     int truePolitical2016[12] = {0};  
     int fakePolitical2016[12] = {0};  
