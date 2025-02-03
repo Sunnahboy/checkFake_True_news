@@ -31,5 +31,7 @@ class dataManagement
        void head(string ** arr, int rows);
        void displayStruct(int rows);
        void ApplySort(int size);
+       string* tokenizeWords(string** arr);
+       void CountingFreq(string** arr);
 };
 #endif
