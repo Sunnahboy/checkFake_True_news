@@ -39,7 +39,10 @@ class dataManagement
                         //if we found a quote the flag set to True
                         QuotedFlag=!QuotedFlag;
                         CurrentField+=c;//we add the quates to the field
-                    }else if(c==',' && !QuotedFlag){
+                    }else if (!isEnglishWordCharacter(c)){
+                        continue;
+                    }
+                    else if(c==',' && !QuotedFlag){
                         //if we encouter a comma after the quates then we will specify each field based on the index
                         if(index==0){
                             article[i].title=CurrentField;
@@ -62,6 +65,9 @@ class dataManagement
                 if (i >= TRUEMAX) break; // Prevent overflow
             }
         }
+        bool isEnglishWordCharacter(char c) {
+           return isalnum(c) || c == '"' || c == ',' || c==' ';
+        }       
 
         void ParseDate(string& Date, int& year, int& month, int& day){
 
@@ -187,9 +193,9 @@ class dataManagement
             string** arr=StoreToArray(size-1, index);
             head(arr, 10);
             for (int i = 0; i < TRUEMAX; i++) {
-                delete[] array[i];
+                delete[] arr[i];
             }
-            delete[] array;
+            delete[] arr;
 
         }
         /*
@@ -200,9 +206,9 @@ class dataManagement
 int main() {
     dataManagement data;
     data.ReadData(data.getTrueData());
-    // data.displayStruct(TRUEMAX);
+    data.displayStruct(46);
 
-    data.ApplySort(TRUEMAX);
+    // data.ApplySort(TRUEMAX);
 
 
     return 0;
