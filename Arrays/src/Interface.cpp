@@ -62,7 +62,7 @@ class Interface
             cout << "4. Merge Sort" << endl;
             cout << "5. Return to Arrays Menu" << endl;
             columns(); 
-            while(!(cin >> choice)|| !(interface.RegInput(choice))){
+            while(!(cin >> choice)|| !RegInput(choice)){
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(),'\n');
                     cout << "Invaliad Input... Enter Your choice Again: ";
@@ -78,11 +78,11 @@ class Interface
                         cout << "Nothing here yet";
                         break;
                     case 4: 
-                        Data.ReadToArray()
+                        cout << "Nothing here yet";
                         break;
                     case 5: 
                         cout <<"Existing the program. GoodBye!";
-                        return 0;
+                        return;
                     default: cout << "Invalid";
                 }
                             

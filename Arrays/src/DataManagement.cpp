@@ -203,13 +203,13 @@ class dataManagement
         */
 };
 
-int main() {
-    dataManagement data;
-    data.ReadData(data.getTrueData());
-    data.displayStruct(46);
+// int main() {
+//     dataManagement data;
+//     data.ReadData(data.getTrueData());
+//     data.displayStruct(46);
 
-    // data.ApplySort(TRUEMAX);
+//     // data.ApplySort(TRUEMAX);
 
 
-    return 0;
-}
+//     return 0;
+// }
