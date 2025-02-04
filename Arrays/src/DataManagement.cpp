@@ -266,12 +266,13 @@ bool RegInput3(int value){
 }
 
 void dataManagement::tokenizeWords(string** array) {
+    ArraysAlgo algo;
     int capacity=1000;
     string* wordsList = new string[capacity];  
     int* wordsFreq = new int[capacity];     
     string filler_words[] = {"a", "the", "is", "it", "to", "and", "of", "on", 
                             "for", "in", "at", "this", "that", "was", "were", "with", "between", "infront",
-                            "have", "had", "has", "been", "about", "into", "are"};    
+                            "have", "had", "has", "been", "about", "into", "are", "after", "before", "not", "where", "when","those", "thus"};    
     int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
     int Unique = 0; 
     for (int i = 0; i < size; i++) {
@@ -323,8 +324,9 @@ void dataManagement::tokenizeWords(string** array) {
             }
         }
     }
+    algo.QuickSort(wordsFreq, Unique, 1);
     cout << "Word Frequency List:\n";
-    for(int i=0; i <Unique; i++){
+    for(int i=0; i <20; i++){
         cout << wordsList[i] << " :: " << wordsFreq[i] << endl;
     }
 
