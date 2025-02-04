@@ -45,6 +45,7 @@ public:
     // void binarysearchYear(int year)const;
     // // Utility methods
     void LinearSearch(string** arr, int choice, string field, int size);
+    void QuickSort(int*& arr, int length, int order);
 };
 
 #endif
