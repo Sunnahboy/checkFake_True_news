@@ -1,3 +1,1 @@
-ndl;
-    }
-    delete[] temp;
+0
