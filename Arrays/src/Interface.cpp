@@ -7,8 +7,13 @@ class Interface
     private:
         ArraysAlgo algo;
         dataManagement Data;
+        
     
     public:
+        Interface() {
+            // Initialize the Data object by reading in the true data file.
+            Data.ReadData(Data.getTrueData());
+        }
         void columns(){
             for(int i=0; i<=80; i++){
                 cout << "="<<left;
@@ -67,18 +72,21 @@ class Interface
                     cin.ignore(numeric_limits<streamsize>::max(),'\n');
                     cout << "Invaliad Input... Enter Your choice Again: ";
                 }
+                int numArticles = TRUEMAX;
                 switch(choice){
                     case 1: 
-                        cout << "Nothing here yet";
+                        cout << "Performing Insertion Sort..." << endl;
+                        Data.ApplyInsertionSort(numArticles);
                         break;
                     case 2: 
-                        cout << "Nothing here yet";
+                        cout << "Performing Bubble Sort..." << endl;
+                        Data.ApplyBubbleSort(numArticles);
                         break;
                     case 3: 
                         cout << "Nothing here yet";
                         break;
                     case 4: 
-                        cout << "Nothing here yet";
+                        Data.ApplyMergeSort(numArticles);
                         break;
                     case 5: 
                         cout <<"Existing the program. GoodBye!";
