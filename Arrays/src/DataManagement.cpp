@@ -6,18 +6,19 @@
 
 #include "Algorithms.cpp"
 using namespace std;
-#define TRUEMAX 21418
-#define MAX 1000000
-#define FALSEMAX 23503
 
 
 dataManagement::dataManagement(){
-    article=new NewsArticle[TRUEMAX];
+    capacity=1000;
+    article=new NewsArticle[capacity];
     TrueData.open("dataSets/true.csv");
     FakeData.open("dataSets/fake.csv");
     if(!TrueData.is_open() || !FakeData.is_open()){
         cout << "Error in reading the file";
+        size=0;
+        capacity=1000;
     }
+    size=0;
 }
 
 void dataManagement::ReadData(ifstream& file){
@@ -25,6 +26,19 @@ void dataManagement::ReadData(ifstream& file){
     string Line, CurrentField, Date;
     int i=0; //To add elements into the 2D array
     while(getline(file, Line)){
+
+        if (size == capacity) {
+            capacity *= 2;  
+            NewsArticle* temp = new NewsArticle[capacity];
+            int Iterations=(size<capacity) ? size : capacity;
+            for (int j = 0; j < size; j++) {
+                temp[j] = article[j];
+            }
+
+            delete[] article;  
+            article = temp;  
+        }
+
         //we create the index to parse the elements inside the file
         int index=0;
         //current field is initially set to none
@@ -60,8 +74,9 @@ void dataManagement::ReadData(ifstream& file){
         // Handle last field (year)
         ParseDate(Date, article[i].publicationYear, article[i].publicationMonth, article[i].publicationDay);
         i++;
-        if (i >= TRUEMAX) break; // Prevent overflow
+        size++;
     }
+        file.clear();
         cout << "Data Loading Complete!" << endl; 
 }
 
@@ -70,26 +85,48 @@ bool dataManagement::isEnglishWordCharacter(char c) {
     return isalnum(c) || c == '"' || c == ',' || c==' ' || c=='\'';
 }       
 
-void dataManagement::ParseDate(string& Date, int& year, int& month, int& day){
 
-        string field = "", basket="";
-        int parseStage = 0;
-        // Manual quote removal and parsing
-        for (char c : Date) {
-            if (c == '"') continue;
-            if (c == ' ' || c == ',') {
-                switch(parseStage) {
-                    case 0: month = monthToNumber(field);break;
-                    case 1: day = StringToInt(field); break;
-                    case 2: basket=field; break;// remove leading space from the year field     
-                    case 3: while (!field.empty() && field[field.length()-1] == ' ') field.erase(field.length()-1); year = StringToInt(field); break;
-                }
-                field = "";
-                parseStage++;
-            } else {
-                field += c;
+int dataManagement::getsize(){
+    return size;
+}
+
+void dataManagement::ParseDate(string& Date, int& year, int& month, int& day) {
+    string field = "";
+    int parseStage = 0;
+    
+    // Manual quote removal and parsing
+    for (char c : Date) {
+        if (c == '"') continue;  // Skip quotes
+        
+        if (c == ' ' || c == ',') {
+            switch(parseStage) {
+                case 0: 
+                    month = monthToNumber(field);
+                    break;
+                case 1: 
+                   day = StringToInt(field); 
+                    break;
+                case 2: 
+                    // Skipping space
+                    break;
+                case 3:
+                    while (!field.empty() && field[field.length()-1] == ' ')
+                        field.erase(field.length()-1);
+                    year = StringToInt(field);
+                    break;
             }
+            field = "";
+            parseStage++;
+        } else {
+            field += c;
         }
+    }
+
+    if (!field.empty() && parseStage == 3) {
+        while (!field.empty() && field[field.length()-1] == ' ')
+            field.erase(field.length()-1);
+        year = StringToInt(field);
+    }
 }
 
 
@@ -138,18 +175,18 @@ int dataManagement::StringToInt(string& str) {
 }
 
 int dataManagement::monthToNumber(string month) {
-    if (month == "January") return 1;
-    if (month == "February") return 2;
-    if (month == "March") return 3;
-    if (month == "April") return 4;
+    if (month == "January" || month=="Jan") return 1;
+    if (month == "February" || month=="Feb") return 2;
+    if (month == "March" || month=="Mar") return 3;
+    if (month == "April" || month=="Apr") return 4;
     if (month == "May") return 5;
-    if (month == "June") return 6;
-    if (month == "July") return 7;
-    if (month == "August") return 8;
-    if (month == "September") return 9;
-    if (month == "October") return 10;
-    if (month == "November") return 11;
-    if (month == "December") return 12;
+    if (month == "June" || month=="Jun") return 6;
+    if (month == "July" || month=="Jul") return 7;
+    if (month == "August" || month=="Aug") return 8;
+    if (month == "September" || month=="Sep") return 9;
+    if (month == "October" || month=="Oct") return 10;
+    if (month == "November" || month=="Nov") return 11;
+    if (month == "December" || month=="Dec") return 12;
     return -1; // Invalid month
 }
 
@@ -206,12 +243,10 @@ void dataManagement::ApplySort(int size){
         index[i]=i;
     }
     algo.MergeSort(newYear, 0, size-1, index);
-    // for (int i=0; i<size; i++){
-    //     cout << index[i]<<endSl;
-    // }
+   
     string** arr=SortToArray(size-1, index);
-    head(arr, 10);
-    for (int i = 0; i < TRUEMAX; i++) {
+    head(arr, 20);
+    for (int i = 0; i < size; i++) {
         delete[] arr[i];
     }
     delete[] arr;
@@ -230,18 +265,20 @@ bool RegInput3(int value){
     return (value==6||value==5 ||value==4||value==3||value==2||value==1);
 }
 
-string* dataManagement::tokenizeWords(string** array) {
-    string *arr = new string[MAX];  
+void dataManagement::tokenizeWords(string** array) {
+    int capacity=1000;
+    string* wordsList = new string[capacity];  
+    int* wordsFreq = new int[capacity];     
     string filler_words[] = {"a", "the", "is", "it", "to", "and", "of", "on", 
-                             "for", "in", "at", "this", "that", "was", "were", "with", "between", "infront",
-                             "have", "had", "has", "been", "about", "into", "are"};    
+                            "for", "in", "at", "this", "that", "was", "were", "with", "between", "infront",
+                            "have", "had", "has", "been", "about", "into", "are"};    
     int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
-    int j = 0; // Counter for storing words in arr[]
-    // Loop through the 2D array (articles)
-    for (int i = 0; i < TRUEMAX; i++) {
+    int Unique = 0; 
+    for (int i = 0; i < size; i++) {
+        if(array[i][2].compare("Government News")!=0) continue; //filter the data only the government once are taken
         string text = array[i][1];  // Extract text from article
         string word = ""; // Temporary string for building words
- 
+
         // Loop through each character in the text
         for (char c : text) {
             // Convert to lowercase
@@ -249,18 +286,35 @@ string* dataManagement::tokenizeWords(string** array) {
             // Check for word boundaries
             if (isspace(c) || ispunct(c)) {
                 if (!word.empty()) { // If a word has been formed
-                    // Check if it's a filler word
-                     bool isFiller = false;
-                     for (int k = 0; k < filler_size; k++) {
+                    // Check if it's a filler array
+                    bool isFiller = false;
+                    for (int k = 0; k < filler_size; k++) {
                         if (word == filler_words[k]) {
                             isFiller = true;
                             break;
                         }
                     }
-                    // Store word if not a filler
-                    if (!isFiller && j <MAX) {
-                        arr[j] = word;
-                        j++;
+                
+                    if (!isFiller) {
+                        bool found = false;
+                        for (int v = 0; v < Unique; v++) {
+                            if (wordsList[v] == word) {
+                                wordsFreq[v] += 1;  
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) { 
+                            if(Unique==capacity){
+                                int newcap= capacity*2;
+                                resizeArray(wordsList, capacity, newcap);
+                                resizeArray(wordsFreq, capacity, newcap);
+                                capacity=newcap;
+                            }
+                            wordsList[Unique] =word;
+                            wordsFreq[Unique] = 1;
+                            Unique++;
+                        }
                     }
                     word = ""; 
                 }
@@ -269,12 +323,26 @@ string* dataManagement::tokenizeWords(string** array) {
             }
         }
     }
-    return arr;
+    cout << "Word Frequency List:\n";
+    for(int i=0; i <Unique; i++){
+        cout << wordsList[i] << " :: " << wordsFreq[i] << endl;
+    }
+
+    delete[] wordsList;
+    delete[] wordsFreq;
 }
 
-void dataManagement::CountingFreq(string** arr){
 
-    string* 
+template <typename Any>
+void dataManagement::resizeArray(Any*& arr, int old, int newS){
+    Any* temp=new Any[newS];
+    int Iterations=(old < newS) ? old : newS;
+    for(int i=0; i <Iterations; i++){
+        temp[i]=arr[i];
+    }
+    delete []arr;
+    arr=temp;
+
 }
 
 
@@ -288,11 +356,10 @@ int main() {
     dataManagement Data;
     ArraysAlgo algo;
     Data.ReadData(Data.getFakeData());
-    string** arr=Data.StoreToArray(TRUEMAX);
-    Data.tokenizeWords(arr);
-    // Data.displayStruct(6156);
-    // Data.ApplySort(TRUEMAX);
-    // cout << arr[5][1] <<endl;
+    string** array=Data.StoreToArray(Data.getsize());
+    Data.tokenizeWords(array);
+    // cout << Data.getsize();
+    // Data.ApplySort(Data.getsize());
     // int choice;
     // int choice2;
     // string field;
@@ -323,11 +390,11 @@ int main() {
     // cout << "Enter the keyword or value to search for: ";
     // getline(cin, field);
 
-    // algo.LinearSearch(arr, choice2-1, field);
+    // algo.LinearSearch(array, choice2-1, field, Data.getsize());
     for (int i = 0; i < TRUEMAX; ++i) {
-        delete[] arr[i];
+        delete[] array[i];
     }
-    delete[] arr;
+    delete[] array;
 
     return 0;   
 }

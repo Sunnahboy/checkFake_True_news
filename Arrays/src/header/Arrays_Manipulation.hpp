@@ -9,6 +9,9 @@
 using namespace std;
 class dataManagement
 {
+    private:
+        int size;
+        int capacity;
     protected:
         ArraysAlgo algo;
         NewsArticle* article;
@@ -23,7 +26,8 @@ class dataManagement
         string** StoreToArray(int size);
         int StringToInt(string& str);
         int monthToNumber(string month);
-
+        int getsize();
+        void setsize(ifstream& file);
         ~dataManagement();
         ifstream& getTrueData();
         ifstream& getFakeData();
@@ -31,7 +35,8 @@ class dataManagement
        void head(string ** arr, int rows);
        void displayStruct(int rows);
        void ApplySort(int size);
-       string* tokenizeWords(string** arr);
-       void CountingFreq(string** arr);
+       void tokenizeWords(string** arr);
+       template <typename Any> 
+       void resizeArray(Any*& array, int oldsize, int newSize);
 };
 #endif

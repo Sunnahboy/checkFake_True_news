@@ -191,19 +191,22 @@ void ArraysAlgo::InsertionSort(string** arr, int size) {
 
 
 // there should one linear search for the value and one for the keywords or two for loops
-void ArraysAlgo::LinearSearch(string** arr, int indx, string value){
+void ArraysAlgo::LinearSearch(string** arr, int indx, string value, int size){
     
-    int* temp=new int[TRUEMAX];
+    int* temp=new int[size];
     int count=0;
     int matchExists=0;
-    for (int i=0; i< TRUEMAX; i++){
+    int Total=0;
+    for (int i=0; i< size; i++){
         if(arr[i][indx]==value){
             temp[matchExists]=i;
             matchExists++;
+            Total++;
         }
         else if (matchExists==0 && arr[i][indx].find(value) != string::npos){
             temp[count]=i;
             count++;
+            Total++;
         }
     }
     if( matchExists > 0 ) {
@@ -226,8 +229,11 @@ void ArraysAlgo::LinearSearch(string** arr, int indx, string value){
         cout << string(166,'=');
         cout <<endl;
     }
+    cout << "Total Rows -> "<< Total;
     delete[] temp;
 }
+
+
 
 // the Parameter should be flexible any field can be compared
 // Linear Search by Category
