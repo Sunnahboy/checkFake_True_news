@@ -179,7 +179,7 @@ class dataManagement
             }
        }
 
-        void ApplySort(int size){
+        void ApplyMergeSort(int size){
             int* newYear= new int[size];
             int* index=new int[size];
             for (int i=0; i<size; i++){
@@ -187,9 +187,7 @@ class dataManagement
                 index[i]=i;
             }
             algo.MergeSort(newYear, 0, size-1, index);
-            // for (int i=0; i<size; i++){
-            //     cout << index[i]<<endl;
-            // }
+            
             string** arr=StoreToArray(size-1, index);
             head(arr, 10);
             for (int i = 0; i < TRUEMAX; i++) {
@@ -198,6 +196,46 @@ class dataManagement
             delete[] arr;
 
         }
+        
+
+        void ApplyInsertionSort(int numArticles) {
+            int* indices = new int[numArticles];
+            for (int i = 0; i < numArticles; i++){
+                indices[i] = i;
+            }
+            // Create a 2D array (each row has 6 columns as in StoreToArray)
+            string** arr = StoreToArray(numArticles, indices);
+            
+            algo.InsertionSort(arr, numArticles);
+            
+            head(arr, 10); //numArticles);
+            
+            // Free allocated memory
+            for (int i = 0; i < numArticles; i++){
+                delete[] arr[i];
+            }
+            delete[] arr;
+            delete[] indices;
+        }
+
+
+        void ApplyBubbleSort(int numArticles) {
+            int* indices = new int[numArticles];
+            for (int i = 0; i < numArticles; i++){
+                indices[i] = i;
+            }
+            string** arr = StoreToArray(numArticles, indices);
+
+            algo.BubbleSort();  // Example: if BubbleSort sorts the internal articles array.
+            
+            // Display the sorted articles from your data structure:
+            head(arr, 10); //numArticles);
+            
+            delete[] indices;
+            // (Assuming BubbleSort works in place on your internal articles array.)
+        }
+
+
         /*
         We can add more functions here in this point
         */

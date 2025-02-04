@@ -18,7 +18,7 @@ int main(){
     while(!(cin >> choice)|| !(interface.RegInput(choice))){
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(),'\n');
-        cout << "Invaliad Input... Enter Your choice Again: ";
+        cout << "Invalid Input... Enter Your choice Again: ";
     }
     switch(choice){
         case 1: 

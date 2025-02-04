@@ -97,21 +97,6 @@ void ArraysAlgo::BubbleSort() {
     }
 }
 
-//There is no need for this code
-// Display All Articles
-// void ArraysAlgo::displayarrays() {
-//     for (int i = 0; i < size; i++) {
-//         cout << "Title: " << articles[i].title << endl;
-//         cout << "Content: " << articles[i].content << endl;
-//         cout << "Category: " << articles[i].category << endl;
-//         cout << "Publication Date: "
-//              << articles[i].publicationYear << "-"
-//              << articles[i].publicationMonth << "-"
-//              << articles[i].publicationDay << endl;
-//         cout << "---------------------------------" << endl;
-//     }
-// }
-
 // Binary Search by Year
 void ArraysAlgo::binarysearchYear(int year) const {
     int left = 0, right = size - 1;
