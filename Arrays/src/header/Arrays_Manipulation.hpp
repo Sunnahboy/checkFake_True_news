@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include "Arrays.hpp"
+#include "HashMap.hpp"
 
 using namespace std;
 class dataManagement
@@ -14,6 +15,7 @@ class dataManagement
         int capacity;
     protected:
         ArraysAlgo algo;
+        HashMap hashmap;
         NewsArticle* article;
         ifstream TrueData;
         ifstream FakeData;
