@@ -10,78 +10,55 @@ struct Node {
     string title;
     string content;
     string category;
-    string publicationDate;
+    int publicationYear;
+    int publicationMonth;
+    int publicationDay;
+    
     Node* next;
 
     // Constructor to initialize node data
-    Node(const string& t, const string& c, const string& cat, const string& pubDate)
+    Node(const string& t, const string& c, const string& cat, const int& pubYear, const int& pubMonth, const int& pubDay)
         :title(t),
         content(c), 
         category(cat),
-        publicationDate(pubDate), 
+        publicationYear(pubYear), 
+        publicationMonth(pubMonth),
+        publicationDay(pubDay),
         next(nullptr) {}
 };
 
 // Define the LinkedList class
 class LinkedList {
 private:
-    Node* head; // Pointer to the head of the list
+     // Pointer to the head of the list
 
 public:
+    Node* head;
     // Constructor
-    LinkedList() : head(nullptr) {}
+    LinkedList();
 
     // Destructor to free memory
     ~LinkedList();
 
     // Add a new article to the list
-    void addArticle(const string& title, const string& content, const string& category, const string& publicationDate);
+    void addArticle(string& title, string& content, string& category, string& publicationDate);
 
     // Display all articles
     void displayArticles() const;
 
     // Search for an article by title
-    Node* searchByTitle(const string& title) const;
+    Node* searchByTitle(string& title) ;
 
     // Sort articles by publication date
     void sortArticles();
 
+    void addNode(string& title, string& content, string& category, int year, int month, int day);
+
+    // Optimized Linear Search
+    void linearSearch(string& searchTerm, string& searchType);
+    //Binary Search
+    void binarySearchByYear(string& targetYear);
+
 };
+
 #endif
-
-
-// // Main function to test the implementation
-// int main() {
-//     LinkedList newsList;
-
-//     // Add articles
-//     newsList.addArticle("AI Breakthrough", "New AI model...", "Technology", "2023-10-01");
-//     newsList.addArticle("Election Results", "The election...", "Politics", "2023-10-05");
-//     newsList.addArticle("Sports Update", "Team wins...", "Sports", "2023-10-03");
-
-//     // Display articles
-//     cout << "All Articles:\n";
-//     newsList.displayArticles();
-
-//     // Search for an article
-//     string searchTitle = "AI Breakthrough";
-//     Node* result = newsList.searchByTitle(searchTitle);
-//     if (result) {
-//         cout << "Found Article: " << result->title << "\n\n";
-//     } else {
-//         cout << "Article not found.\n\n";
-//     }
-
-//     // Sort articles
-//     cout << "Sorted Articles:\n";
-//     newsList.sortArticles();
-//     newsList.displayArticles();
-
-//     // Delete an article
-//     string deleteTitle = "Sports Update";
-//     newsList.deleteArticle(deleteTitle);
-//     cout << "After Deleting '" << deleteTitle << "':\n";
-//     newsList.displayArticles();
-
-//     return 0;
-// } 

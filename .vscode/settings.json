@@ -6,7 +6,8 @@
         "string": "cpp",
         "iosfwd": "cpp",
         "*.tcc": "cpp",
-        "stdexcept": "cpp"
+        "stdexcept": "cpp",
+        "random": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

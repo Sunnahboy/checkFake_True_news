@@ -115,7 +115,7 @@ class dataManagement
             int result = 0;
             for (char c : str) {
                 result = result * 10 + (c - '0');
-            }
+            } 
             return result;
         }
 
