@@ -3,7 +3,7 @@
 #include <iomanip>
 #include "header/Arrays_Manipulation.hpp"
 #include "header/Arrays.hpp"
-
+#include "header/HashMap.hpp"
 #include "Algorithms.cpp"
 using namespace std;
 
@@ -267,19 +267,15 @@ bool RegInput3(int value){
 
 void dataManagement::tokenizeWords(string** array) {
     ArraysAlgo algo;
-    int capacity=1000;
-    string* wordsList = new string[capacity];  
-    int* wordsFreq = new int[capacity];     
+    HashMap hashmap;
     string filler_words[] = {"a", "the", "is", "it", "to", "and", "of", "on", 
                             "for", "in", "at", "this", "that", "was", "were", "with", "between", "infront",
                             "have", "had", "has", "been", "about", "into", "are", "after", "before", "not", "where", "when","those", "thus"};    
     int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
-    int Unique = 0; 
     for (int i = 0; i < size; i++) {
         if(array[i][2].compare("Government News")!=0) continue; //filter the data only the government once are taken
         string text = array[i][1];  // Extract text from article
         string word = ""; // Temporary string for building words
-
         // Loop through each character in the text
         for (char c : text) {
             // Convert to lowercase
@@ -295,27 +291,8 @@ void dataManagement::tokenizeWords(string** array) {
                             break;
                         }
                     }
-                
                     if (!isFiller) {
-                        bool found = false;
-                        for (int v = 0; v < Unique; v++) {
-                            if (wordsList[v] == word) {
-                                wordsFreq[v] += 1;  
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) { 
-                            if(Unique==capacity){
-                                int newcap= capacity*2;
-                                resizeArray(wordsList, capacity, newcap);
-                                resizeArray(wordsFreq, capacity, newcap);
-                                capacity=newcap;
-                            }
-                            wordsList[Unique] =word;
-                            wordsFreq[Unique] = 1;
-                            Unique++;
-                        }
+                        hashmap.insert(word);
                     }
                     word = ""; 
                 }
@@ -324,15 +301,88 @@ void dataManagement::tokenizeWords(string** array) {
             }
         }
     }
-    algo.QuickSort(wordsFreq, Unique, 1);
+    auto result=hashmap.getKeysAndFrequencies();
+    string* keys=result.first;
+    int* freq=result.second;
+    algo.QuickSort(freq, hashmap.getCount(), 1);
     cout << "Word Frequency List:\n";
     for(int i=0; i <20; i++){
-        cout << wordsList[i] << " :: " << wordsFreq[i] << endl;
+        cout << freq[i] << " :: " << keys[i] << endl;
     }
 
-    delete[] wordsList;
-    delete[] wordsFreq;
+    delete[] keys;
+    delete[] freq;
 }
+
+
+// void dataManagement::tokenizeWords(string** array) {
+//     ArraysAlgo algo;
+//     int capacity=1000;
+//     string* wordsList = new string[capacity];  
+//     int* wordsFreq = new int[capacity];     
+//     string filler_words[] = {"a", "the", "is", "it", "to", "and", "of", "on", 
+//                             "for", "in", "at", "this", "that", "was", "were", "with", "between", "infront",
+//                             "have", "had", "has", "been", "about", "into", "are", "after", "before", "not", "where", "when","those", "thus"};    
+//     int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
+//     int Unique = 0; 
+//     for (int i = 0; i < size; i++) {
+//         if(array[i][2].compare("Government News")!=0) continue; //filter the data only the government once are taken
+//         string text = array[i][1];  // Extract text from article
+//         string word = ""; // Temporary string for building words
+
+//         // Loop through each character in the text
+//         for (char c : text) {
+//             // Convert to lowercase
+//             c = tolower(c);
+//             // Check for word boundaries
+//             if (isspace(c) || ispunct(c)) {
+//                 if (!word.empty()) { // If a word has been formed
+//                     // Check if it's a filler array
+//                     bool isFiller = false;
+//                     for (int k = 0; k < filler_size; k++) {
+//                         if (word == filler_words[k]) {
+//                             isFiller = true;
+//                             break;
+//                         }
+//                     }
+                
+//                     if (!isFiller) {
+//                         bool found = false;
+//                         for (int v = 0; v < Unique; v++) {
+//                             if (wordsList[v] == word) {
+//                                 wordsFreq[v] += 1;  
+//                                 found = true;
+//                                 break;
+//                             }
+//                         }
+//                         if (!found) { 
+//                             if(Unique==capacity){
+//                                 int newcap= capacity*2;
+//                                 resizeArray(wordsList, capacity, newcap);
+//                                 resizeArray(wordsFreq, capacity, newcap);
+//                                 capacity=newcap;
+//                             }
+//                             wordsList[Unique] =word;
+//                             wordsFreq[Unique] = 1;
+//                             Unique++;
+//                         }
+//                     }
+//                     word = ""; 
+//                 }
+//             } else {
+//                 word += c;
+//             }
+//         }
+//     }
+//     algo.QuickSort(wordsFreq, Unique, 1);
+//     cout << "Word Frequency List:\n";
+//     for(int i=0; i <20; i++){
+//         cout << wordsList[i] << " :: " << wordsFreq[i] << endl;
+//     }
+
+//     delete[] wordsList;
+//     delete[] wordsFreq;
+// }
 
 
 template <typename Any>
