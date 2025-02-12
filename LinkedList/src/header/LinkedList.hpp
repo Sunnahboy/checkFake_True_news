@@ -23,6 +23,7 @@ struct article{
 class dataManagement{
     private:
         article* head=nullptr;
+        article* tail = nullptr; // New tail pointer
         int size;
         string ListName;
         ifstream TrueData;
@@ -38,7 +39,7 @@ class dataManagement{
         // Constructor of the list
         article * CreateNewNode(string Title, string Content, string Category, int Day, int Month, int Year);
         void addArticlefromFront(string Title, string Content, string Category,int Day, int Month, int Yearr);
-        // void addArticlefromEnd(string Title, string Content, string Category, int Day, int Month, int Year);
+        void addArticlefromEnd(string Title, string Content, string Category, int Day, int Month, int Year);
 
         void ReadData(ifstream& file);
         void ParseDate(string& Date, int& year, int& month, int& day);
