@@ -39,6 +39,20 @@ void dataManagement::addArticlefromFront(string Title, string Content, string Ca
     size++;
 }
 
+void dataManagement::addArticlefromEnd(string Title, string Content, string Category, int Day, int Month, int Year) {
+    article* NewArticle = CreateNewNode(Title, Content, Category, Day, Month, Year);
+    
+    if (head == nullptr) {  
+        head = NewArticle;
+        tail = NewArticle;  // Set tail if it's the first node
+    } else {
+        tail->next = NewArticle;  // Directly link the last node to new node
+        tail = NewArticle;        // Update tail pointer
+    }
+    size++;  
+}
+
+
 
 void dataManagement::ReadData(ifstream& file) {
     //lambda function to read the data
@@ -102,7 +116,7 @@ void dataManagement::ReadData(ifstream& file) {
 
         int year, month, day;
         ParseDate(dateField, year, month, day);
-        addArticlefromFront(title, content, category, day, month, year);
+        addArticlefromEnd(title, content, category, day, month, year);
     }
     cout << "Data Loading complete";
 }
@@ -398,6 +412,7 @@ int main() {
     dataManagement Data("News Articles");
     Data.ReadData(Data.getFakeData());
     Data.displayArticlesfromFront();
+    // Data.displayArticlesfromEnd();
     // Data.tokenizeWords(array);
     // cout << Data.getsize();
     // Data.head(array, 9028);
