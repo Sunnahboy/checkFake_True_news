@@ -11,19 +11,17 @@ using namespace std;
 class dataManagement
 {
     private:
-        int size;
-        int capacity;
-    protected:
         ArraysAlgo algo;
-        HashMap hashmap;
         NewsArticle* article;
         ifstream TrueData;
         ifstream FakeData;
+        int size;
+        int capacity;
     public:
         dataManagement();
         void ReadData(ifstream& file);
         bool isEnglishWordCharacter(char c);
-        void ParseDate(string& Date, int& year, int& month, int& day);
+        bool ParseDate(string& Date, int& year, int& month, int& day);
         string** SortToArray(int size, int* temp);
         string** StoreToArray(int size);
         int StringToInt(string& str);
