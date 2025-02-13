@@ -1,8 +1,46 @@
+
+#ifdef _WIN32
+#include <windows.h>
+#include <psapi.h>
+long getMemoryUsageKB() {
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+    if (GetProcessMemoryInfo(GetCurrentProcess(),
+        (PROCESS_MEMORY_COUNTERS*)&pmc,
+        sizeof(pmc))) {
+        // WorkingSetSize is in bytes; convert to kilobytes.
+        return static_cast<long>(pmc.WorkingSetSize / 1024);
+    }
+    return -1; // Error indicator.
+}
+#elif defined(__APPLE__)
+#include <sys/resource.h>
+long getMemoryUsageKB() {
+    struct rusage usage;
+    getrusage(RUSAGE_SELF, &usage);
+    // On macOS, ru_maxrss is in bytes; convert to kilobytes.
+    return usage.ru_maxrss / 1024;
+}
+#else
+    // Assume Linux/Unix.
+#include <sys/resource.h>
+long getMemoryUsageKB() {
+    struct rusage usage;
+    getrusage(RUSAGE_SELF, &usage);
+    // On Linux, ru_maxrss is already in kilobytes.
+    return usage.ru_maxrss;
+}
+#endif
+
+
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include "header/Arrays.hpp"
 #include "Algorithms.cpp"
+#include <chrono>
+#include <string>
+
 
 using namespace std;
 
@@ -165,7 +203,7 @@ class dataManagement
                     dateField.erase(0, 1);
                 }
         
-                if (title.empty() || content.empty() || category.empty() || dateField.empty() ) continue;
+                if (title.empty() || content.empty() || category.empty() || dateField.empty()) continue;
         
                 // Store parsed data
                 article[currentSize].title    = title;
@@ -331,14 +369,15 @@ class dataManagement
        }
 
        void displayStruct(int rows){
-            for(int i=1; i<rows; i++){ 
+            for(int i=1; i<=rows; i++){ 
                 cout << " Row Number: " <<i <<endl;
                 cout << "Title: " <<article[i].title<<endl; 
                 cout << "Text: " <<article[i].content<<endl<<endl; 
                 cout << "Subject: " <<article[i].category<<endl; 
-                cout <<"Year: "<< article[i].publicationYear<<endl; 
-                cout <<"Month: "<< article[i].publicationMonth<<endl; 
-                cout <<"Day: "<< article[i].publicationDay<<endl; 
+                cout << "Date: " << article[i].publicationDay << "-" << article[i].publicationMonth << "-" << article[i].publicationYear << endl;
+                // cout <<"Year: "<< article[i].publicationYear<<endl; 
+                // cout <<"Month: "<< article[i].publicationMonth<<endl; 
+                // cout <<"Day: "<< article[i].publicationDay<<endl; 
                 cout << string(166,'=');
                 cout <<endl;
             }
@@ -383,12 +422,14 @@ class dataManagement
             NewsArticle* sortedArticles = new NewsArticle[size];
             
             // Remap articles based on sorted indices
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < 20; i++) {
                 sortedArticles[i] = article[index[i]];
+                // cout << "Index: " << index[i] <<endl;
             }
             
+            
             // Copy sorted articles back to original array
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < 10; i++) {
                 article[i] = sortedArticles[i];
             }
             
@@ -398,7 +439,7 @@ class dataManagement
             delete[] sortedArticles;
             
             // Uncomment to display sorted articles
-            displayStruct(20);
+            // displayStruct(20);
         }
         
         void ApplyInsertionSort(int numArticles) {
@@ -434,19 +475,80 @@ class dataManagement
         int getCurrentSize() const {
             return currentSize;
         }
+
+
+
+
+
+        
+
+    //Nested Performance Profiling Tools
+    struct PerformanceMetrics {
+        double timeSeconds; // Elapsed time (seconds)
+        long memoryKB;      // Memory change (in KB)
+    };
+
+    template<typename Func, typename... Args>
+    PerformanceMetrics measurePerformance(Func func, Args... args) {
+        long memBefore = getMemoryUsageKB();
+        auto start = chrono::high_resolution_clock::now();
+
+        func(args...);
+
+        auto end = chrono::high_resolution_clock::now();
+        long memAfter = getMemoryUsageKB();
+        chrono::duration<double> elapsed = end - start;
+
+        PerformanceMetrics metrics;
+        metrics.timeSeconds = elapsed.count();
+        metrics.memoryKB = memAfter - memBefore;
+        return metrics;
+    }
+
+    template<typename Func, typename... Args>
+    PerformanceMetrics profileAlgorithm(const string& algorithmName,
+                                        const string& theoreticalTime,
+                                        const string& theoreticalSpace,
+                                        Func func, Args... args) {
+        PerformanceMetrics metrics = measurePerformance(func, args...);
+
+        cout << "Algorithm: " << algorithmName << "\n";
+        cout << "  Theoretical Time Complexity: " << theoreticalTime << "\n";
+        cout << "  Theoretical Space Complexity: " << theoreticalSpace << "\n";
+        cout << "  Measured Time: " << metrics.timeSeconds << " seconds\n";
+        cout << "  Measured Memory Change: " << metrics.memoryKB << " KB\n";
+        cout << "--------------------------------------------\n";
+
+        return metrics;
+    }
 };
 
 int main() {
     dataManagement data;
     data.ReadData(data.getFakeData());
-    data.ReadData(data.getTrueData());
-    data.displayStruct(3);//data.getCurrentSize());
-
-    // cout << "Applying Merge Sort" << endl << endl;
-
-    // data.ApplyMergeSort(data.getCurrentSize());
-    // data.ApplyInsertionSort(data.getCurrentSize());
+    // data.ReadData(data.getTrueData());
     // data.displayStruct(3);
+
+    const int numAlgorithms = 1;
+
+    // Use the nested type by qualifying with the class name.
+    dataManagement::PerformanceMetrics metricsArray[numAlgorithms];
+
+    // Wrap the sort call in a lambda to defer execution.
+    metricsArray[0] = data.profileAlgorithm(
+        "Process merge sort",
+        "O(n log n)",
+        "O(n)",
+        [&data]() { 
+            data.ApplyMergeSort(data.getCurrentSize());
+        }
+    );
+
+    cout << "\nSummary of Performance Metrics (stored in array):\n";
+    for (int i = 0; i < numAlgorithms; ++i) {
+        cout << "Result " << i << ": Time = " << metricsArray[i].timeSeconds
+                << " sec, Memory Change = " << metricsArray[i].memoryKB << " KB\n";
+    }
 
     return 0;
 }
