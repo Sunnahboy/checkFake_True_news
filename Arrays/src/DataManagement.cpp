@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <sstream>
 #include "header/Arrays_Manipulation.hpp"
 #include "header/Arrays.hpp"
 #include "header/HashMap.hpp"
@@ -10,6 +11,7 @@ using namespace std;
 
 dataManagement::dataManagement(){
     capacity=1000;
+    size=0;
     article=new NewsArticle[capacity];
     TrueData.open("dataSets/true.csv");
     FakeData.open("dataSets/fake.csv");
@@ -18,13 +20,16 @@ dataManagement::dataManagement(){
         size=0;
         capacity=1000;
     }
-    size=0;
 }
+
 
 void dataManagement::ReadData(ifstream& file){
     bool QuotedFlag=false;
     string Line, CurrentField, Date;
     int i=0; //To add elements into the 2D array
+    int maxGarbage=1000;
+    string garbageCollector[maxGarbage];
+    int garbageIndex=0;
     while(getline(file, Line)){
 
         if (size == capacity) {
@@ -55,13 +60,15 @@ void dataManagement::ReadData(ifstream& file){
                 continue;
             }
             else if(c==',' && !QuotedFlag){
-                //if we encouter a comma after the quates then we will specify each field based on the index
-                if(index==0){
-                    article[i].title=CurrentField;
-                }else if(index==1){
-                    article[i].content=CurrentField;
-                }else if (index==2){
-                    article[i].category=CurrentField;
+                if(!CurrentField.empty()){
+                    
+                    if(index==0){
+                        article[i].title=CurrentField;
+                    }else if(index==1){
+                        article[i].content=CurrentField;
+                    }else if (index==2){
+                        article[i].category=CurrentField;
+                    }
                 }
                 CurrentField=""; //we have to reset the current field
                 index++;
@@ -69,65 +76,101 @@ void dataManagement::ReadData(ifstream& file){
                 //if none of the condition were True we reset the index
                 CurrentField+=c;
             }
-        } 
-        Date= CurrentField;
-        // Handle last field (year)
-        ParseDate(Date, article[i].publicationYear, article[i].publicationMonth, article[i].publicationDay);
-        i++;
-        size++;
+                //if we encouter a comma after the quates then we will specify each field based on the index
+        }
+        if(!CurrentField.empty()){
+            Date= CurrentField;
+            int year, month, day;
+            if(!ParseDate(Date, year, month, day)){
+                if(garbageIndex < maxGarbage){
+                    garbageCollector[garbageIndex++]=Line;
+                }
+                continue;
+            }
+            article[i].publicationYear = year;
+            article[i].publicationMonth = month;
+            article[i].publicationDay = day;
+        }
+        if (!article[i].title.empty() && !article[i].content.empty() && !article[i].category.empty()) {
+            i++;
+            size++;
+        }
     }
         file.clear();
         cout << "Data Loading Complete!" << endl; 
 }
 
-
 bool dataManagement::isEnglishWordCharacter(char c) {
     return isalnum(c) || c == '"' || c == ',' || c==' ' || c=='\'';
-}       
-
+}  
 
 int dataManagement::getsize(){
     return size;
 }
-
-void dataManagement::ParseDate(string& Date, int& year, int& month, int& day) {
+bool dataManagement::ParseDate(string& Date, int& year, int& month, int& day) {
     string field = "";
     int parseStage = 0;
-    
-    // Manual quote removal and parsing
-    for (char c : Date) {
-        if (c == '"') continue;  // Skip quotes
-        
-        if (c == ' ' || c == ',') {
-            switch(parseStage) {
-                case 0: 
-                    month = monthToNumber(field);
-                    break;
-                case 1: 
-                   day = StringToInt(field); 
-                    break;
-                case 2: 
-                    // Skipping space
-                    break;
-                case 3:
-                    while (!field.empty() && field[field.length()-1] == ' ')
-                        field.erase(field.length()-1);
-                    year = StringToInt(field);
-                    break;
+
+    if(Date.find('-')!=string::npos){
+        //format DD-MMM-YYYY
+        int dashcount=0;
+        for(char c :Date){
+            if(c=='-'){
+                if(dashcount==0){
+                    day=StringToInt(field);
+                }
+                else if(dashcount==1){
+                    month=monthToNumber(field);
+                }
+                field="";
+                dashcount++;
+            }else{
+                field+=c;
             }
-            field = "";
-            parseStage++;
-        } else {
-            field += c;
+        }
+        year=StringToInt(field);
+    }else{
+    
+        // Manual quote removal and parsing
+        for (char c : Date) {
+            if (c == '"') continue;  // Skip quotes
+            
+            if (c == ' ' || c == ',') {
+                switch(parseStage) {
+                    case 0: 
+                        month = monthToNumber(field);
+                        break;
+                    case 1: 
+                    day = StringToInt(field); 
+                        break;
+                        case 2: 
+                        // Skipping space
+                        break;
+                    case 3:
+                        while (!field.empty() && field[field.length()-1] == ' ')
+                            field.erase(field.length()-1);
+                        year = StringToInt(field);
+                        break;
+                }
+                field = "";
+                parseStage++;
+            } else {
+                field += c;
+            }
+        }
+
+        if (!field.empty() && parseStage == 3) {
+            while (!field.empty() && field[field.length()-1] == ' ')
+                field.erase(field.length()-1);
+            year = StringToInt(field);
         }
     }
-
-    if (!field.empty() && parseStage == 3) {
-        while (!field.empty() && field[field.length()-1] == ' ')
-            field.erase(field.length()-1);
-        year = StringToInt(field);
+    if(year <=0){
+        return false;
     }
+    return true;
 }
+
 
 
 string** dataManagement::SortToArray(int size, int* temp) {
@@ -306,7 +349,7 @@ void dataManagement::tokenizeWords(string** array) {
     int* freq=result.second;
     algo.QuickSort(freq, hashmap.getCount(), 1);
     cout << "Word Frequency List:\n";
-    for(int i=0; i <20; i++){
+    for(int i=0; i <200; i++){
         cout << freq[i] << " :: " << keys[i] << endl;
     }
 
@@ -407,10 +450,12 @@ We can add more functions here in this point
 int main() {
     dataManagement Data;
     ArraysAlgo algo;
-    Data.ReadData(Data.getFakeData());
+    Data.ReadData(Data.getTrueData());
     string** array=Data.StoreToArray(Data.getsize());
-    Data.tokenizeWords(array);
+    // Data.displayStruct(10000);
+    // Data.tokenizeWords(array);
     // cout << Data.getsize();
+    Data.head(array, Data.getsize());
     // Data.ApplySort(Data.getsize());
     // int choice;
     // int choice2;
@@ -443,7 +488,7 @@ int main() {
     // getline(cin, field);
 
     // algo.LinearSearch(array, choice2-1, field, Data.getsize());
-    for (int i = 0; i < TRUEMAX; ++i) {
+    for (int i = 0; i < Data.getsize(); ++i) {
         delete[] array[i];
     }
     delete[] array;

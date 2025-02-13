@@ -21,9 +21,10 @@ private:
     int size;              // Current number of articles in the array
     int* arr;              // Pointer to an integer array
     string indicator;
+    
 
     // Function to resize the integer array when needed
-    void resizeArray(int*& array, int newCapacity);
+    void resizeArray2(int*& array, int newCapacity);
 
 public:
     NewsArticle* articles; // Dynamic array of NewsArticle
