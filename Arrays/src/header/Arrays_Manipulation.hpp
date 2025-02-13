@@ -16,6 +16,9 @@ class dataManagement
     protected:
         ArraysAlgo algo;
         HashMap hashmap;
+        YearHashMap hashmapYear;
+        DayHashMap hashmapDay;
+        MonthHashMap hashmapMonth; 
         NewsArticle* article;
         ifstream TrueData;
         ifstream FakeData;
