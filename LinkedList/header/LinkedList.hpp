@@ -56,6 +56,8 @@ public:
 
     // Optimized Linear Search
     void linearSearch(string& searchTerm, string& searchType);
+    Node* mergeSortedLists(Node* a, Node* b);
+    Node* bottomUpMergeSort(Node* head);
     //Binary Search
     void binarySearchByYear(string& targetYear);
 
