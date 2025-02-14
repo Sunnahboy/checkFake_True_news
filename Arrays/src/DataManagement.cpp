@@ -1,38 +1,6 @@
 
-#ifdef _WIN32
-#include <windows.h>
-#include <psapi.h>
-long getMemoryUsageKB() {
-    PROCESS_MEMORY_COUNTERS_EX pmc;
-    if (GetProcessMemoryInfo(GetCurrentProcess(),
-        (PROCESS_MEMORY_COUNTERS*)&pmc,
-        sizeof(pmc))) {
-        // WorkingSetSize is in bytes; convert to kilobytes.
-        return static_cast<long>(pmc.WorkingSetSize / 1024);
-    }
-    return -1; // Error indicator.
-}
-#elif defined(__APPLE__)
-#include <sys/resource.h>
-long getMemoryUsageKB() {
-    struct rusage usage;
-    getrusage(RUSAGE_SELF, &usage);
-    // On macOS, ru_maxrss is in bytes; convert to kilobytes.
-    return usage.ru_maxrss / 1024;
-}
-#else
-    // Assume Linux/Unix.
-#include <sys/resource.h>
-long getMemoryUsageKB() {
-    struct rusage usage;
-    getrusage(RUSAGE_SELF, &usage);
-    // On Linux, ru_maxrss is already in kilobytes.
-    return usage.ru_maxrss;
-}
-#endif
 
-
-
+#include "header/PerformanceProfiler.hpp"
 #include <iostream>
 #include <limits>
 #include <fstream>
@@ -502,49 +470,6 @@ void ApplyBubbleSort(int numArticles) {
             return currentSize;
         }
            
-        
-
-    //Nested Performance Profiling Tools
-    struct PerformanceMetrics {
-        double timeSeconds; // Elapsed time (seconds)
-        long memoryKB;      // Memory change (in KB)
-    };
-
-    template<typename Func, typename... Args>
-    PerformanceMetrics measurePerformance(Func func, Args... args) {
-        long memBefore = getMemoryUsageKB();
-        auto start = chrono::high_resolution_clock::now();
-
-        func(args...);
-
-        auto end = chrono::high_resolution_clock::now();
-        long memAfter = getMemoryUsageKB();
-        chrono::duration<double> elapsed = end - start;
-
-        PerformanceMetrics metrics;
-        metrics.timeSeconds = elapsed.count();
-        metrics.memoryKB = memAfter - memBefore;
-        return metrics;
-    }
-
-    template<typename Func, typename... Args>
-    PerformanceMetrics profileAlgorithm(const string& algorithmName,
-                                        const string& theoreticalTime,
-                                        const string& theoreticalSpace,
-                                        Func func, Args... args) {
-        PerformanceMetrics metrics = measurePerformance(func, args...);
-
-        cout << "Algorithm: " << algorithmName << "\n";
-        cout << "  Theoretical Time Complexity: " << theoreticalTime << "\n";
-        cout << "  Theoretical Space Complexity: " << theoreticalSpace << "\n";
-        cout << "  Measured Time: " << metrics.timeSeconds << " seconds\n";
-        cout << "  Measured Memory Change: " << metrics.memoryKB << " KB\n";
-        cout << "--------------------------------------------\n";
-
-        return metrics;
-    }
-
-    
 };
 
 int main() {
@@ -575,6 +500,6 @@ int main() {
     //    cout << "Result " << i << ": Time = " << metricsArray[i].timeSeconds
     //            << " sec, Memory Change = " << metricsArray[i].memoryKB << " KB\n";
     //}
-
+    profileAlgorithm(&data,"Bubble Sort", "O(n)", "O(1)", &data.ApplyMergeSort, data.getCurrentSize());
     return 0;
 }
