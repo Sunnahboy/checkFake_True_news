@@ -20,6 +20,8 @@ LinkedList::~LinkedList() {
 
 // --- HELPER FUNCTIONS FOR DATE COMPARISONS ---
 
+
+
 // Returns true if the date in node 'a' is later than in node 'b'
 bool dateGreater(Node* a, Node* b) {
     if (a->publicationYear != b->publicationYear)
@@ -39,6 +41,96 @@ bool dateLess(Node* a, Node* b) {
 }
 
 // --- END HELPER FUNCTIONS ---
+
+
+// Merges two sorted linked lists efficiently
+Node* LinkedList::mergeSortedLists(Node* a, Node* b) {
+    Node* head = nullptr;
+    Node* tail = nullptr;
+
+    auto appendNode = [&](Node*& node) {
+        if (!head) {
+            head = tail = node;
+            //cout << "Appending node: " << node->title << endl; 
+        } else {
+            tail->next = node;
+            tail = node;
+            //cout << "Appending node: " << node->title << endl;
+        }
+        node = node->next;
+    };
+
+    while (a && b) {
+        if (a->publicationYear < b->publicationYear || 
+            (a->publicationYear == b->publicationYear && (a->publicationMonth < b->publicationMonth || 
+            (a->publicationMonth == b->publicationMonth && a->publicationDay <= b->publicationDay)))) {
+            appendNode(a);
+        } else {
+            appendNode(b);
+            
+        }
+    }
+
+    tail->next = (a ? a : b);
+    return head;
+}
+
+// Bottom-up merge sort implementation
+Node* LinkedList::bottomUpMergeSort(Node* head) {
+    if (!head || !head->next) return head;
+
+    int length = 0;
+    for (Node* node = head; node; node = node->next) length++;
+
+    Node dummy("", "", "", 0, 0, 0); // Dummy node to simplify merging
+    dummy.next = head;
+
+    for (int size = 1; size < length; size *= 2) {
+        Node* current = dummy.next;
+        Node* tail = &dummy;
+
+        while (current) {
+            Node* left = current;
+            Node* right = nullptr;
+            Node* nextSegment = nullptr;
+
+            int count = 1;
+            while (count < size && current->next) {
+                current = current->next;
+                count++;
+            }
+
+            if (current->next) {
+                right = current->next;
+                current->next = nullptr;
+                current = right;
+            } else {
+                break; // Stop if we've reached the end
+            }
+
+            count = 1;
+            while (count < size && current->next) {
+                current = current->next;
+                count++;
+            }
+
+            if (current->next) {
+                nextSegment = current->next;
+                current->next = nullptr;
+            }
+            //cout << "Merging segments..." << endl; // Debugging line
+            tail->next = mergeSortedLists(left, right);
+
+            while (tail->next) tail = tail->next;
+
+            current = nextSegment;
+        }
+        head = dummy.next;
+    }
+
+    return head;
+}
+
 
 // Search for an article by title
 Node* LinkedList::searchByTitle(string& title) {
