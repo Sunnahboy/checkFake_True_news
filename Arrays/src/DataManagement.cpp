@@ -34,6 +34,7 @@ long getMemoryUsageKB() {
 
 
 #include <iostream>
+#include <limits>
 #include <fstream>
 #include <sstream>
 #include "header/Arrays.hpp"
@@ -358,12 +359,12 @@ class dataManagement
             for(int i=1; i<rows; i++){
                 cout << " Row Number: " <<i <<endl;
                 cout << "Title: " <<arr[i][0]<<endl; 
-                cout << "Text: " <<arr[i][1]<<endl<<endl; 
-                cout << "Subject: " <<arr[i][2]<<endl; 
+                //cout << "Text: " <<arr[i][1]<<endl<<endl; 
+                //cout << "Subject: " <<arr[i][2]<<endl; 
                 cout <<"Year: "<< arr[i][3]<<endl; 
                 cout <<"Month: "<< arr[i][4]<<endl; 
                 cout <<"Day: "<< arr[i][5]<<endl; 
-                cout << string(166,'=');
+                //cout << string(166,'=');
                 cout <<endl;
             }
        }
@@ -458,28 +459,49 @@ class dataManagement
             delete[] indices;
         }
 
-        void ApplyBubbleSort(int numArticles) {
-            int* indices = new int[numArticles];
-            for (int i = 0; i < numArticles; i++){
-                indices[i] = i;
-            }
-            string** arr = StoreToArray(numArticles, indices);
+        //void ApplyBubbleSort(int numArticles) {
+        //    int* indices = new int[numArticles];
+        //    for (int i = 0; i < numArticles; i++){
+        //        indices[i] = i;
+        //    }
+        //    string** arr = StoreToArray(numArticles, indices);
+//
+        //    algo.BubbleSort();
+        //    
+        //    head(arr, 10);
+        //    
+        //    delete[] indices;
+        //}
+//
 
-            algo.BubbleSort();
-            
-            head(arr, 10);
-            
-            delete[] indices;
-        }
+void ApplyBubbleSort(int numArticles) {
+    int* indices = new int[numArticles];
+    for (int i = 0; i < numArticles; i++) {
+        indices[i] = i;
+        
+    }
+
+    string** arr = StoreToArray(numArticles, indices);
+
+    ArraysAlgo algo;
+    cout << "Before Bubble Sort:" << endl;
+    head(arr, 10);
+    algo.BubbleSort(arr, numArticles);  // Use arr, not data
+    cout << "After Bubble Sort:" << endl;
+    head(arr, 10);
+
+
+    delete[] arr[0];
+    delete[] arr;
+    delete[] indices;
+}
+
+
 
         int getCurrentSize() const {
             return currentSize;
         }
-
-
-
-
-
+           
         
 
     //Nested Performance Profiling Tools
@@ -521,34 +543,38 @@ class dataManagement
 
         return metrics;
     }
+
+    
 };
 
 int main() {
     dataManagement data;
+    //data.ReadData(data.getFakeData());
     data.ReadData(data.getFakeData());
-    // data.ReadData(data.getTrueData());
+    //data.ApplyInsertionSort(data.getCurrentSize());
     // data.displayStruct(3);
-
-    const int numAlgorithms = 1;
+    data.ApplyBubbleSort(10);
+    //const int numAlgorithms = 1;
 
     // Use the nested type by qualifying with the class name.
-    dataManagement::PerformanceMetrics metricsArray[numAlgorithms];
+    //dataManagement::PerformanceMetrics metricsArray[numAlgorithms];
 
     // Wrap the sort call in a lambda to defer execution.
-    metricsArray[0] = data.profileAlgorithm(
-        "Process merge sort",
-        "O(n log n)",
-        "O(n)",
-        [&data]() { 
-            data.ApplyMergeSort(data.getCurrentSize());
-        }
-    );
-
-    cout << "\nSummary of Performance Metrics (stored in array):\n";
-    for (int i = 0; i < numAlgorithms; ++i) {
-        cout << "Result " << i << ": Time = " << metricsArray[i].timeSeconds
-                << " sec, Memory Change = " << metricsArray[i].memoryKB << " KB\n";
-    }
+    //metricsArray[0] = data.profileAlgorithm(
+    //    "Process merge sort",
+    //    "O(n log n)",
+    //    "O(n)",
+    //    [&data]() { 
+    //        data.ApplyMergeSort(data.getCurrentSize());
+    //    }
+    //);
+    //
+//
+    //cout << "\nSummary of Performance Metrics (stored in array):\n";
+    //for (int i = 0; i < numAlgorithms; ++i) {
+    //    cout << "Result " << i << ": Time = " << metricsArray[i].timeSeconds
+    //            << " sec, Memory Change = " << metricsArray[i].memoryKB << " KB\n";
+    //}
 
     return 0;
 }

@@ -85,60 +85,35 @@ bool customStringCompare(const char* str1, const char* str2) {
     return (str1[i] == '\0' && str2[i] == '\0'); // Ensure both strings end at the same position
 }
 
+
 // Bubble Sort Implementation
-void ArraysAlgo::BubbleSort() {
-    for (int i = 0; i < size - 1; i++) {
-        bool swapped = false;
-        for (int j = 0; j < size - i - 1; j++) {
-            if (articles[j].publicationYear > articles[j + 1].publicationYear) {
-                swap(articles[j], articles[j + 1]);
+void ArraysAlgo::BubbleSort(string** arr, int size) {
+    bool swapped = true;
+
+    while (swapped) {
+        swapped = false;
+
+        for (int i = 0; i < size - 1; i++) {
+            int year1 = stoi(arr[i][3]);
+            int month1 = stoi(arr[i][4]);
+            int day1 = stoi(arr[i][5]);
+
+            int year2 = stoi(arr[i + 1][3]);
+            int month2 = stoi(arr[i + 1][4]);
+            int day2 = stoi(arr[i + 1][5]);
+
+            // Compare dates for descending order
+            if (year1 < year2 ||
+                (year1 == year2 && month1 < month2) ||
+                (year1 == year2 && month1 == month2 && day1 < day2)) {
+                
+                // Swap entire rows
+                for (int j = 0; j < 6; j++) {
+                    swap(arr[i][j], arr[i + 1][j]);
+                }
                 swapped = true;
             }
         }
-        if (!swapped) break; // If no swaps, array is sorted
-    }
-}
-
-// Binary Search by Year
-void ArraysAlgo::binarysearchYear(int year) const {
-    int left = 0, right = size - 1;
-    bool found = false;
-
-    while (left <= right) {
-        int mid = left + (right - left) / 2; //this should be (left+right)/2
-
-        if (articles[mid].publicationYear == year) {
-            // Match found; display article
-            cout << "Match Found:\n";
-            cout << "Title: " << articles[mid].title << endl;
-            found = true;
-
-            // Check for duplicates in both directions
-            int temp = mid - 1;
-            while (temp >= 0 && articles[temp].publicationYear == year) {
-                cout << "Title: " << articles[temp].title << endl;
-                temp--;
-            }
-
-            temp = mid + 1;
-            while (temp < size && articles[temp].publicationYear == year) {
-                cout << "Title: " << articles[temp].title << endl;
-                temp++;
-            }
-            break;
-
-            //the above portion of code can be ignored if we sort the complete date including the year
-        }
-
-        if (articles[mid].publicationYear < year) {
-            left = mid + 1;
-        } else {
-            right = mid - 1;
-        }
-    }
-
-    if (!found) {
-        cout << "No articles found for the year: " << year << endl;
     }
 }
 

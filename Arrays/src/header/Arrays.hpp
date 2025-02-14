@@ -40,7 +40,9 @@ public:
     // Sorting algorithms
     void InsertionSort(string** arr, int size);
     void MergeSort(int*& arr, int left, int right, int*& temp);
-    void BubbleSort();
+    //void BubbleSort();
+    void BubbleSort(string** arr, int size);
+
     void QuickSort();
     void binarysearchYear(int year)const;
     // Utility methods
