@@ -1,3 +1,5 @@
+
+#include "../header/PerformanceProfiler.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -418,6 +420,35 @@ public:
         string year = "2017";
         list.binarySearchByYear(year); 
     }
+
+
+    void sortArticles() {
+        
+        cout << "Sorting articles..." << endl; // Debugging line
+        list.head = list.bottomUpMergeSort(list.head); // Sort the linked list
+        cout << "Articles sorted." << endl; // Debugging line
+    }
+
+    void DisplayArticles(int rows = -1) const {
+        cout << "Displaying articles..." << endl; // Debugging line
+        int count = 0;
+        Node* temp = list.head; // Assuming head is the pointer to the start of the linked list
+        while (temp != nullptr && (rows == -1 || count < rows)) {
+            cout << "\n--- Article " << count + 1 << " ---\n";
+            cout << "Title: " << temp->title << "\n";
+            cout << "Content: " << temp->content << "\n";
+            cout << "Category: " << temp->category << "\n";
+            cout << "Date: " 
+                 << temp->publicationYear << "-" 
+                 << (temp->publicationMonth < 10 ? "0" : "") << temp->publicationMonth << "-" 
+                 << (temp->publicationDay < 10 ? "0" : "") << temp->publicationDay << "\n";
+            temp = temp->next;
+            count++;
+        }
+        if (count == 0) {
+            cout << "No articles to display." << endl; // Debugging line
+        }
+    }
 };
 
 // Implementation of LinkedList::addNode
@@ -425,23 +456,30 @@ void LinkedList::addNode(string& title, string& content, string& category, int y
     Node* newNode = new Node(title, content, category, year, month, day);
     if (head == nullptr) {
         head = newNode;
+       // cout << "Added first article: " << title << endl; 
     } else {
         Node* temp = head;
         while (temp->next != nullptr) {
             temp = temp->next;
         }
         temp->next = newNode;
+        //cout << "Added article: " << title << endl;
     }
 }
+
 
 int main() {
 
     DataManagement data;
     data.readData(data.getTrueData(), true);   // Read and count true news articles
     data.readData(data.getFakeData(), false);    // Read and count fake news articles
-    data.displayArticleCounts();                 // Show article count statistics
+    //data.displayArticleCounts();                 // Show article count statistics
     // data.displayArticles(3);                  // Display first 3 articles
-    // data.testSearch();                        // Test search functionality
-    
+    // data.testSearch();  
+    //data.displayArticles();                       // Test search functionality
+    //data.sortArticles();  
+    //data.DisplayArticles(); 
+    profileAlgorithm("Merge Sort", "O(n log n)", "The algorithm does not require extra space but the linked list nodes do consume memory.O(1)", [&data]() { data.sortArticles(); });
+
     return 0;
 }   
