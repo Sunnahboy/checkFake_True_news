@@ -2,16 +2,18 @@
 #include <limits>
 #include "header/Arrays.hpp"
 using namespace std;
-#define TRUEMAX 21418
 
+
+//Sorting Algorithms
 // Helper function for Merge Sort
-void Merge(int*& arr, int LEFT, int MID, int RIGHT, int*& temp) {
+template <typename Type>
+void Merge(Type*& arr, int LEFT, int MID, int RIGHT, int*& temp) {
     int L = MID - LEFT + 1;
     int R = RIGHT - MID;
 
     // Creating two temporary arrays for sorting and two for getting the index
-    int* leftArr = new int[L];
-    int* rightArr = new int[R];
+    Type* leftArr = new Type[L];
+    Type* rightArr = new Type[R];
     int* leftindex = new int[L];
     int* rightindex = new int[R];
 
@@ -39,8 +41,7 @@ void Merge(int*& arr, int LEFT, int MID, int RIGHT, int*& temp) {
         }
         k++;
     }
-
-    // Copy remaining elements
+      // Copy remaining elements
     while (i < L) {
         arr[k] = leftArr[i];
         temp[k]=leftindex[i];
@@ -60,27 +61,15 @@ void Merge(int*& arr, int LEFT, int MID, int RIGHT, int*& temp) {
     delete[] leftindex;
     delete[] rightindex;
 }
-
+template<typename Type>
 // Merge Sort Implementation
-void ArraysAlgo::MergeSort(int*& arr, int left, int right,int*& temp) {
+void ArraysAlgo::MergeSort(Type*& arr, int left, int right,int*& temp) {
     if (left >= right) return;
 
     int mid = left + (right - left) / 2;
     MergeSort(arr, left, mid, temp);
     MergeSort(arr, mid + 1, right, temp);
     Merge(arr, left, mid, right, temp);
-}
-
-// Custom String Comparison Function
-bool customStringCompare(const char* str1, const char* str2) {
-    int i = 0;
-    while (str1[i] != '\0' && str2[i] != '\0') {
-        if (str1[i] != str2[i]) {
-            return false; // Mismatch found
-        }
-        i++;
-    }
-    return (str1[i] == '\0' && str2[i] == '\0'); // Ensure both strings end at the same position
 }
 
 // Bubble Sort Implementation
@@ -98,47 +87,6 @@ void ArraysAlgo::BubbleSort() {
 }
 
 
-// Binary Search by Year
-// void ArraysAlgo::binarysearchYear(int year) const {
-//     int left = 0, right = size - 1;
-//     bool found = false;
-
-//     while (left <= right) {
-//         int mid = left + (right - left) / 2;
-
-//         if (articles[mid].publicationYear == year) {
-//             // Match found; display the article
-//                 foufor
-//             nd = true;
-
-//             // Check for duplicates in both directions
-//             int temp = mid - 1;
-//             while (temp >= 0 && articles[temp].publicationYear == year)
-//                 temp--;for
-//             }
-
-//             temp = mid + 1;
-//             while (temp < size && articles[temp].publicationYear == year)                    
-            
-//                 temp++;for
-//             }
-//             break;
-
-//             //the above portion of code can be ignored if we sort the complete date including the year
-//         }
-
-//         if (articles[mid].publicationYear < year) {
-//             left = mid + 1;
-//         } else {
-//             right = mid - 1;
-//         }
-//      if(!found) {
-      
-//     }
-// }
-
-
-//Insertion Sort
 void ArraysAlgo::InsertionSort(string** arr, int size) {
     int* index = new int[size];
     for (int i = 0; i < size; i++) {
@@ -188,77 +136,6 @@ void ArraysAlgo::InsertionSort(string** arr, int size) {
     delete[] sortedArr;
     delete[] index; // Clean up index array
 }
-
-
-// there should one linear search for the value and one for the keywords or two for loops
-void ArraysAlgo::LinearSearch(string** arr, int indx, string value, int size){
-    
-    int* temp=new int[size];
-    int count=0;
-    int matchExists=0;
-    int Total=0;
-    for (int i=0; i< size; i++){
-        if(arr[i][indx]==value){
-            temp[matchExists]=i;
-            matchExists++;
-            Total++;
-        }
-        else if (matchExists==0 && arr[i][indx].find(value) != string::npos){
-            temp[count]=i;
-            count++;
-            Total++;
-        }
-    }
-    if( matchExists > 0 ) {
-        count = matchExists;
-    }
-
-    if(count==0){
-        cout << "No Match Found!"<<endl;
-        return;
-    }   
-    for (int j=0; j< count; j++){
-        int index=temp[j];
-        cout << " Row Number: " <<index<<endl;
-        cout << "Title: " <<arr[index][0]<<endl; 
-        cout << "Text: " <<arr[index][1]<<endl<<endl; 
-        cout << "Subject: " <<arr[index][2]<<endl; 
-        cout <<"Year: "<< arr[index][3]<<endl; 
-        cout <<"Month: "<< arr[index][4]<<endl; 
-        cout <<"Day: "<< arr[index][5]<<endl; 
-        cout << string(166,'=');
-        cout <<endl;
-    }
-    cout << "Total Rows -> "<< Total;
-    delete[] temp;
-}
-
-
-
-// the Parameter should be flexible any field can be compared
-// Linear Search by Category
-// void LinearsearchByCategory(const char* category) {
-//     bool found = false;
-//     ArraysAlgo algo;
-//     for (int i = 0; i < algo.getsize(); i++) {
-//         if (customStringCompare(articles[i].category.c_str(), category)) {
-//             // Match found;6lay the article
-//                 foufor
-// nd = true;
-
-//             // Perform transposition to move the article closer to the start
-//             if (i > 0) {
-//                 NewsArticle temp = articles[i];
-//                 articles[i] = articles[i - 1];
-//                 articles[i - 1] = temp;
-//             }
-//         }
-//     }
-
-// 6  if (!found) {
-//  for   //     
-// }
-// }
 int compare(int a, int b, int order) { //helper to choose decending or ascending order
     if(order == 1){                    // if 1 its descending else its descending
         return a>=b;
@@ -330,7 +207,116 @@ void ArraysAlgo::QuickSort(int*& arr, int length, int order){ // Wrapper functio
 
 }
 
+//Searching Algorithms
+
+void ArraysAlgo::BinarySearch(string** arr, int index, string field, int size) {
+    int left = 0, right = size - 1;
+    int* temp = new int[size]; // Store matched indices
+    int count = 0;
+    bool found = false;
+
+    // Standard binary search loop
+    while (left <= right) {
+        int mid = (right + left) / 2;
+        
+        if (arr[mid][index] == field) {
+            temp[count++] = mid;
+            found = true;
+
+            // Check for duplicates in the left portion of the array
+            int l = mid - 1;
+            while (l >= left && arr[l][index] == field) {
+                temp[count++] = l--;
+            }
+            //check for the duplicates in the right portion of the array
+            int r = mid + 1;
+            while (r <= right && arr[r][index] == field) {
+                temp[count++] = r++; 
+            }
+
+            break; // Exit once all matches are collected
+        }
+        else if (arr[mid][index] < field) {
+            left = mid + 1;
+        }
+        else {
+            right = mid - 1;
+        }
+    }
+
+    if (!found) {
+        for (int i = 0; i < size; i++) {
+            if (arr[i][index].find(field) != string::npos) {
+                temp[count++] = i;
+            }
+        }
+    }
+
+    if (count == 0) {
+        cout << "No Match Found!" << endl;
+        delete[] temp;
+        return;
+    }
+
+    for (int j = 0; j < count; j++) {
+        int row = temp[j];
+        cout << " Row Number: " << row << endl;
+        cout << "Title: " << arr[row][0] << endl;
+        cout << "Text: " << arr[row][1] << endl;
+        cout << "Subject: " << arr[row][2] << endl;
+        cout << "Year: " << arr[row][3] << endl;
+        cout << "Month: " << arr[row][4] << endl;
+        cout << "Day: " << arr[row][5] << endl;
+        cout << string(166, '=') << endl;
+    }
+    cout << "Total Rows -> " << count << endl;
+    delete[] temp;
+}
 
 
+
+
+// there should one linear search for the value and one for the keywords or two for loops
+void ArraysAlgo::LinearSearch(string** arr, int indx, string value, int size){
+    
+    int* temp=new int[size];
+    int count=0;
+    int matchExists=0;
+    int Total=0;
+    for (int i=0; i< size; i++){
+        if(arr[i][indx]==value){
+            temp[matchExists]=i;
+            matchExists++;
+            Total++;
+        }
+        else if (matchExists==0 && arr[i][indx].find(value) != string::npos){
+            temp[count]=i;
+            count++;
+            Total++;
+        }
+    }
+    if( matchExists > 0 ) {
+        count = matchExists;
+    }
+
+    if(count==0){
+        cout << "No Match Found!"<<endl;
+        return;
+    }   
+    for (int j=0; j< count; j++){
+        int index=temp[j];
+        cout << " Row Number: " <<index<<endl;
+        cout << "Title: " <<arr[index][0]<<endl; 
+        cout << "Text: " <<arr[index][1]<<endl<<endl; 
+        cout << "Subject: " <<arr[index][2]<<endl; 
+        cout <<"Year: "<< arr[index][3]<<endl; 
+        cout <<"Month: "<< arr[index][4]<<endl; 
+        cout <<"Day: "<< arr[index][5]<<endl; 
+        cout << string(166,'=');
+        cout <<endl;
+    }
+    cout << "Total Rows -> "<< Total;
+    delete[] temp;
+}
 
 

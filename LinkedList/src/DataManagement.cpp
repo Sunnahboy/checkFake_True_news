@@ -1,13 +1,17 @@
 #include <iostream>
 #include <fstream>
+#include <limits>
 #include <iomanip>
 #include <sstream>
 #include "header/LinkedList.hpp"
+#include "header/LinkedList_Manipulation.hpp"
 using namespace std;
 
 
 dataManagement::dataManagement(string listname){
     size=0;
+    head = nullptr;
+    tail = nullptr;
     this -> ListName=listname;
     TrueData.open("dataSets/true.csv");
     FakeData.open("dataSets/fake.csv");
@@ -54,120 +58,133 @@ void dataManagement::addArticlefromEnd(string Title, string Content, string Cate
 
 
 
-void dataManagement::ReadData(ifstream& file) {
-    //lambda function to read the data
+void dataManagement::ReadData(ifstream& file){
+    bool QuotedFlag=false;
+    string Line, CurrentField, Date;
+    int i=0; //To add elements into the 2D array
+    int maxGarbage=1000;
+    string garbageCollector[maxGarbage];
+    int garbageIndex=0;
+    while(getline(file, Line)){
 
-    auto readCSVField = [](istringstream &iss) -> string {
-        string field;
-        char firstChar = iss.peek();
-    
-        if (firstChar == '"') {  
-            iss.get(); // Consume the opening quote
-            bool insideQuotes = true;
-            char c;
-    
-            while (iss.get(c)) {
-                if (c == '"' && iss.peek() == '"') {
-                    iss.get(); // Consume escaped quote `""`
-                    field += '"';
-                } else if (c == '"') {
-                    insideQuotes = false; // End of quoted field
-                } else if (!insideQuotes && c == ',') {
-                    break; // End of field
-                } else {
-                    field += c; // Store character normally
-                }
+        string title, content, category;
+        //we create the index to parse the elements inside the file
+        int index=0;
+        //current field is initially set to none
+        CurrentField="";
+        //we make a loop to read the data and parse each character
+        for(size_t j=0; j < Line.length(); j++){
+            char c=Line[j];
+
+            if(c=='"'){
+                //if we found a quote the flag set to True
+                QuotedFlag=!QuotedFlag;
+                CurrentField+=c;//we add the quates to the field
+            }else if (!isEnglishWordCharacter(c)){
+                continue;
             }
-        } else {
-            getline(iss, field, ','); // Read unquoted fields normally
+            else if(c==',' && !QuotedFlag){
+                if(!CurrentField.empty()){
+                    
+                    if(index==0){
+                        title=CurrentField;
+                    }else if(index==1){
+                        content=CurrentField;
+                    }else if (index==2){
+                        category=CurrentField;
+                    }
+                }
+                CurrentField=""; //we have to reset the current field
+                index++;
+            }else{
+                //if none of the condition were True we reset the index
+                CurrentField+=c;
+            }
+                //if we encouter a comma after the quates then we will specify each field based on the index
         }
-    
-        return field;
-    };
-    string header;
-    getline(file, header);//Skipping the header of the data
-    string line;
-
-    while (getline(file, line)) {
-        // Trim leading and trailing whitespace
-        size_t start = line.find_first_not_of(" \t\r\n");
-        if (start == string::npos) continue; // Skip empty or whitespace-only lines
-        size_t end = line.find_last_not_of(" \t\r\n");
-        string trimmedLine = line.substr(start, end - start + 1);
-        
-        if (trimmedLine.empty()) continue; // Double check for empty lines
-        
-        istringstream iss(trimmedLine);
-
-        // Read CSV fields efficiently
-        string title    = readCSVField(iss);
-        string content  = readCSVField(iss);
-        string category = readCSVField(iss);
-        string dateField;
-        getline(iss, dateField); // Read remaining date field
-
-        // Remove leading comma if present in the date field
-        if (!dateField.empty() && dateField[0] == ',') {
-            dateField.erase(0, 1);
+        if(!CurrentField.empty()){
+            Date= CurrentField;
+            int year, month, day;
+            if(!ParseDate(Date, year, month, day)){
+                if(garbageIndex < maxGarbage){
+                    garbageCollector[garbageIndex++]=Line;
+                }
+                continue;
+            }
+            
+            addArticlefromEnd(title, content, category, day, month, year);
         }
-
-        if (title.empty() || content.empty() || category.empty() || dateField.empty() ) continue;
-        // Store parsed data
-
-        int year, month, day;
-        ParseDate(dateField, year, month, day);
-        addArticlefromEnd(title, content, category, day, month, year);
+        if (head != nullptr) {
+            size++;
+        }
     }
-    cout << "Data Loading complete";
+        file.clear();
+        cout << "Data Loading Complete!" << endl; 
 }
         
 
-void dataManagement::ParseDate(string& Date, int& year, int& month, int& day) {
-    // Remove any extraneous quotation marks from the Date string.
-    string cleanDate;
-    string monthToken, dayToken, yearToken;
-    for (char c : Date) {
-        if (c != '"') {
-            cleanDate.push_back(c);
-        }
-    }
-    
-    // Check if the date uses dashes, e.g., "19-Feb-18"
-    if (cleanDate.find('-') != std::string::npos) {
-        // Expected format: "dd-MMM-yy"
-            size_t firstDash = cleanDate.find('-');
-        size_t secondDash = cleanDate.find('-', firstDash + 1);
-        if (firstDash != std::string::npos && secondDash != string::npos) {
-            dayToken = cleanDate.substr(0, firstDash);
-            monthToken = cleanDate.substr(firstDash + 1, secondDash - firstDash - 1);
-            yearToken = cleanDate.substr(secondDash + 1);
+bool dataManagement::ParseDate(string& Date, int& year, int& month, int& day) {
+    string field = "";
+    int parseStage = 0;
 
-            // cout <<  dayToken  << monthToken <<  yearToken << endl;
-            
-            // Convert the tokens to the respective values.
-            day = StringToInt(dayToken);
-            month = monthToNumber(monthToken);
-            year = StringToInt(yearToken);
-            
-            // If the year is in two-digit format, assume it's 2000+ (adjust as needed).
-            if (year < 100) {
-                year += 2000;
+    if(Date.find('-')!=string::npos){
+        //format DD-MMM-YYYY
+        int dashcount=0;
+        for(char c :Date){
+            if(c=='-'){
+                if(dashcount==0){
+                    day=StringToInt(field);
+                }
+                else if(dashcount==1){
+                    month=monthToNumber(field);
+                }
+                field="";
+                dashcount++;
+            }else{
+                field+=c;
             }
-            return;
+        }
+        year=StringToInt(field);
+    }else{
+    
+        // Manual quote removal and parsing
+        for (char c : Date) {
+            if (c == '"') continue;  // Skip quotes
+            
+            if (c == ' ' || c == ',') {
+                switch(parseStage) {
+                    case 0: 
+                        month = monthToNumber(field);
+                        break;
+                    case 1: 
+                    day = StringToInt(field); 
+                        break;
+                        case 2: 
+                        // Skipping space
+                        break;
+                    case 3:
+                        while (!field.empty() && field[field.length()-1] == ' ')
+                            field.erase(field.length()-1);
+                        year = StringToInt(field);
+                        break;
+                }
+                field = "";
+                parseStage++;
+            } else {
+                field += c;
+            }
+        }
+
+        if (!field.empty() && parseStage == 3) {
+            while (!field.empty() && field[field.length()-1] == ' ')
+                field.erase(field.length()-1);
+            year = StringToInt(field);
         }
     }
-    // Otherwise, assume the format is like "January 1 2016" (or "January 1, 2016")
-    istringstream ss(cleanDate);
-    ss >> monthToken >> dayToken >> yearToken;
-    
-    // Remove any trailing comma from the day token (e.g., "1,")
-    if (!dayToken.empty() && dayToken.back() == ',') {
-        dayToken.pop_back();
+    if(year <=0){
+        return false;
     }
-    
-    month = monthToNumber(monthToken);
-    day = StringToInt(dayToken);
-    year = StringToInt(yearToken);
+    return true;
 }
     
 
@@ -180,7 +197,9 @@ int dataManagement::getsize(){
     return size;
 }
 
-
+article * dataManagement::gethead(){
+    return head;
+}
 // an integer method that converts the strings to integers
 int dataManagement::StringToInt(string& str) {
     int result = 0;
@@ -224,13 +243,14 @@ void dataManagement::displayArticlesfromFront(){
     article * temp=head;
     int i=0;
     while(temp != nullptr){
-        cout << " Row Number: " << i <<endl;
+        cout << " Row Number: " << 1+i <<endl;
         cout << "Title: " << temp -> title <<endl; 
         cout << "Text: " << temp -> content<<endl<<endl; 
         cout << "Subject: " << temp -> category<<endl; 
         cout <<"Year: "<< temp -> year<<endl; 
         cout <<"Month: "<< temp -> month<<endl; 
         cout <<"Day: "<< temp -> day<<endl; 
+        cout <<"Total Rows: "<< getsize()<<endl; 
         cout << string(166,'=');
         cout <<endl;
         temp = temp -> next;
@@ -401,6 +421,17 @@ void dataManagement::displayArticlesfromFront(){
 
 // }
 
+bool RegInput(int value){
+    return (value==3||value==2||value==1);
+}
+
+bool RegInput2(int value){
+return (value==5 ||value==4||value==3||value==2||value==1);
+}
+
+bool RegInput3(int value){
+return (value==6||value==5 ||value==4||value==3||value==2||value==1);
+}
 
 
 
@@ -410,44 +441,44 @@ We can add more functions here in this point
 
 int main() {
     dataManagement Data("News Articles");
+    LinkedListAlgo algo;
     Data.ReadData(Data.getFakeData());
-    Data.displayArticlesfromFront();
     // Data.displayArticlesfromEnd();
     // Data.tokenizeWords(array);
     // cout << Data.getsize();
     // Data.head(array, 9028);
     // Data.ApplySort(Data.getsize());
-    // int choice;
-    // int choice2;
-    // string field;
-    // cout << " Select Searching Algorithm" << endl;
-    // cout << "1. Linear Search" << endl;
-    // cout << "2. Binary Search" << endl;
-    // cout << "3. Return to Arrays Menu" << endl;
-    // cout << "Please Enter your choice.... ";
-    // while(!(cin>>choice)|| !(RegInput2(choice))){
-    //     cin.clear();
-    //     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    //     cout << "Invalid.. Please Enter your choice again.... ";
-    // }
-    // cout << "Chose a field to search for"<<endl;
-    // cout << "1. Title "<<endl; 
-    // cout << "2. Text "<<endl;
-    // cout << "3. Subject "<<endl;
-    // cout << "4. Year "<<endl;
-    // cout << "5. Month "<<endl;
-    // cout << "6. Day "<<endl;
-    // cout << "Please Enter your choice.... ";
-    // while(!(cin>>choice2)|| !(RegInput3(choice))){
-    //     cin.clear();
-    //     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    //     cout << "Invalid.. Please Enter your choice again.... ";
-    // }
-    // cin.ignore();
-    // cout << "Enter the keyword or value to search for: ";
-    // getline(cin, field);
+    int choice;
+    int choice2;
+    string field;
+    cout << " Select Searching Algorithm" << endl;
+    cout << "1. Linear Search" << endl;
+    cout << "2. Binary Search" << endl;
+    cout << "3. Return to Arrays Menu" << endl;
+    cout << "Please Enter your choice.... ";
+    while(!(cin>>choice)|| !(RegInput2(choice))){
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid.. Please Enter your choice again.... ";
+    }
+    cout << "Chose a field to search for"<<endl;
+    cout << "1. Title "<<endl; 
+    cout << "2. Text "<<endl;
+    cout << "3. Subject "<<endl;
+    cout << "4. Year "<<endl;
+    cout << "5. Month "<<endl;
+    cout << "6. Day "<<endl;
+    cout << "Please Enter your choice.... ";
+    while(!(cin>>choice2)|| !(RegInput3(choice))){
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid.. Please Enter your choice again.... ";
+    }
+    cin.ignore();
+    cout << "Enter the keyword or value to search for: ";
+    getline(cin, field);
 
-    // algo.LinearSearch(array, choice2-1, field, Data.getsize());
+    algo.linearSearch(Data.gethead(), choice2-1, field);
 
 
     return 0;   

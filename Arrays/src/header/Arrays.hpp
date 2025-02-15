@@ -40,10 +40,11 @@ public:
 
     // Sorting algorithms
     void InsertionSort(string** arr, int size);
-    void MergeSort(int*& arr, int left, int right, int*& temp);
+    template <typename Type>
+    void MergeSort(Type*& arr, int left, int right, int*& temp);
+    void BinarySearch(string** arr, int choice, string field, int size);
     void BubbleSort();
     // void QuickSort();
-    // void binarysearchYear(int year)const;
     // // Utility methods
     void LinearSearch(string** arr, int choice, string field, int size);
     void QuickSort(int*& arr, int length, int order);
