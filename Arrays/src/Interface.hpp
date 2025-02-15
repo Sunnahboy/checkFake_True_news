@@ -2,14 +2,15 @@
 #include <limits>
 #include "header/Arrays_Manipulation.hpp"
 #include "DataManagement.cpp"
-#include "Algorithms.cpp"
 #include "header/Arrays.hpp"
+#ifndef Interface_HPP
+#define Interface_HPP
 using namespace std;
-#define TRUEMAX 21418
 class Interface
 {   
     private:
         dataManagement Data;
+        ArraysAlgo algo;
     
     public:
         void columns(){
@@ -93,7 +94,7 @@ class Interface
 
         void SearchData(){           
             Data.ReadData(Data.getTrueData());
-            string** arr=Data.StoreToArray(TRUEMAX);
+            string** arr=Data.StoreToArray(Data.getsize());
             int choice;
             int choice2;
             string field;
@@ -109,28 +110,60 @@ class Interface
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 cout << "Invalid.. Please Enter your choice again.... ";
             }
-            cout << "Chose a field to search for"<<endl;
-            cout << "1. Title "<<endl;
-            cout << "2. Text "<<endl;
-            cout << "3. Subject "<<endl;
-            cout << "4. Year "<<endl;
-            cout << "5. Month "<<endl;
-            cout << "6. Day "<<endl;
-            cout << "Please Enter your choice.... ";
-            while(!(cin>>choice2)|| !(RegInput3(choice))){
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Invalid.. Please Enter your choice again.... ";
+            switch(choice){
+                case 1:
+                    cout << "Chose a field to search for"<<endl;
+                    cout << "1. Title "<<endl;
+                    cout << "2. Text "<<endl;
+                    cout << "3. Subject "<<endl;
+                    cout << "4. Year "<<endl;
+                    cout << "5. Month "<<endl;
+                    cout << "6. Day "<<endl;
+                    cout << "Please Enter your choice.... ";
+                    while(!(cin>>choice2)|| !(RegInput3(choice))){
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        cout << "Invalid.. Please Enter your choice again.... ";
+                    }
+                    cin.ignore();
+                    cout << "Enter the keyword or value to search for: ";
+                    getline(cin, field);
+        
+                    algo.LinearSearch(arr, choice2, field, Data.getsize());
+                    for (int i = 0; i < Data.getsize(); ++i) {
+                        delete[] arr[i];
+                    }
+                    delete[] arr;
+                    break;
+                case 2:
+                    cout << "Chose a field to search for"<<endl;
+                    cout << "1. Title "<<endl;
+                    cout << "2. Text "<<endl;
+                    cout << "3. Subject "<<endl;
+                    cout << "4. Year "<<endl;
+                    cout << "5. Month "<<endl;
+                    cout << "6. Day "<<endl;
+                    cout << "Please Enter your choice.... ";
+                    while(!(cin>>choice2)|| !(RegInput3(choice))){
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        cout << "Invalid.. Please Enter your choice again.... ";
+                    }
+                    cin.ignore();
+                    cout << "Enter the keyword or value to search for: ";
+                    getline(cin, field);
+        
+                    algo.BinarySearch(arr, choice2, field, Data.getsize());
+                    for (int i = 0; i < Data.getsize(); ++i) {
+                        delete[] arr[i];
+                    }
+                    delete[] arr;
+                    break;
+                case 3:
+                    return 0;
+                    break;
+                default:
             }
-            cin.ignore();
-            cout << "Enter the keyword or value to search for: ";
-            getline(cin, field);
-
-            Data.LinearSearch(arr, choice2, field);
-            for (int i = 0; i < TRUEMAX; ++i) {
-                delete[] arr[i];
-            }
-            delete[] arr;
 
         }
 
@@ -146,3 +179,4 @@ class Interface
             return (value==6||value==5 ||value==4||value==3||value==2||value==1);
         }
 };
+#endif

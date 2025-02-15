@@ -196,7 +196,7 @@ string** dataManagement::StoreToArray(int size) {
     for (int i = 0; i < size; i++) {
         arr[i] = new string[6];  // Allocate 6 columns for each row
     }
-    
+
     for (int i = 0; i < size; i++) {
         arr[i][0] = article[i].title;
         arr[i][1] = article[i].content;
@@ -276,25 +276,42 @@ void dataManagement::displayStruct(int rows){
         cout <<endl;
     }
 }
-
-void dataManagement::ApplySort(int size){
-    dataManagement data;
-    int* newYear= new int[size];
-    int* index=new int[size];
-    for (int i=0; i<size; i++){
-        newYear[i]=article[i].publicationYear;
-        index[i]=i;
+void dataManagement::ApplySort(string**& array, int size, int field) {
+    if (field >= 3) {
+        ApplySortH<int>(array, size, field); 
+    } else {
+        ApplySortH<string>(array, size, field);
     }
-    algo.MergeSort(newYear, 0, size-1, index);
-   
-    string** arr=SortToArray(size-1, index);
-    head(arr, 20);
-    for (int i = 0; i < size; i++) {
-        delete[] arr[i];
-    }
-    delete[] arr;
-
 }
+
+template <typename SelectedType>
+void dataManagement::ApplySortH(string**& array, int size, int field) {
+    if (size <= 0) return;
+
+    SelectedType* SelectedField = new SelectedType[size];
+    int* index = new int[size];
+
+    for (int i = 0; i < size; i++) {
+        if constexpr (is_same<SelectedType, int>::value) {
+            SelectedField[i] = stoi(array[i][field]);  
+        } else {
+            SelectedField[i] = array[i][field];  
+        }
+        index[i] = i;  
+    }
+    ArraysAlgo algo;
+    algo.MergeSort(SelectedField, 0, size - 1, index);
+    
+    for (int i = 0; i < size; i++) {
+        delete[] array[i];
+    }
+    delete[] array;
+
+    array = SortToArray(size, index);
+    delete[] SelectedField;
+    delete[] index;
+}
+
 
 bool RegInput(int value){
             return (value==3||value==2||value==1);
@@ -450,44 +467,45 @@ We can add more functions here in this point
 int main() {
     dataManagement Data;
     ArraysAlgo algo;
-    Data.ReadData(Data.getTrueData());
+    Data.ReadData(Data.getFakeData());
     string** array=Data.StoreToArray(Data.getsize());
     // Data.displayStruct(10000);
     // Data.tokenizeWords(array);
+    // Data.head(array, 100);
     // cout << Data.getsize();
-    Data.head(array, Data.getsize());
-    // Data.ApplySort(Data.getsize());
-    // int choice;
-    // int choice2;
-    // string field;
-    // cout << " Select Searching Algorithm" << endl;
-    // cout << "1. Linear Search" << endl;
-    // cout << "2. Binary Search" << endl;
-    // cout << "3. Return to Arrays Menu" << endl;
-    // cout << "Please Enter your choice.... ";
-    // while(!(cin>>choice)|| !(RegInput2(choice))){
-    //     cin.clear();
-    //     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    //     cout << "Invalid.. Please Enter your choice again.... ";
-    // }
-    // cout << "Chose a field to search for"<<endl;
-    // cout << "1. Title "<<endl; 
-    // cout << "2. Text "<<endl;
-    // cout << "3. Subject "<<endl;
-    // cout << "4. Year "<<endl;
-    // cout << "5. Month "<<endl;
-    // cout << "6. Day "<<endl;
-    // cout << "Please Enter your choice.... ";
-    // while(!(cin>>choice2)|| !(RegInput3(choice))){
-    //     cin.clear();
-    //     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    //     cout << "Invalid.. Please Enter your choice again.... ";
-    // }
-    // cin.ignore();
-    // cout << "Enter the keyword or value to search for: ";
-    // getline(cin, field);
-
-    // algo.LinearSearch(array, choice2-1, field, Data.getsize());
+    // Data.head(array, Data.getsize());
+    int choice;
+    int choice2;
+    string field;
+    cout << " Select Searching Algorithm" << endl;
+    cout << "1. Linear Search" << endl;
+    cout << "2. Binary Search" << endl;
+    cout << "3. Return to Arrays Menu" << endl;
+    cout << "Please Enter your choice.... ";
+    while(!(cin>>choice)|| !(RegInput2(choice))){
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid.. Please Enter your choice again.... ";
+        }
+        cout << "Chose a field to search for"<<endl;
+        cout << "1. Title "<<endl; 
+        cout << "2. Text "<<endl;
+        cout << "3. Subject "<<endl;
+        cout << "4. Year "<<endl;
+        cout << "5. Month "<<endl;
+        cout << "6. Day "<<endl;
+        cout << "Please Enter your choice.... ";
+        while(!(cin>>choice2)|| !(RegInput3(choice))){
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid.. Please Enter your choice again.... ";
+            }
+            cin.ignore();
+            cout << "Enter the keyword or value to search for: ";
+            getline(cin, field);
+            
+            Data.ApplySort(array, Data.getsize(), choice2-1);
+            algo.BinarySearch(array, choice2-1, field, Data.getsize());
     for (int i = 0; i < Data.getsize(); ++i) {
         delete[] array[i];
     }
