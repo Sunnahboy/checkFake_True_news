@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <fstream>
 using namespace std;
 
 // Define the Node structure
@@ -59,6 +60,9 @@ class dataManagement{
 
         // Sort articles by publication date
         // void sortArticles();
+
+        void calculatePoliticalFakePercentage(article* trueHead, article* fakeHead);
+        void analyzeMonthlyFakePoliticalNews(article* fakeHead);
 
 };
 #endif
