@@ -335,6 +335,41 @@ void dataManagement::ApplySortH(string**& array, int size, int field, int sortTy
     delete[] index;
 }
 
+template <typename SelectedType>
+void dataManagement::ApplyInsertionSort(string**& array, int size, int field) {
+    if (size <= 0) return;
+
+    // Create a key array for full date in YYYYMMDD format.
+    SelectedType* SelectedField = new SelectedType[size];
+    int* index = new int[size];
+
+    for (int i = 0; i < size; i++) {
+        int year  = stoi(array[i][3]);
+        int month = stoi(array[i][4]);
+        int day   = stoi(array[i][5]);
+        SelectedField[i] = year * 10000 + month * 100 + day;  // Combined key
+        index[i] = i;
+    }
+
+    ArraysAlgo algo;
+    // Sort the key array (SelectedField) with InsertionSort
+    algo.InsertionSort(SelectedField, size, index);
+
+    // Delete the old two-dimensional array.
+    for (int i = 0; i < size; i++) {
+        delete[] array[i];
+    }
+    delete[] array;
+
+    // Rebuild the two-dimensional array based on the sorted indices.
+    array = SortToArray(size, index);
+
+    // Clean up temporary arrays.
+    delete[] SelectedField;
+    delete[] index;
+}
+
+
 
 bool RegInput(int value){
             return (value==3||value==2||value==1);
@@ -654,7 +689,34 @@ int main() {
         for (int i = 0; i < Data.getsize(); ++i) {
             delete[] array[i];
         }
+<<<<<<< HEAD
         delete[] array;
+=======
+        cout << "Chose a field to search for"<<endl;
+        cout << "1. Title "<<endl; 
+        cout << "2. Text "<<endl;
+        cout << "3. Subject "<<endl;
+        cout << "4. Year "<<endl;
+        cout << "5. Month "<<endl;
+        cout << "6. Day "<<endl;
+        cout << "Please Enter your choice.... ";
+        while(!(cin>>choice2)|| !(RegInput3(choice))){
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid.. Please Enter your choice again.... ";
+            }
+            cin.ignore();
+            cout << "Enter the keyword or value to search for: ";
+            getline(cin, field);
+            
+            Data.ApplySort(array, Data.getsize(), choice2-1);
+
+            algo.BinarySearch(array, choice2-1, field, Data.getsize());
+    for (int i = 0; i < Data.getsize(); ++i) {
+        delete[] array[i];
+    }
+    delete[] array;
+>>>>>>> 50a4325a6f0ebfd7961abf01806641ddccd0263f
 
     return 0;   
 }
