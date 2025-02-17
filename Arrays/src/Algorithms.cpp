@@ -73,139 +73,184 @@ void ArraysAlgo::MergeSort(Type*& arr, int left, int right,int*& temp) {
 }
 
 // Bubble Sort Implementation
-void ArraysAlgo::BubbleSort() {
-    for (int i = 0; i < size - 1; i++) {
+template <typename Type>
+void ArraysAlgo::BubbleSort(Type*& arr, int left, int right, int*& temp) {
+    
+    if (left >= right) {
+        cout << "Skipping sorting since left >= right!" << endl;
+        return;  // Avoid infinite recursion
+    }
+
+    // Directly perform sorting here
+    for (int i = left; i < right; i++) {
         bool swapped = false;
-        for (int j = 0; j < size - i - 1; j++) {
-            if (articles[j].publicationYear > articles[j + 1].publicationYear) {
-                swap(articles[j], articles[j + 1]);
+        for (int j = left; j < right - (i - left); j++) {
+            if (arr[j] > arr[j + 1]) {
+                swap(arr[j], arr[j + 1]);
+                swap(temp[j], temp[j + 1]);  // Maintain index tracking
                 swapped = true;
             }
         }
-        if (!swapped) break; // If no swaps, array is sorted
+        if (!swapped) break;  // Stop early if no swaps
     }
+
+    cout << "BubbleSort completed!" << endl;
 }
 
 
-void ArraysAlgo::InsertionSort(string** arr, int size) {
-    int* index = new int[size];
-    for (int i = 0; i < size; i++) {
-        index[i] = i; // Initialize index array
-    }
-
+template <typename Type>
+void ArraysAlgo::InsertionSort(Type*& arr, int size, int* index) {
+    // InsertionSort on the key array 'arr' using the 'index' array.
     for (int i = 1; i < size; i++) {
-        int key = index[i];  // Store the current index
-        int year = stoi(arr[key][3]); // Extract date components once
-        int month = stoi(arr[key][4]);
-        int day = stoi(arr[key][5]);
-        
+        int keyIndex = index[i];
+        Type keyValue = arr[keyIndex];
         int j = i - 1;
-        
-        // Compare using year, then month, then day (change to ascending order)
-        while (j >= 0) {
-            int prevYear = stoi(arr[index[j]][3]);
-            int prevMonth = stoi(arr[index[j]][4]);
-            int prevDay = stoi(arr[index[j]][5]);
-            
-            // Sort earliest to latest
-            if (prevYear > year || 
-                (prevYear == year && prevMonth > month) ||
-                (prevYear == year && prevMonth == month && prevDay > day)) {
-                index[j + 1] = index[j]; // Shift index to the right
-                j--;
-            } else {
-                break; // Correct position found
-            }
+        while (j >= 0 && arr[index[j]] > keyValue) {
+            index[j + 1] = index[j];
+            j--;
         }
-        index[j + 1] = key; // Insert key at correct position
+        index[j + 1] = keyIndex;
     }
-
-    // Rearrange the array in place using the sorted index array
-    string** sortedArr = new string*[size];
-    for (int i = 0; i < size; i++) {
-        sortedArr[i] = new string[6];
-        sortedArr[i] = arr[index[i]];  // Place sorted elements into the new array
-    }
-
-    // Copy the sorted values back into the original array
-    for (int i = 0; i < size; i++) {
-        arr[i] = sortedArr[i];
-    }
-
-    // Clean up memory
-    delete[] sortedArr;
-    delete[] index; // Clean up index array
-}
-int compare(int a, int b, int order) { //helper to choose decending or ascending order
-    if(order == 1){                    // if 1 its descending else its descending
-        return a>=b;
-    }
-    else if(order == 0){
-        return a<=b;
-    }
-    return -1;
 }
 
-void swap(int *a, int *b) { //helper function to swap arrays. 
-    int temp = *a;
-    *a = *b;
-    *b = temp;
+// int compare(int a, int b, int order) { //helper to choose decending or ascending order
+//     if(order == 1){                    // if 1 its descending else its descending
+//         return a>=b;
+//     }
+//     else if(order == 0){
+//         return a<=b;
+//     }
+//     return -1;
+// }
+
+// void swap(int *a, int *b) { //helper function to swap arrays. 
+//     int temp = *a;
+//     *a = *b;
+//     *b = temp;
+// }
+
+// int Partition(int*& arr, int low, int high, int order){ //function to partiton and sort the array via a chosen pivot. 
+//                                              // rearranges the elements according to the pivot
+
+//     int pivot = arr[high];
+
+//     int i = low -1; 
+
+//     for (int j = low; j < high; j++) {
+//         // if the current element is smaller than or equal to the pivot
+//         if (compare(arr[j], pivot, order)) {
+//             // increment index if smaller
+//             i++;
+            
+//             // swap current element with element at index i
+//             swap(&arr[i], &arr[j]);
+//         }
+//     }
+    
+//     // place pivot in  correct position
+//     swap(&arr[i + 1], &arr[high]);
+    
+//     // return the index of the pivot
+//     return i + 1;
+
+// } 
+
+// void QuickSortRecursion(int*& arr, int left, int right, int order){ // the recursive function 
+    
+//       // base case if statement to check if the array has more than 1 element
+//     if (left < right) {
+//         // part the array and get the index of the pivot element
+//         int pivotIndex = Partition(arr, left, right, order);
+        
+//         // recusrive call to the left
+//         QuickSortRecursion(arr, left, pivotIndex - 1, order);
+        
+//         // recusrive call to the right 
+//         QuickSortRecursion(arr, pivotIndex + 1, right, order);
+//     }
+
+
+// }
+
+// void ArraysAlgo::QuickSort(int*& arr, int length, int order){ // Wrapper function, used to initiate QuickSort
+
+//     if (length <= 1){ //this is to check if the array is empty or with 1 element.
+//                       // to ensure that when the array gets small enough no resources are used to sort again. 
+//         return;
+//     }
+    
+
+//     QuickSortRecursion(arr, 0, length-1, order); //this calls the recursive function to sort initially, the entire array is chosen first to last element
+
+// }
+
+
+// Helper function to compare elements based on order (ascending/descending)
+template <typename Type>
+int compare(Type a, Type b, int order) {
+    if (order == 1) { // Descending order
+        return a >= b;
+    } else { // Ascending order
+        return a <= b;
+    }
 }
 
-int Partition(int*& arr, int low, int high, int order){ //function to partiton and sort the array via a chosen pivot. 
-                                             // rearranges the elements according to the pivot
+// Swaps two elements in an array
+template <typename Type>
+void swapType(Type& a, Type& b) {
+    Type temp = a;
+    a = b;
+    b = temp;
+}
 
-    int pivot = arr[high];
+void swapInt(int& a, int& b) {
+    int temp = a;
+    a = b;
+    b = temp;
+}
 
-    int i = low -1; 
+// Partition function for QuickSort
+template <typename Type>
+int Partition(Type*& arr, int*& temp, int low, int high, int order) {
+    Type pivot = arr[high];  // Choose pivot (last element)
+    int pivotIndex = temp[high];
+
+    int i = low - 1; 
 
     for (int j = low; j < high; j++) {
-        // if the current element is smaller than or equal to the pivot
+        // Compare elements based on order
         if (compare(arr[j], pivot, order)) {
-            // increment index if smaller
             i++;
-            
-            // swap current element with element at index i
-            swap(&arr[i], &arr[j]);
+            swapType(arr[i], arr[j]);  // Swap elements
+            swapInt(temp[i], temp[j]); // Swap corresponding indices
         }
     }
     
-    // place pivot in  correct position
-    swap(&arr[i + 1], &arr[high]);
+    // Place pivot in correct position
+    swapType(arr[i + 1], arr[high]);
+    swapInt(temp[i + 1], temp[high]);
     
-    // return the index of the pivot
-    return i + 1;
+    return i + 1;  // Return pivot index
+}
 
-} 
-
-void QuickSortRecursion(int*& arr, int left, int right, int order){ // the recursive function 
-    
-      // base case if statement to check if the array has more than 1 element
+// Recursive QuickSort function
+template <typename Type>
+void QuickSortRecursion(Type*& arr, int*& temp, int left, int right, int order) {
     if (left < right) {
-        // part the array and get the index of the pivot element
-        int pivotIndex = Partition(arr, left, right, order);
-        
-        // recusrive call to the left
-        QuickSortRecursion(arr, left, pivotIndex - 1, order);
-        
-        // recusrive call to the right 
-        QuickSortRecursion(arr, pivotIndex + 1, right, order);
+        int pivotIndex = Partition(arr, temp, left, right, order);
+        QuickSortRecursion(arr, temp, left, pivotIndex - 1, order);
+        QuickSortRecursion(arr, temp, pivotIndex + 1, right, order);
     }
-
-
 }
 
-void ArraysAlgo::QuickSort(int*& arr, int length, int order){ // Wrapper function, used to initiate QuickSort
+// QuickSort wrapper function
+template <typename Type>
+void ArraysAlgo::QuickSort(Type*& arr, int length, int*& temp, int order) {
+    if (length <= 1) return; // No need to sort if array has 0 or 1 element
 
-    if (length <= 1){ //this is to check if the array is empty or with 1 element.
-                      // to ensure that when the array gets small enough no resources are used to sort again. 
-        return;
-    }
-    
-
-    QuickSortRecursion(arr, 0, length-1, order); //this calls the recursive function to sort initially, the entire array is chosen first to last element
-
+    QuickSortRecursion(arr, temp, 0, length - 1, order); // Call recursive QuickSort
 }
+
 
 //Searching Algorithms
 

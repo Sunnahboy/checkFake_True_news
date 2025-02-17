@@ -39,15 +39,21 @@ public:
     }
 
     // Sorting algorithms
-    void InsertionSort(string** arr, int size);
+    template <typename Type>
+    void InsertionSort(Type*& arr, int size, int* index);
     template <typename Type>
     void MergeSort(Type*& arr, int left, int right, int*& temp);
-    void BinarySearch(string** arr, int choice, string field, int size);
-    void BubbleSort();
+    void BinarySearch(string** arr, int index, string field, int size);
+    template <typename Type>
+    void BubbleSort(Type*& arr, int LEFT, int RIGHT, int*& temp);
     // void QuickSort();
     // // Utility methods
     void LinearSearch(string** arr, int choice, string field, int size);
-    void QuickSort(int*& arr, int length, int order);
+    template <typename Type>
+    void QuickSort(Type*& arr, int length, int*& temp, int order);
+
+    void calculateFakeNewsPercentage(string** trueNews, int trueSize, string** fakeNews, int fakeSize);
+    void displayFakeNewsPercentageByMonth(string** trueNews, int trueSize, string** fakeNews, int fakeSize);
 };
 
 #endif
