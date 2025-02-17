@@ -113,79 +113,7 @@ void ArraysAlgo::InsertionSort(Type*& arr, int size, int* index) {
     }
 }
 
-// int compare(int a, int b, int order) { //helper to choose decending or ascending order
-//     if(order == 1){                    // if 1 its descending else its descending
-//         return a>=b;
-//     }
-//     else if(order == 0){
-//         return a<=b;
-//     }
-//     return -1;
-// }
 
-// void swap(int *a, int *b) { //helper function to swap arrays. 
-//     int temp = *a;
-//     *a = *b;
-//     *b = temp;
-// }
-
-// int Partition(int*& arr, int low, int high, int order){ //function to partiton and sort the array via a chosen pivot. 
-//                                              // rearranges the elements according to the pivot
-
-//     int pivot = arr[high];
-
-//     int i = low -1; 
-
-//     for (int j = low; j < high; j++) {
-//         // if the current element is smaller than or equal to the pivot
-//         if (compare(arr[j], pivot, order)) {
-//             // increment index if smaller
-//             i++;
-            
-//             // swap current element with element at index i
-//             swap(&arr[i], &arr[j]);
-//         }
-//     }
-    
-//     // place pivot in  correct position
-//     swap(&arr[i + 1], &arr[high]);
-    
-//     // return the index of the pivot
-//     return i + 1;
-
-// } 
-
-// void QuickSortRecursion(int*& arr, int left, int right, int order){ // the recursive function 
-    
-//       // base case if statement to check if the array has more than 1 element
-//     if (left < right) {
-//         // part the array and get the index of the pivot element
-//         int pivotIndex = Partition(arr, left, right, order);
-        
-//         // recusrive call to the left
-//         QuickSortRecursion(arr, left, pivotIndex - 1, order);
-        
-//         // recusrive call to the right 
-//         QuickSortRecursion(arr, pivotIndex + 1, right, order);
-//     }
-
-
-// }
-
-// void ArraysAlgo::QuickSort(int*& arr, int length, int order){ // Wrapper function, used to initiate QuickSort
-
-//     if (length <= 1){ //this is to check if the array is empty or with 1 element.
-//                       // to ensure that when the array gets small enough no resources are used to sort again. 
-//         return;
-//     }
-    
-
-//     QuickSortRecursion(arr, 0, length-1, order); //this calls the recursive function to sort initially, the entire array is chosen first to last element
-
-// }
-
-
-// Helper function to compare elements based on order (ascending/descending)
 template <typename Type>
 int compare(Type a, Type b, int order) {
     if (order == 1) { // Descending order
