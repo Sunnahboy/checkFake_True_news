@@ -5,6 +5,8 @@
 #include <sstream>
 #include "header/LinkedList.hpp"
 #include "header/LinkedList_Manipulation.hpp"
+#include "Algorithms.cpp"
+
 using namespace std;
 
 
@@ -448,6 +450,12 @@ int main() {
     // cout << Data.getsize();
     // Data.head(array, 9028);
     // Data.ApplySort(Data.getsize());
+
+    cout << "Before Insertion Sort" << endl;
+    Data.insertionSortByDate();
+    cout << "After Insertion Sort" << endl;
+    
+
     int choice;
     int choice2;
     string field;
