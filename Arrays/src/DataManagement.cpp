@@ -312,6 +312,41 @@ void dataManagement::ApplySortH(string**& array, int size, int field) {
     delete[] index;
 }
 
+template <typename SelectedType>
+void dataManagement::ApplyInsertionSort(string**& array, int size, int field) {
+    if (size <= 0) return;
+
+    // Create a key array for full date in YYYYMMDD format.
+    SelectedType* SelectedField = new SelectedType[size];
+    int* index = new int[size];
+
+    for (int i = 0; i < size; i++) {
+        int year  = stoi(array[i][3]);
+        int month = stoi(array[i][4]);
+        int day   = stoi(array[i][5]);
+        SelectedField[i] = year * 10000 + month * 100 + day;  // Combined key
+        index[i] = i;
+    }
+
+    ArraysAlgo algo;
+    // Sort the key array (SelectedField) with InsertionSort
+    algo.InsertionSort(SelectedField, size, index);
+
+    // Delete the old two-dimensional array.
+    for (int i = 0; i < size; i++) {
+        delete[] array[i];
+    }
+    delete[] array;
+
+    // Rebuild the two-dimensional array based on the sorted indices.
+    array = SortToArray(size, index);
+
+    // Clean up temporary arrays.
+    delete[] SelectedField;
+    delete[] index;
+}
+
+
 
 bool RegInput(int value){
             return (value==3||value==2||value==1);
@@ -505,6 +540,7 @@ int main() {
             getline(cin, field);
             
             Data.ApplySort(array, Data.getsize(), choice2-1);
+
             algo.BinarySearch(array, choice2-1, field, Data.getsize());
     for (int i = 0; i < Data.getsize(); ++i) {
         delete[] array[i];

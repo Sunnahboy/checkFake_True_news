@@ -39,9 +39,11 @@ public:
     }
 
     // Sorting algorithms
-    void InsertionSort(string** arr, int size);
+    
     template <typename Type>
     void MergeSort(Type*& arr, int left, int right, int*& temp);
+    template <typename Type>
+    void InsertionSort(Type*& arr, int size, int* index);
     void BinarySearch(string** arr, int choice, string field, int size);
     void BubbleSort();
     // void QuickSort();
