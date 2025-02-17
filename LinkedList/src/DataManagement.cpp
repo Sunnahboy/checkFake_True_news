@@ -4,7 +4,9 @@
 #include <iomanip>
 #include <sstream>
 #include "header/LinkedList.hpp"
+#include "header/MasterList.hpp"
 #include "header/LinkedList_Manipulation.hpp"
+#include "header/llhashmap.hpp"
 using namespace std;
 
 
@@ -289,125 +291,140 @@ void dataManagement::displayArticlesfromFront(){
 //     return (value==6||value==5 ||value==4||value==3||value==2||value==1);
 // }
 
-// void dataManagement::tokenizeWords(string** array) {
-//     ArraysAlgo algo;
-//     HashMap hashmap;
-//     string filler_words[] = {"a", "the", "is", "it", "to", "and", "of", "on", 
-//                             "for", "in", "at", "this", "that", "was", "were", "with", "between", "infront",
-//                             "have", "had", "has", "been", "about", "into", "are", "after", "before", "not", "where", "when","those", "thus"};    
-//     int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
-//     for (int i = 0; i < currentSize; i++) {
-//         if(array[i][2].compare("Government News")!=0) continue; //filter the data only the government once are taken
-//         string text = array[i][1];  // Extract text from article
-//         string word = ""; // Temporary string for building words
-//         // Loop through each character in the text
-//         for (char c : text) {
-//             // Convert to lowercase
-//             c = tolower(c);
-//             // Check for word boundaries
-//             if (isspace(c) || ispunct(c)) {
-//                 if (!word.empty()) { // If a word has been formed
-//                     // Check if it's a filler array
-//                     bool isFiller = false;
-//                     for (int k = 0; k < filler_size; k++) {
-//                         if (word == filler_words[k]) {
-//                             isFiller = true;
-//                             break;
-//                         }
-//                     }
-//                     if (!isFiller) {
-//                         hashmap.insert(word);
-//                     }
-//                     word = ""; 
-//                 }
-//             } else {
-//                 word += c;
-//             }
-//         }
-//     }
-//     auto result=hashmap.getKeysAndFrequencies();
-//     string* keys=result.first;
-//     int* freq=result.second;
-//     algo.QuickSort(freq, hashmap.getCount(), 1);
-//     cout << "Word Frequency List:\n";
-//     for(int i=0; i <20; i++){
-//         cout << freq[i] << " :: " << keys[i] << endl;
-//     }
+void dataManagement::tokenizeWords(article * Node) {
+    MasterList wordList; // Using MasterList instead of hashmap or arrays
 
-//     delete[] keys;
-//     delete[] freq;
-// }
+    // List of filler words to ignore
+    const string filler_words[] = {
+        "a", "the", "is", "it", "to", "and", "of", "on", "for", "in", "at", "this",
+        "that", "was", "were", "with", "between", "infront", "have", "had", "has", 
+        "been", "about", "into", "are", "after", "before", "not", "where", "when", "thus"
+    };
+    int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
+
+    article* temp = Node; // Start from the first article node
+
+    while (temp != nullptr) {
+        if (temp->category != "Government News") { // Filter government-related news
+            temp = temp->next;
+            continue;
+        }
+
+        string text = temp->content; // Extract content from article
+        string word = ""; // Temporary string for building words
+
+        for (char c : text) {
+            c = tolower(c); // Convert to lowercase
+            if (isspace(c) || ispunct(c)) { // Check for word boundaries
+                if (!word.empty()) { // If a word has been formed
+                    // Check if it's a filler word
+                    bool isFiller = false;
+                    for (int k = 0; k < filler_size; k++) {
+                        if (word == filler_words[k]) {
+                            isFiller = true;
+                            break;
+                        }
+                    }
+                    if (!isFiller) {
+                        wordList.insertOrUpdate(word); // Insert word into MasterList
+                    }
+                    word = ""; // Reset for next word
+                }
+            } else {
+                word += c; // Add character to word
+            }
+        }
+
+        // Insert last word if exists
+        if (!word.empty()) {
+            bool isFiller = false;
+            for (int k = 0; k < filler_size; k++) {
+                if (word == filler_words[k]) {
+                    isFiller = true;
+                    break;
+                }
+            }
+            if (!isFiller) {
+                wordList.insertOrUpdate(word);
+            }
+        }
+
+        temp = temp->next; // Move to the next article
+    }
+
+    wordList.displayWords();
+}
 
 
-// void dataManagement::tokenizeWords(string** array) {
-//     ArraysAlgo algo;
-//     int capacity=1000;
-//     string* wordsList = new string[capacity];  
-//     int* wordsFreq = new int[capacity];     
-//     string filler_words[] = {"a", "the", "is", "it", "to", "and", "of", "on", 
-//                             "for", "in", "at", "this", "that", "was", "were", "with", "between", "infront",
-//                             "have", "had", "has", "been", "about", "into", "are", "after", "before", "not", "where", "when","those", "thus"};    
-//     int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
-//     int Unique = 0; 
-//     for (int i = 0; i < size; i++) {
-//         if(array[i][2].compare("Government News")!=0) continue; //filter the data only the government once are taken
-//         string text = array[i][1];  // Extract text from article
-//         string word = ""; // Temporary string for building words
+void dataManagement::tokenizeWordsHash(article* Node) {
+    HashMap wordMap; // Using HashMap instead of arrays
 
-//         // Loop through each character in the text
-//         for (char c : text) {
-//             // Convert to lowercase
-//             c = tolower(c);
-//             // Check for word boundaries
-//             if (isspace(c) || ispunct(c)) {
-//                 if (!word.empty()) { // If a word has been formed
-//                     // Check if it's a filler array
-//                     bool isFiller = false;
-//                     for (int k = 0; k < filler_size; k++) {
-//                         if (word == filler_words[k]) {
-//                             isFiller = true;
-//                             break;
-//                         }
-//                     }
-                
-//                     if (!isFiller) {
-//                         bool found = false;
-//                         for (int v = 0; v < Unique; v++) {
-//                             if (wordsList[v] == word) {
-//                                 wordsFreq[v] += 1;  
-//                                 found = true;
-//                                 break;
-//                             }
-//                         }
-//                         if (!found) { 
-//                             if(Unique==capacity){
-//                                 int newcap= capacity*2;
-//                                 resizeArray(wordsList, capacity, newcap);
-//                                 resizeArray(wordsFreq, capacity, newcap);
-//                                 capacity=newcap;
-//                             }
-//                             wordsList[Unique] =word;
-//                             wordsFreq[Unique] = 1;
-//                             Unique++;
-//                         }
-//                     }
-//                     word = ""; 
-//                 }
-//             } else {
-//                 word += c;
-//             }
-//         }
-//     }
-//     algo.QuickSort(wordsFreq, Unique, 1);
-//     cout << "Word Frequency List:\n";
-//     for(int i=0; i <20; i++){
-//         cout << wordsList[i] << " :: " << wordsFreq[i] << endl;
-//     }
+    // List of filler words to ignore
+    const string filler_words[] = {
+        "a", "the", "is", "it", "to", "and", "of", "on", "for", "in", "at", "this",
+        "that", "was", "were", "with", "between", "infront", "have", "had", "has",
+        "been", "about", "into", "are", "after", "before", "not", "where", "when", "thus"
+    };
+    int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
 
-//     delete[] wordsList;
-//     delete[] wordsFreq;
-// }
+    article* temp = Node; // Start from the first article node
 
+    while (temp != nullptr) {
+        if (temp->category != "Government News") { // Filter only government news
+            temp = temp->next;
+            continue;
+        }
+
+        string text = temp->content; // Extract content from the article
+        string word = ""; // Temporary string for building words
+
+        for (char c : text) {
+            c = tolower(c); // Convert to lowercase
+            if (isspace(c) || ispunct(c)) { // Check for word boundaries
+                if (!word.empty()) { // If a word has been formed
+                    // Check if it's a filler word
+                    bool isFiller = false;
+                    for (int k = 0; k < filler_size; k++) {
+                        if (word == filler_words[k]) {
+                            isFiller = true;
+                            break;
+                        }
+                    }
+                    if (!isFiller) {
+                        wordMap.insert(word); // Insert word into the linked list HashMap
+                    }
+                    word = ""; // Reset for next word
+                }
+            } else {
+                word += c; // Add character to word
+            }
+        }
+
+        // Insert last word if exists
+        if (!word.empty()) {
+            bool isFiller = false;
+            for (int k = 0; k < filler_size; k++) {
+                if (word == filler_words[k]) {
+                    isFiller = true;
+                    break;
+                }
+            }
+            if (!isFiller) {
+                wordMap.insert(word);
+            }
+        }
+
+        temp = temp->next; // Move to the next article
+    }
+
+    // Get keys and frequencies from HashMap
+    FreqTextWords* wordlist = wordMap.getKeysAndFrequencies();
+        cout << "\nTop 20 Most Frequent Words in Government Fake News:\n";
+        while(wordlist) {
+            cout << wordlist ->word << " - " << wordlist -> freq << " times\n";
+            wordlist=wordlist -> next;
+        }
+}
 
 // template <typename Any>
 // void dataManagement::resizeArray2(Any*& arr, int old, int newS){
@@ -444,41 +461,46 @@ int main() {
     LinkedListAlgo algo;
     Data.ReadData(Data.getFakeData());
     // Data.displayArticlesfromEnd();
-    // Data.tokenizeWords(array);
+    Data.tokenizeWordsHash(Data.gethead());
     // cout << Data.getsize();
     // Data.head(array, 9028);
     // Data.ApplySort(Data.getsize());
-    int choice;
-    int choice2;
-    string field;
-    cout << " Select Searching Algorithm" << endl;
-    cout << "1. Linear Search" << endl;
-    cout << "2. Binary Search" << endl;
-    cout << "3. Return to Arrays Menu" << endl;
-    cout << "Please Enter your choice.... ";
-    while(!(cin>>choice)|| !(RegInput2(choice))){
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "Invalid.. Please Enter your choice again.... ";
-    }
-    cout << "Chose a field to search for"<<endl;
-    cout << "1. Title "<<endl; 
-    cout << "2. Text "<<endl;
-    cout << "3. Subject "<<endl;
-    cout << "4. Year "<<endl;
-    cout << "5. Month "<<endl;
-    cout << "6. Day "<<endl;
-    cout << "Please Enter your choice.... ";
-    while(!(cin>>choice2)|| !(RegInput3(choice))){
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "Invalid.. Please Enter your choice again.... ";
-    }
-    cin.ignore();
-    cout << "Enter the keyword or value to search for: ";
-    getline(cin, field);
-
-    algo.linearSearch(Data.gethead(), choice2-1, field);
+    // int choice;
+    // int choice2;
+    // string field;
+    // cout << " Select Searching Algorithm" << endl;
+    // cout << "1. Linear Search" << endl;
+    // cout << "2. Binary Search" << endl;
+    // cout << "3. Return to Arrays Menu" << endl;
+    // cout << "Please Enter your choice.... ";
+    // while(!(cin>>choice)|| !(RegInput(choice))){
+    //     cin.clear();
+    //     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    //     cout << "Invalid.. Please Enter your choice again.... ";
+    // }
+    // cout << "Chose a field to search for"<<endl;
+    // cout << "1. Title "<<endl; 
+    // cout << "2. Text "<<endl;
+    // cout << "3. Subject "<<endl;
+    // cout << "4. Year "<<endl;
+    // cout << "5. Month "<<endl;
+    // cout << "6. Day "<<endl;
+    // cout << "Please Enter your choice.... ";
+    // while(!(cin>>choice2)|| !(RegInput3(choice2))){
+    //     cin.clear();
+    //     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    //     cout << "Invalid.. Please Enter your choice again.... ";
+    // }
+    // cin.ignore();
+    // cout << "Enter the keyword or value to search for: ";
+    // getline(cin, field);
+    
+    // if (choice == 1) {
+    //         algo.linearSearch(Data.gethead(), choice2-1, field);
+    // } 
+    // else if (choice == 2) {
+    //         algo.BinarySearch(Data.gethead(), choice2-1, field);
+    // }
 
 
     return 0;   

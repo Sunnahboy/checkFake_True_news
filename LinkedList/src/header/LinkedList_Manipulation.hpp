@@ -55,7 +55,67 @@ class LinkedListAlgo{
                 Data.displayArticlesfromFront();
             }
         }
-        void BinarySearch();
+        
+        void BinarySearch(article *head, int index, string value) {
+            if (!head) {
+                cout << "Linked list is empty!" << endl;
+                return;
+            }
+        
+            article *start = head;
+            article *end = nullptr;
+            bool found = false;
+        
+            while (start != end && start != nullptr) {
+                article *mid = getMiddle(start, end);
+                if (!mid) break;
+        
+                string midValue = getField(mid, index);
+        
+                if (midValue == value || midValue.find(value) != string::npos) {
+                    // Store result if found
+                    Data.addArticlefromEnd(mid->title, mid->content, mid->category, mid->day, mid->month, mid->year);
+                    found = true;
+        
+                    // **Check for duplicates in the left direction**
+                    article *leftCheck = start;
+                    while (leftCheck != mid) {
+                        string leftValue = getField(leftCheck, index);
+                        if (leftValue == value || leftValue.find(value) != string::npos) {
+                            Data.addArticlefromEnd(leftCheck->title, leftCheck->content, leftCheck->category, leftCheck->day, leftCheck->month, leftCheck->year);
+                            found = true;
+                        }
+                        leftCheck = leftCheck->next;
+                    }
+                    
+                    // **Check for duplicates in the right direction**
+                    article *rightCheck = mid->next;
+                    while (rightCheck) {
+                        string rightValue = getField(rightCheck, index);
+                        if (rightValue == value || rightValue.find(value) != string::npos) {
+                            Data.addArticlefromEnd(rightCheck->title, rightCheck->content, rightCheck->category, rightCheck->day, rightCheck->month, rightCheck->year);
+                            found = true;
+                        }
+                        rightCheck = rightCheck->next;
+                    }
+        
+                    break;  
+                } 
+                else if (midValue < value) {
+                    start = mid->next;  // **Move right**
+                } 
+                else {
+                    end = mid;  // **Move left**
+                }
+            }
+        
+            if (!found) 
+                cout << "Value: " << value << " doesn't exist" << endl;
+            else 
+                Data.displayArticlesfromFront();
+        }
+        
+        
 
 };
 #endif

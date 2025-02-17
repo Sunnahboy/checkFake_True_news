@@ -54,7 +54,8 @@ class dataManagement{
         void displayArticlesfromFront();
         // void displayArticlesfromEnd();
         article *gethead();
-
+        void tokenizeWords(article * Node);
+        void tokenizeWordsHash(article * Node);
         // Search for an article by title
 
         // Sort articles by publication date

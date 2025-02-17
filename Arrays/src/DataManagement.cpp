@@ -4,6 +4,7 @@
 #include <sstream>
 #include "header/Arrays_Manipulation.hpp"
 #include "header/Arrays.hpp"
+#include "header/NewsArticle.hpp"
 #include "header/HashMap.hpp"
 #include "Algorithms.cpp"
 using namespace std;
@@ -35,7 +36,6 @@ void dataManagement::ReadData(ifstream& file){
         if (size == capacity) {
             capacity *= 2;  
             NewsArticle* temp = new NewsArticle[capacity];
-            int Iterations=(size<capacity) ? size : capacity;
             for (int j = 0; j < size; j++) {
                 temp[j] = article[j];
             }
@@ -242,6 +242,7 @@ dataManagement::~dataManagement(){
         FakeData.close();
     }
 }
+
 ifstream& dataManagement::getTrueData(){
     return TrueData;
 }
@@ -276,22 +277,24 @@ void dataManagement::displayStruct(int rows){
         cout <<endl;
     }
 }
-void dataManagement::ApplySort(string**& array, int size, int field) {
+void dataManagement::ApplySort(string**& array, int size, int field, int sortType) {
     if (field >= 3) {
-        ApplySortH<int>(array, size, field); 
+        ApplySortH<int>(array, size, field, sortType); 
     } else {
-        ApplySortH<string>(array, size, field);
+        ApplySortH<string>(array, size, field, sortType);
     }
 }
 
 template <typename SelectedType>
-void dataManagement::ApplySortH(string**& array, int size, int field) {
+void dataManagement::ApplySortH(string**& array, int size, int field, int sortType) {
     if (size <= 0) return;
 
     SelectedType* SelectedField = new SelectedType[size];
     int* index = new int[size];
+    
 
     for (int i = 0; i < size; i++) {
+        
         if constexpr (is_same<SelectedType, int>::value) {
             SelectedField[i] = stoi(array[i][field]);  
         } else {
@@ -299,9 +302,29 @@ void dataManagement::ApplySortH(string**& array, int size, int field) {
         }
         index[i] = i;  
     }
+
     ArraysAlgo algo;
-    algo.MergeSort(SelectedField, 0, size - 1, index);
     
+
+    // Choose sorting algorithm based on sortType
+    switch (sortType) {
+        case 1:
+            algo.MergeSort(SelectedField, 0, size - 1, index);
+            break;
+        case 2:
+            algo.BubbleSort(SelectedField, 0, size - 1, index);
+            break;
+        case 3:
+            algo.InsertionSort(SelectedField, size, index);
+            break;
+        case 4:
+            algo.QuickSort(SelectedField, size ,index, 0);
+        default:
+            cout << "Invalid sorting option: " << sortType << endl;
+            break;
+    }
+    
+
     for (int i = 0; i < size; i++) {
         delete[] array[i];
     }
@@ -325,7 +348,7 @@ bool RegInput3(int value){
     return (value==6||value==5 ||value==4||value==3||value==2||value==1);
 }
 
-void dataManagement::tokenizeWords(string** array) {
+void dataManagement::tokenizeWordsHash(string** array) {
     ArraysAlgo algo;
     HashMap hashmap;
     string filler_words[] = {"a", "the", "is", "it", "to", "and", "of", "on", 
@@ -364,9 +387,10 @@ void dataManagement::tokenizeWords(string** array) {
     auto result=hashmap.getKeysAndFrequencies();
     string* keys=result.first;
     int* freq=result.second;
-    algo.QuickSort(freq, hashmap.getCount(), 1);
+    int* temp=new int[hashmap.getCount()];
+    algo.QuickSort(freq, hashmap.getCount(), temp, 1);
     cout << "Word Frequency List:\n";
-    for(int i=0; i <200; i++){
+    for(int i=0; i <500; i++){
         cout << freq[i] << " :: " << keys[i] << endl;
     }
 
@@ -457,7 +481,107 @@ void dataManagement::resizeArray(Any*& arr, int old, int newS){
 
 }
 
+// void dataManagement::StatisticalSum() {
+//     NewsArticleProcessor processor;
+//     string datasetChoice;
+//         cout << "Select dataset to process (true/fake): ";
+//         cin >> datasetChoice;
+//         if (datasetChoice == "true" || datasetChoice == "fake") {
+//             ReadData(datasetChoice == "true" ? getTrueData() : getFakeData());
+//         } else {
+//             cout << "Invalid choice. Please enter 'true' or 'fake'." << endl;
+//         }
 
+//     int size = getsize();
+//     if (size <= 0) {
+//         cout << "No articles found. Exiting...\n";
+//         return;
+//     }
+
+//     string** articles = StoreToArray(size);
+    
+//     // Create NewsArticleProcessor and process articles
+//     processor.processArticles(articles, size);
+
+//     while (true) {
+//         int option;
+//         cout << "\nSelect analysis type:\n";
+//         cout << "1. View articles per year\n";
+//         cout << "2. View articles per month\n";
+//         cout << "3. View articles per day\n";
+//         cout << "4. Exit\n";
+//         cout << "Enter your choice: ";
+//         cin >> option;
+
+//         if (option == 1) {
+//             int year;
+//             while (true) {
+//                 cout << "Enter year: ";
+//                 cin >> year;
+//                 if (processor.isValidYear(year, datasetChoice)) break;
+//                 cout << "Invalid year. Try again.\n";
+//             }
+
+//             int total = processor.getArticleCount(year);
+//             processor.displayTable("Articles in " + to_string(year), total);
+
+//         } else if (option == 2) {
+//             int year, month;
+//             while (true) {
+//                 cout << "Enter year: ";
+//                 cin >> year;
+//                 if (processor.isValidYear(year, datasetChoice)) break;
+//                 cout << "Invalid year. Try again.\n";
+//             }
+
+//             while (true) {
+//                 cout << "Enter month (1-12): ";
+//                 cin >> month;
+//                 if (processor.isValidMonth(month)) break;
+//                 cout << "Invalid month. Try again.\n";
+//             }
+
+//             int total = processor.getArticleCount(year, month);
+//             processor.displayTable("Articles in " + to_string(year) + " - Month " + to_string(month), total);
+
+//         } else if (option == 3) {
+//             int year, month, day;
+//             while (true) {
+//                 cout << "Enter year: ";
+//                 cin >> year;
+//                 if (processor.isValidYear(year, datasetChoice)) break;
+//                 cout << "Invalid year. Try again.\n";
+//             }
+
+//             while (true) {
+//                 cout << "Enter month (1-12): ";
+//                 cin >> month;
+//                 if (processor.isValidMonth(month)) break;
+//                 cout << "Invalid month. Try again.\n";
+//             }
+
+//             while (true) {
+//                 cout << "Enter day: ";
+//                 cin >> day;
+//                 if (processor.isValidDay(year, month, day)) break;
+//                 cout << "Invalid day. Try again.\n";
+//             }
+
+//             int total = processor.getArticleCount(year, month, day);
+//             processor.displayTable("Articles on " + to_string(year) + "-" + to_string(month) + "-" + to_string(day), total);
+
+//         } else if (option == 4) {
+//             break;
+//         } else {
+//             cout << "Invalid choice. Please enter a number between 1 and 4.\n";
+//         }
+//     }
+
+//     for (int i = 0; i < size; ++i) {
+//         delete[] articles[i];
+//     }
+//     delete[] articles;
+// }
 
 
 /*
@@ -467,49 +591,70 @@ We can add more functions here in this point
 int main() {
     dataManagement Data;
     ArraysAlgo algo;
+    // Data.StatisticalSum();
     Data.ReadData(Data.getFakeData());
     string** array=Data.StoreToArray(Data.getsize());
     // Data.displayStruct(10000);
-    // Data.tokenizeWords(array);
+    Data.tokenizeWordsHash(array);
     // Data.head(array, 100);
     // cout << Data.getsize();
     // Data.head(array, Data.getsize());
-    int choice;
-    int choice2;
-    string field;
-    cout << " Select Searching Algorithm" << endl;
-    cout << "1. Linear Search" << endl;
-    cout << "2. Binary Search" << endl;
-    cout << "3. Return to Arrays Menu" << endl;
-    cout << "Please Enter your choice.... ";
-    while(!(cin>>choice)|| !(RegInput2(choice))){
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid.. Please Enter your choice again.... ";
+    // int choice, choice2, sortType;
+    // string field;
+    // cout << " Select Searching Algorithm" << endl;
+    // cout << "1. Linear Search" << endl;
+    // cout << "2. Binary Search" << endl;
+    // cout << "3. Return to Arrays Menu" << endl;
+    // cout << "Please Enter your choice.... ";
+    // while(!(cin>>choice)|| !(RegInput2(choice))){
+    //         cin.clear();
+    //         cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    //         cout << "Invalid.. Please Enter your choice again.... ";
+    //     }
+    //     cout << "Chose a field to search for"<<endl;
+    //     cout << "1. Title "<<endl; 
+    //     cout << "2. Text "<<endl;
+    //     cout << "3. Subject "<<endl;
+    //     cout << "4. Year "<<endl;
+    //     cout << "5. Month "<<endl;
+    //     cout << "6. Day "<<endl;
+    //     cout << "Please Enter your choice.... ";
+    //     while(!(cin>>choice2)|| !(RegInput3(choice))){
+    //             cin.clear();
+    //             cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    //             cout << "Invalid.. Please Enter your choice again.... ";
+    //     }
+    //     cin.ignore();
+    //     cout << "Enter the keyword or value to search for: ";
+    //     getline(cin, field);
+        
+    //         // Sorting Algorithm Selection
+    //     cout << "Select Sorting Algorithm: " << endl;
+    //     cout << "1. Merge Sort" << endl;
+    //     cout << "2. Bubble Sort" << endl;
+    //     cout << "3. Insertion Sort" << endl;
+    //     cout << "4. Quick Sort" << endl;
+    //     cout << "Enter your choice: ";
+
+    //     while (!(cin >> sortType) || (sortType < 1 || sortType > 4)) {
+    //         cin.clear();
+    //         cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    //         cout << "Invalid choice. Enter 1 (Merge Sort) or 2 (Bubble Sort): ";
+    //     }
+        
+    //     Data.ApplySort(array, Data.getsize(), choice2 - 1, sortType);
+
+    //     // Perform search
+        // if (choice == 1) {
+        //     algo.LinearSearch(array, choice2 - 1, field, Data.getsize());
+        // } else if (choice == 2) {
+        //     algo.BinarySearch(array, choice2 - 1, field, Data.getsize());
+        // }
+
+        for (int i = 0; i < Data.getsize(); ++i) {
+            delete[] array[i];
         }
-        cout << "Chose a field to search for"<<endl;
-        cout << "1. Title "<<endl; 
-        cout << "2. Text "<<endl;
-        cout << "3. Subject "<<endl;
-        cout << "4. Year "<<endl;
-        cout << "5. Month "<<endl;
-        cout << "6. Day "<<endl;
-        cout << "Please Enter your choice.... ";
-        while(!(cin>>choice2)|| !(RegInput3(choice))){
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Invalid.. Please Enter your choice again.... ";
-            }
-            cin.ignore();
-            cout << "Enter the keyword or value to search for: ";
-            getline(cin, field);
-            
-            Data.ApplySort(array, Data.getsize(), choice2-1);
-            algo.BinarySearch(array, choice2-1, field, Data.getsize());
-    for (int i = 0; i < Data.getsize(); ++i) {
-        delete[] array[i];
-    }
-    delete[] array;
+        delete[] array;
 
     return 0;   
 }

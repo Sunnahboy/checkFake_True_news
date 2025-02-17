@@ -1,89 +1,111 @@
-#ifndef HashMap_HPP
-#define HashMap_HPP
-#include <iostream>
-using namespace std;
-struct Node
-{
-    string key;
-    int value;
-    Node * next;
-    Node(string keyValue){
-        key=keyValue;
-        value=1;
-        next=nullptr;
-        //this insert from the front
-    }
-};
+    #ifndef llhashmap_HPP
+    #define llhashmap_HPP
+    #include <iostream>
+    using namespace std;
+    struct Node
+    {
+        string key;
+        int value;
+        Node * next;
+        Node(string keyValue){
+            key=keyValue;
+            value=1;
+            next=nullptr;
+            //this insert from the front
+        }
+    };
+
+    struct FreqTextWords{
+        string word;
+        int freq;
+        FreqTextWords* next;
+        FreqTextWords(string w){
+            word=w;
+            freq=1;
+            next=nullptr;
+        }
+    };
 
 class HashMap
 {
-private:
-    static const int size=1000; //size of the array of the HashMap
-    Node * table[size];
+    private:
+        static const int size=1000; //size of the array of the HashMap
+        Node * table[size];
+        FreqTextWords* TokenNode=nullptr;
 
-    int hashFunction(string key){
-        int hash=0;
-        for(char c :key){
-            hash=(hash * 131 + c) % size; //hashing function to return the index from 0 999
-        }
-        return hash;
-    }
-
-public:
-    HashMap() { // Missing constructor
-        for(int i = 0; i < size; i++) {
-            table[i] = nullptr;
-        }
-    }
-    void insert(string newkey){
-        int index= hashFunction(newkey);
-        Node* temp= table[index];
-
-        while(temp != nullptr){
-            if(temp -> key == newkey){
-                temp -> value ++;
-                return;
+        int hashFunction(string key){
+            int hash=0;
+            for(char c :key){
+                hash=(hash * 131 + c) % size; //hashing function to return the index from 0 999
             }
-            temp= temp -> next;
+            return hash;
         }
-        Node * newNode=new Node(newkey);
-        newNode -> next=table[index];
-        table[index]=newNode;
-    }
 
-    int getCount(){
-        int count=0;
-        for(int i=0; i <size; i++){
-            Node *temp=table[i];
+    public:
+        HashMap() { // Missing constructor
+            for(int i = 0; i < size; i++) {
+                table[i] = nullptr;
+            }
+        }
+        void insert(string newkey){
+            int index= hashFunction(newkey);
+            Node* temp= table[index];
+
             while(temp != nullptr){
-                count++;
-                temp=temp -> next;
+                if(temp -> key == newkey){
+                    temp -> value ++;
+                    return;
+                }
+                temp= temp -> next;
             }
+            Node * newNode=new Node(newkey);
+            newNode -> next=table[index];
+            table[index]=newNode;
         }
-        return count;
-    }
 
-    pair<string*, int*> getKeysAndFrequencies() {
-        int count = getCount();
-        if (count == 0) return {nullptr, nullptr};
-    
-        string* keys = new string[count];
-        int* freqs = new int[count];
-    
-        int index = 0;
-        for (int i = 0; i < size; i++) {
-            Node* temp = table[i];
-            while (temp != nullptr) {
-                keys[index] = temp->key;
-                freqs[index] = temp->value; // Directly store frequency
-                index++;
-                temp = temp->next;
+        int getCount(){
+            int count=0;
+            for(int i=0; i <size; i++){
+                Node *temp=table[i];
+                while(temp != nullptr){
+                    count++;
+                    temp=temp -> next;
+                }
             }
+            return count;
         }
-        return {keys, freqs};
-    }
-    
-};
+
+        FreqTextWords* getKeysAndFrequencies() {
+            int count = getCount();
+            if (count == 0) return nullptr; // No elements, return null
+        
+            FreqTextWords* FreqOfWord = nullptr;  // Head of linked list
+            FreqTextWords* tail = nullptr;  // Tail for efficient insertion
+        
+            for (int i = 0; i < size; i++) {
+                Node* temp = table[i];
+                while (temp != nullptr) {
+                    // Create a new node for FreqTextWords
+                    FreqTextWords* newNode = new FreqTextWords(temp->key);
+                    newNode->freq = temp->value; // Store frequency
+        
+                    // Insert at the end of the list
+                    if (!FreqOfWord) {
+                        FreqOfWord = newNode; // First node becomes head
+                        tail = newNode; // Tail points to the first node
+                    } else {
+                        tail->next = newNode; // Append to the list
+                        tail = newNode; // Move tail forward
+                    }
+        
+                    temp = temp->next;
+                }
+            }
+            return FreqOfWord; // Return the head of the linked list
+        }
+        
+        
+    };
 
 // Day Node
 struct DayNode {
@@ -242,5 +264,7 @@ int get(int year, int month, int day) {
 }
 
 };
+
+
 
 #endif
