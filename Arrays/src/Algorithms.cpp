@@ -87,55 +87,74 @@ void ArraysAlgo::BubbleSort() {
 }
 
 
-void ArraysAlgo::InsertionSort(string** arr, int size) {
-    int* index = new int[size];
-    for (int i = 0; i < size; i++) {
-        index[i] = i; // Initialize index array
-    }
+// void ArraysAlgo::InsertionSort(string** arr, int size) {
+//     int* index = new int[size];
+//     for (int i = 0; i < size; i++) {
+//         index[i] = i; // Initialize index array
+//     }
 
-    for (int i = 1; i < size; i++) {
-        int key = index[i];  // Store the current index
-        int year = stoi(arr[key][3]); // Extract date components once
-        int month = stoi(arr[key][4]);
-        int day = stoi(arr[key][5]);
+//     for (int i = 1; i < size; i++) {
+//         int key = index[i];  // Store the current index
+//         int year = stoi(arr[key][3]); // Extract date components once
+//         int month = stoi(arr[key][4]);
+//         int day = stoi(arr[key][5]);
         
-        int j = i - 1;
+//         int j = i - 1;
         
-        // Compare using year, then month, then day (change to ascending order)
-        while (j >= 0) {
-            int prevYear = stoi(arr[index[j]][3]);
-            int prevMonth = stoi(arr[index[j]][4]);
-            int prevDay = stoi(arr[index[j]][5]);
+//         // Compare using year, then month, then day (change to ascending order)
+//         while (j >= 0) {
+//             int prevYear = stoi(arr[index[j]][3]);
+//             int prevMonth = stoi(arr[index[j]][4]);
+//             int prevDay = stoi(arr[index[j]][5]);
             
-            // Sort earliest to latest
-            if (prevYear > year || 
-                (prevYear == year && prevMonth > month) ||
-                (prevYear == year && prevMonth == month && prevDay > day)) {
-                index[j + 1] = index[j]; // Shift index to the right
-                j--;
-            } else {
-                break; // Correct position found
-            }
+//             // Sort earliest to latest
+//             if (prevYear > year || 
+//                 (prevYear == year && prevMonth > month) ||
+//                 (prevYear == year && prevMonth == month && prevDay > day)) {
+//                 index[j + 1] = index[j]; // Shift index to the right
+//                 j--;
+//             } else {
+//                 break; // Correct position found
+//             }
+//         }
+//         index[j + 1] = key; // Insert key at correct position
+//     }
+
+//     // Rearrange the array in place using the sorted index array
+//     string** sortedArr = new string*[size];
+//     for (int i = 0; i < size; i++) {
+//         sortedArr[i] = new string[6];
+//         sortedArr[i] = arr[index[i]];  // Place sorted elements into the new array
+//     }
+
+//     // Copy the sorted values back into the original array
+//     for (int i = 0; i < size; i++) {
+//         arr[i] = sortedArr[i];
+//     }
+
+//     // Clean up memory
+//     delete[] sortedArr;
+//     delete[] index; // Clean up index array
+// }
+
+
+template <typename Type>
+void ArraysAlgo::InsertionSort(Type*& arr, int size, int* index) {
+    // InsertionSort on the key array 'arr' using the 'index' array.
+    for (int i = 1; i < size; i++) {
+        int keyIndex = index[i];
+        Type keyValue = arr[keyIndex];
+        int j = i - 1;
+        while (j >= 0 && arr[index[j]] > keyValue) {
+            index[j + 1] = index[j];
+            j--;
         }
-        index[j + 1] = key; // Insert key at correct position
+        index[j + 1] = keyIndex;
     }
-
-    // Rearrange the array in place using the sorted index array
-    string** sortedArr = new string*[size];
-    for (int i = 0; i < size; i++) {
-        sortedArr[i] = new string[6];
-        sortedArr[i] = arr[index[i]];  // Place sorted elements into the new array
-    }
-
-    // Copy the sorted values back into the original array
-    for (int i = 0; i < size; i++) {
-        arr[i] = sortedArr[i];
-    }
-
-    // Clean up memory
-    delete[] sortedArr;
-    delete[] index; // Clean up index array
 }
+
+
+
 int compare(int a, int b, int order) { //helper to choose decending or ascending order
     if(order == 1){                    // if 1 its descending else its descending
         return a>=b;

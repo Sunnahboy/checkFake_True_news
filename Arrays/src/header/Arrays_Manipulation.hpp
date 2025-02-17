@@ -37,6 +37,7 @@ class dataManagement
        template <typename SelectedType>
        void ApplySortH(string**& arr,int size, int field);
        void ApplySort(string**& arr,int size, int field);
+       void ApplyInsertionSort(string**& array, int size, int field);
        void tokenizeWords(string** arr);
        template <typename Any> 
        void resizeArray(Any*& array, int oldsize, int newSize);
