@@ -33,7 +33,7 @@ class dataManagement
         ~dataManagement();
         ifstream& getTrueData();
         ifstream& getFakeData();
-       void StatisticalSum();
+       void StatisticalSum(string ** articles, string datasetChoice);
        void head(string ** arr, int rows);
        void displayStruct(int rows);
        template <typename SelectedType>

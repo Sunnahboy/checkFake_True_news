@@ -335,41 +335,6 @@ void dataManagement::ApplySortH(string**& array, int size, int field, int sortTy
     delete[] index;
 }
 
-template <typename SelectedType>
-void dataManagement::ApplyInsertionSort(string**& array, int size, int field) {
-    if (size <= 0) return;
-
-    // Create a key array for full date in YYYYMMDD format.
-    SelectedType* SelectedField = new SelectedType[size];
-    int* index = new int[size];
-
-    for (int i = 0; i < size; i++) {
-        int year  = stoi(array[i][3]);
-        int month = stoi(array[i][4]);
-        int day   = stoi(array[i][5]);
-        SelectedField[i] = year * 10000 + month * 100 + day;  // Combined key
-        index[i] = i;
-    }
-
-    ArraysAlgo algo;
-    // Sort the key array (SelectedField) with InsertionSort
-    algo.InsertionSort(SelectedField, size, index);
-
-    // Delete the old two-dimensional array.
-    for (int i = 0; i < size; i++) {
-        delete[] array[i];
-    }
-    delete[] array;
-
-    // Rebuild the two-dimensional array based on the sorted indices.
-    array = SortToArray(size, index);
-
-    // Clean up temporary arrays.
-    delete[] SelectedField;
-    delete[] index;
-}
-
-
 
 bool RegInput(int value){
             return (value==3||value==2||value==1);
@@ -434,74 +399,75 @@ void dataManagement::tokenizeWordsHash(string** array) {
 }
 
 
-// void dataManagement::tokenizeWords(string** array) {
-//     ArraysAlgo algo;
-//     int capacity=1000;
-//     string* wordsList = new string[capacity];  
-//     int* wordsFreq = new int[capacity];     
-//     string filler_words[] = {"a", "the", "is", "it", "to", "and", "of", "on", 
-//                             "for", "in", "at", "this", "that", "was", "were", "with", "between", "infront",
-//                             "have", "had", "has", "been", "about", "into", "are", "after", "before", "not", "where", "when","those", "thus"};    
-//     int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
-//     int Unique = 0; 
-//     for (int i = 0; i < size; i++) {
-//         if(array[i][2].compare("Government News")!=0) continue; //filter the data only the government once are taken
-//         string text = array[i][1];  // Extract text from article
-//         string word = ""; // Temporary string for building words
+void dataManagement::tokenizeWords(string** array) {
+    ArraysAlgo algo;
+    int capacity=1000;
+    string* wordsList = new string[capacity];  
+    int* wordsFreq = new int[capacity];     
+    string filler_words[] = {"a", "the", "is", "it", "to", "and", "of", "on", 
+                            "for", "in", "at", "this", "that", "was", "were", "with", "between", "infront",
+                            "have", "had", "has", "been", "about", "into", "are", "after", "before", "not", "where", "when","those", "thus"};    
+    int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
+    int Unique = 0; 
+    for (int i = 0; i < size; i++) {
+        if(array[i][2].compare("Government News")!=0) continue; //filter the data only the government once are taken
+        string text = array[i][1];  // Extract text from article
+        string word = ""; // Temporary string for building words
 
-//         // Loop through each character in the text
-//         for (char c : text) {
-//             // Convert to lowercase
-//             c = tolower(c);
-//             // Check for word boundaries
-//             if (isspace(c) || ispunct(c)) {
-//                 if (!word.empty()) { // If a word has been formed
-//                     // Check if it's a filler array
-//                     bool isFiller = false;
-//                     for (int k = 0; k < filler_size; k++) {
-//                         if (word == filler_words[k]) {
-//                             isFiller = true;
-//                             break;
-//                         }
-//                     }
+        // Loop through each character in the text
+        for (char c : text) {
+            // Convert to lowercase
+            c = tolower(c);
+            // Check for word boundaries
+            if (isspace(c) || ispunct(c)) {
+                if (!word.empty()) { // If a word has been formed
+                    // Check if it's a filler array
+                    bool isFiller = false;
+                    for (int k = 0; k < filler_size; k++) {
+                        if (word == filler_words[k]) {
+                            isFiller = true;
+                            break;
+                        }
+                    }
                 
-//                     if (!isFiller) {
-//                         bool found = false;
-//                         for (int v = 0; v < Unique; v++) {
-//                             if (wordsList[v] == word) {
-//                                 wordsFreq[v] += 1;  
-//                                 found = true;
-//                                 break;
-//                             }
-//                         }
-//                         if (!found) { 
-//                             if(Unique==capacity){
-//                                 int newcap= capacity*2;
-//                                 resizeArray(wordsList, capacity, newcap);
-//                                 resizeArray(wordsFreq, capacity, newcap);
-//                                 capacity=newcap;
-//                             }
-//                             wordsList[Unique] =word;
-//                             wordsFreq[Unique] = 1;
-//                             Unique++;
-//                         }
-//                     }
-//                     word = ""; 
-//                 }
-//             } else {
-//                 word += c;
-//             }
-//         }
-//     }
-//     algo.QuickSort(wordsFreq, Unique, 1);
-//     cout << "Word Frequency List:\n";
-//     for(int i=0; i <20; i++){
-//         cout << wordsList[i] << " :: " << wordsFreq[i] << endl;
-//     }
+                    if (!isFiller) {
+                        bool found = false;
+                        for (int v = 0; v < Unique; v++) {
+                            if (wordsList[v] == word) {
+                                wordsFreq[v] += 1;  
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) { 
+                            if(Unique==capacity){
+                                int newcap= capacity*2;
+                                resizeArray(wordsList, capacity, newcap);
+                                resizeArray(wordsFreq, capacity, newcap);
+                                capacity=newcap;
+                            }
+                            wordsList[Unique] =word;
+                            wordsFreq[Unique] = 1;
+                            Unique++;
+                        }
+                    }
+                    word = ""; 
+                }
+            } else {
+                word += c;
+            }
+        }
+    }
+    int * temp=new int[Unique];
+    algo.QuickSort(wordsFreq, Unique, temp, 1);
+    cout << "Word Frequency List:\n";
+    for(int i=0; i <20; i++){
+        cout << wordsList[i] << " :: " << wordsFreq[i] << endl;
+    }
 
-//     delete[] wordsList;
-//     delete[] wordsFreq;
-// }
+    delete[] wordsList;
+    delete[] wordsFreq;
+}
 
 
 template <typename Any>
@@ -516,107 +482,89 @@ void dataManagement::resizeArray(Any*& arr, int old, int newS){
 
 }
 
-// void dataManagement::StatisticalSum() {
-//     NewsArticleProcessor processor;
-//     string datasetChoice;
-//         cout << "Select dataset to process (true/fake): ";
-//         cin >> datasetChoice;
-//         if (datasetChoice == "true" || datasetChoice == "fake") {
-//             ReadData(datasetChoice == "true" ? getTrueData() : getFakeData());
-//         } else {
-//             cout << "Invalid choice. Please enter 'true' or 'fake'." << endl;
-//         }
+void dataManagement::StatisticalSum(string** articles, string datasetChoice) {
+    NewsArticleProcessor processor;
+    // Create NewsArticleProcessor and process articles
+    processor.processArticles(articles, getsize());
+    int option;
+    cout << "\nSelect analysis type:\n";
+    cout << "1. View articles per year\n";
+    cout << "2. View articles per month\n";
+    cout << "3. View articles per day\n";
+    cout << "4. Exit\n";
+    cout << "Enter your choice: ";
+    while (!(cin >> option)) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid choice. Please enter a number between 1 and 4.\n";
+    }
+    int year, month, day;
 
-//     int size = getsize();
-//     if (size <= 0) {
-//         cout << "No articles found. Exiting...\n";
-//         return;
-//     }
-
-//     string** articles = StoreToArray(size);
+    switch (option) {
+        case 1:
+            cout << "Enter year: ";
+            cin >> year;
+            while (!processor.isValidYear(year, datasetChoice)) {
+                cout << "Invalid year. Try again.\nEnter year: ";
+                cin >> year;
+            }
+            processor.displayTable("Articles in " + to_string(year), processor.getArticleCount(year));
+            break;
+        
+        case 2:
+            cout << "Enter year: ";
+            cin >> year;
+            while (!processor.isValidYear(year, datasetChoice)) {
+                cout << "Invalid year. Try again.\nEnter year: ";
+                cin >> year;
+            }
+            
+            cout << "Enter month (1-12): ";
+            cin >> month;
+            while (!processor.isValidMonth(month)) {
+                cout << "Invalid month. Try again.\nEnter month (1-12): ";
+                cin >> month;
+            }
+            
+            processor.displayTable("Articles in " + to_string(year) + " - Month " + to_string(month), processor.getArticleCount(year, month));
+            break;
+        
+        case 3:
+            cout << "Enter year: ";
+            cin >> year;
+            while (!processor.isValidYear(year, datasetChoice)) {
+                cout << "Invalid year. Try again.\nEnter year: ";
+                cin >> year;
+            }
+            
+            cout << "Enter month (1-12): ";
+            cin >> month;
+            while (!processor.isValidMonth(month)) {
+                cout << "Invalid month. Try again.\nEnter month (1-12): ";
+                cin >> month;
+            }
+            
+            cout << "Enter day: ";
+            cin >> day;
+            while (!processor.isValidDay(year, month, day)) {
+                cout << "Invalid day. Try again.\nEnter day: ";
+                cin >> day;
+            }
+            
+            processor.displayTable("Articles in " + to_string(year) + " - Month " + to_string(month) + " - Day " + to_string(day), processor.getArticleCount(year, month, day));
+            break;
+        
+        default:
+            cout << "Invalid option selected.";
+            break;
+    }
     
-//     // Create NewsArticleProcessor and process articles
-//     processor.processArticles(articles, size);
 
-//     while (true) {
-//         int option;
-//         cout << "\nSelect analysis type:\n";
-//         cout << "1. View articles per year\n";
-//         cout << "2. View articles per month\n";
-//         cout << "3. View articles per day\n";
-//         cout << "4. Exit\n";
-//         cout << "Enter your choice: ";
-//         cin >> option;
-
-//         if (option == 1) {
-//             int year;
-//             while (true) {
-//                 cout << "Enter year: ";
-//                 cin >> year;
-//                 if (processor.isValidYear(year, datasetChoice)) break;
-//                 cout << "Invalid year. Try again.\n";
-//             }
-
-//             int total = processor.getArticleCount(year);
-//             processor.displayTable("Articles in " + to_string(year), total);
-
-//         } else if (option == 2) {
-//             int year, month;
-//             while (true) {
-//                 cout << "Enter year: ";
-//                 cin >> year;
-//                 if (processor.isValidYear(year, datasetChoice)) break;
-//                 cout << "Invalid year. Try again.\n";
-//             }
-
-//             while (true) {
-//                 cout << "Enter month (1-12): ";
-//                 cin >> month;
-//                 if (processor.isValidMonth(month)) break;
-//                 cout << "Invalid month. Try again.\n";
-//             }
-
-//             int total = processor.getArticleCount(year, month);
-//             processor.displayTable("Articles in " + to_string(year) + " - Month " + to_string(month), total);
-
-//         } else if (option == 3) {
-//             int year, month, day;
-//             while (true) {
-//                 cout << "Enter year: ";
-//                 cin >> year;
-//                 if (processor.isValidYear(year, datasetChoice)) break;
-//                 cout << "Invalid year. Try again.\n";
-//             }
-
-//             while (true) {
-//                 cout << "Enter month (1-12): ";
-//                 cin >> month;
-//                 if (processor.isValidMonth(month)) break;
-//                 cout << "Invalid month. Try again.\n";
-//             }
-
-//             while (true) {
-//                 cout << "Enter day: ";
-//                 cin >> day;
-//                 if (processor.isValidDay(year, month, day)) break;
-//                 cout << "Invalid day. Try again.\n";
-//             }
-
-//             int total = processor.getArticleCount(year, month, day);
-//             processor.displayTable("Articles on " + to_string(year) + "-" + to_string(month) + "-" + to_string(day), total);
-
-//         } else if (option == 4) {
-//             break;
-//         } else {
-//             cout << "Invalid choice. Please enter a number between 1 and 4.\n";
-//         }
-//     }
-
-//     for (int i = 0; i < size; ++i) {
-//         delete[] articles[i];
-//     }
-//     delete[] articles;
-// }
+    for (int i = 0; i < size; ++i) {
+        delete[] articles[i];
+    }
+    delete[] articles;
+}
 
 
 /*
@@ -626,14 +574,12 @@ We can add more functions here in this point
 int main() {
     dataManagement Data;
     ArraysAlgo algo;
-    // Data.StatisticalSum();
-    Data.ReadData(Data.getFakeData());
+    Data.ReadData(Data.getTrueData());
     string** array=Data.StoreToArray(Data.getsize());
+    Data.StatisticalSum(array, "true");
     // Data.displayStruct(10000);
-    Data.tokenizeWordsHash(array);
-    // Data.head(array, 100);
-    // cout << Data.getsize();
-    // Data.head(array, Data.getsize());
+    // Data.tokenizeWords(array);
+    // Data.tokenizeWordsHash(array);
     // int choice, choice2, sortType;
     // string field;
     // cout << " Select Searching Algorithm" << endl;
@@ -680,43 +626,16 @@ int main() {
     //     Data.ApplySort(array, Data.getsize(), choice2 - 1, sortType);
 
     //     // Perform search
-        // if (choice == 1) {
-        //     algo.LinearSearch(array, choice2 - 1, field, Data.getsize());
-        // } else if (choice == 2) {
-        //     algo.BinarySearch(array, choice2 - 1, field, Data.getsize());
-        // }
+    //     if (choice == 1) {
+    //         algo.LinearSearch(array, choice2 - 1, field, Data.getsize());
+    //     } else if (choice == 2) {
+    //         algo.BinarySearch(array, choice2 - 1, field, Data.getsize());
+    //     }
 
         for (int i = 0; i < Data.getsize(); ++i) {
             delete[] array[i];
         }
-<<<<<<< HEAD
         delete[] array;
-=======
-        cout << "Chose a field to search for"<<endl;
-        cout << "1. Title "<<endl; 
-        cout << "2. Text "<<endl;
-        cout << "3. Subject "<<endl;
-        cout << "4. Year "<<endl;
-        cout << "5. Month "<<endl;
-        cout << "6. Day "<<endl;
-        cout << "Please Enter your choice.... ";
-        while(!(cin>>choice2)|| !(RegInput3(choice))){
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Invalid.. Please Enter your choice again.... ";
-            }
-            cin.ignore();
-            cout << "Enter the keyword or value to search for: ";
-            getline(cin, field);
-            
-            Data.ApplySort(array, Data.getsize(), choice2-1);
-
-            algo.BinarySearch(array, choice2-1, field, Data.getsize());
-    for (int i = 0; i < Data.getsize(); ++i) {
-        delete[] array[i];
-    }
-    delete[] array;
->>>>>>> 50a4325a6f0ebfd7961abf01806641ddccd0263f
 
     return 0;   
 }

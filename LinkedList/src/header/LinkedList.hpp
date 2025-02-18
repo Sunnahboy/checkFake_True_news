@@ -51,6 +51,8 @@ class dataManagement{
         ifstream& getTrueData();
         ifstream& getFakeData();
 
+        void runNewsProcessor(article * head, string datasetChoice);
+
         // Display all articles
         void displayArticlesfromFront();
         // void displayArticlesfromEnd();
