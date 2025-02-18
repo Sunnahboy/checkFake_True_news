@@ -7,6 +7,7 @@
 #include "header/MasterList.hpp"
 #include "header/LinkedList_Manipulation.hpp"
 #include "header/llhashmap.hpp"
+#include "header/NewsArticle.hpp"
 using namespace std;
 
 
@@ -450,6 +451,86 @@ bool RegInput3(int value){
 return (value==6||value==5 ||value==4||value==3||value==2||value==1);
 }
 
+void dataManagement::runNewsProcessor(article* head, string datasetChoice) {
+    NewsArticleProcessor processor;
+    
+    
+    processor.processArticles(head); // Pass the linked list to process
+    int option;
+    cout << "\nSelect analysis type:\n";
+    cout << "1. View articles per year\n";
+    cout << "2. View articles per month\n";
+    cout << "3. View articles per day\n";
+    cout << "4. Exit\n";
+    cout << "Enter your choice: ";
+    while (!(cin >> option)) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid choice. Please enter a number between 1 and 4.\n";
+    }
+    int year, month, day;
+
+    switch (option) {
+        case 1:
+            cout << "Enter year: ";
+            cin >> year;
+            while (!processor.isValidYear(year, datasetChoice)) {
+                cout << "Invalid year. Try again.\nEnter year: ";
+                cin >> year;
+            }
+            processor.displayTable("Articles in " + to_string(year), processor.getArticleCount(year));
+            break;
+        
+        case 2:
+            cout << "Enter year: ";
+            cin >> year;
+            while (!processor.isValidYear(year, datasetChoice)) {
+                cout << "Invalid year. Try again.\nEnter year: ";
+                cin >> year;
+            }
+            
+            cout << "Enter month (1-12): ";
+            cin >> month;
+            while (!processor.isValidMonth(month)) {
+                cout << "Invalid month. Try again.\nEnter month (1-12): ";
+                cin >> month;
+            }
+            
+            processor.displayTable("Articles in " + to_string(year) + " - Month " + to_string(month), processor.getArticleCount(year, month));
+            break;
+        
+        case 3:
+            cout << "Enter year: ";
+            cin >> year;
+            while (!processor.isValidYear(year, datasetChoice)) {
+                cout << "Invalid year. Try again.\nEnter year: ";
+                cin >> year;
+            }
+            
+            cout << "Enter month (1-12): ";
+            cin >> month;
+            while (!processor.isValidMonth(month)) {
+                cout << "Invalid month. Try again.\nEnter month (1-12): ";
+                cin >> month;
+            }
+            
+            cout << "Enter day: ";
+            cin >> day;
+            while (!processor.isValidDay(year, month, day)) {
+                cout << "Invalid day. Try again.\nEnter day: ";
+                cin >> day;
+            }
+            
+            processor.displayTable("Articles in " + to_string(year) + " - Month " + to_string(month) + " - Day " + to_string(day), processor.getArticleCount(year, month, day));
+            break;
+        
+        default:
+            cout << "Invalid option selected.";
+            break;
+    }
+    
+}
+
 
 
 /*
@@ -459,9 +540,11 @@ We can add more functions here in this point
 int main() {
     dataManagement Data("News Articles");
     LinkedListAlgo algo;
-    Data.ReadData(Data.getFakeData());
+    Data.ReadData(Data.getTrueData());
+    // Use linked list head directly
+    Data.runNewsProcessor(Data.gethead(), "true");
     // Data.displayArticlesfromEnd();
-    Data.tokenizeWordsHash(Data.gethead());
+   // Data.tokenizeWordsHash(Data.gethead());
     // cout << Data.getsize();
     // Data.head(array, 9028);
     // Data.ApplySort(Data.getsize());

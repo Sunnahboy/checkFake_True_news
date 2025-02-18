@@ -2,9 +2,9 @@
 #define NewsArticle_HPP
 
 #include <iostream>
-#include "header/llhashmap.hpp"
-#include "header/LinkedList.hpp"
-#include "header/LinkedList_Manipulation.hpp"
+#include "llhashmap.hpp"
+#include "LinkedList.hpp"
+#include "LinkedList_Manipulation.hpp"
 
 using namespace std;
 
@@ -44,10 +44,9 @@ public:
         }
         return articleData.get(year, month, day);  // Daily count
     }
-};
-
-// Helper functions
-bool isValidYear(int year, string dataset) {
+    
+    // Helper functions
+    bool isValidYear(int year, string dataset) {
     if (dataset == "true") return (year >= 2016 && year <= 2017);
     return (year >= 2015 && year <= 2017);
 }
@@ -73,104 +72,6 @@ void displayTable(string title, int value) {
 }
 
 // Callable function instead of `main()`
-void runNewsProcessor() {
-    dataManagement data("News Articles");
-    string datasetChoice;
-
-    while (true) {
-        cout << "Select dataset to process (true/fake): ";
-        cin >> datasetChoice;
-
-        if (datasetChoice == "true") {
-            data.ReadData(data.getTrueData());
-            break;
-        } else if (datasetChoice == "fake") {
-            data.ReadData(data.getFakeData());
-            break;
-        } else {
-            cout << "Invalid choice. Please enter 'true' or 'fake'." << endl;
-        }
-    }
-
-    // Use linked list head directly
-    article* head = data.gethead();
-    
-    NewsArticleProcessor processor;
-    processor.processArticles(head); // Pass the linked list to process
-
-    while (true) {
-        int option;
-        cout << "\nSelect analysis type:\n";
-        cout << "1. View articles per year\n";
-        cout << "2. View articles per month\n";
-        cout << "3. View articles per day\n";
-        cout << "4. Exit\n";
-        cout << "Enter your choice: ";
-        cin >> option;
-
-        if (option == 1) {
-            int year;
-            while (true) {
-                cout << "Enter year: ";
-                cin >> year;
-                if (isValidYear(year, datasetChoice)) break;
-                cout << "Invalid year. Please enter a valid year for this dataset.\n";
-            }
-
-            int total = processor.getArticleCount(year);
-            displayTable("Articles in " + to_string(year), total);
-
-        } else if (option == 2) {
-            int year, month;
-            while (true) {
-                cout << "Enter year: ";
-                cin >> year;
-                if (isValidYear(year, datasetChoice)) break;
-                cout << "Invalid year. Try again.\n";
-            }
-
-            while (true) {
-                cout << "Enter month (1-12): ";
-                cin >> month;
-                if (isValidMonth(month)) break;
-                cout << "Invalid month. Try again.\n";
-            }
-
-            int total = processor.getArticleCount(year, month);
-            displayTable("Articles in " + to_string(year) + " - Month " + to_string(month), total);
-
-        } else if (option == 3) {
-            int year, month, day;
-            while (true) {
-                cout << "Enter year: ";
-                cin >> year;
-                if (isValidYear(year, datasetChoice)) break;
-                cout << "Invalid year. Try again.\n";
-            }
-
-            while (true) {
-                cout << "Enter month (1-12): ";
-                cin >> month;
-                if (isValidMonth(month)) break;
-                cout << "Invalid month. Try again.\n";
-            }
-
-            while (true) {
-                cout << "Enter day: ";
-                cin >> day;
-                if (isValidDay(year, month, day)) break;
-                cout << "Invalid day. Try again.\n";
-            }
-
-            int total = processor.getArticleCount(year, month, day);
-            displayTable("Articles on " + to_string(year) + "-" + to_string(month) + "-" + to_string(day), total);
-
-        } else if (option == 4) {
-            break;
-        } else {
-            cout << "Invalid choice. Please enter a number between 1 and 4.\n";
-        }
-    }
-}
+};
 
 #endif 

@@ -104,8 +104,6 @@ void ArraysAlgo::InsertionSort(Type*& arr, int size, int* index) {
     for (int i = 1; i < size; i++) {
         int keyIndex = index[i];
         Type keyValue = arr[keyIndex];
-        int keyIndex = index[i];
-        Type keyValue = arr[keyIndex];
         int j = i - 1;
         while (j >= 0 && arr[index[j]] > keyValue) {
             index[j + 1] = index[j];
