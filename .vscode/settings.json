@@ -6,11 +6,18 @@
         "string": "cpp",
         "iosfwd": "cpp",
         "*.tcc": "cpp",
+<<<<<<< HEAD
         "ostream": "cpp",
         "system_error": "cpp",
         "new": "cpp",
         "variant": "cpp",
         "format": "cpp"
+=======
+        "stdexcept": "cpp",
+        "random": "cpp",
+        "new": "cpp",
+        "ostream": "cpp"
+>>>>>>> 3b64d3a65cf0da24851784b9a3cd3a20ec39b2d6
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
