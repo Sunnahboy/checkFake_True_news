@@ -6,9 +6,9 @@ using namespace std;
 
 
 // Helper function to check if an article's category indicates political news.
-bool isPolitical(const string &category) {
+bool isPolitical(string &category) {
     // Check if "politicsNews" appears anywhere in the category.
-    return (category.find("politicsNews") != string::npos);
+    return (category.find("politicsNews") != string::npos || category.find("politics") != string::npos);
 }
 
 // Function to calculate the percentage of political articles from 2016 that are fake.
@@ -44,6 +44,8 @@ void dataManagement::calculatePoliticalFakePercentage(article* trueHead, article
     double percentage = (fakePolitical * 100.0) / totalPolitical;
     cout << "Percentage of political news articles from 2016 that are fake: " 
          << percentage << "%" << endl;
+    cout << "Total political articles from 2016: " << totalPolitical << endl;
+    cout << "Total fake political articles from 2016: " << fakePolitical << endl;
 }
 
 
@@ -53,17 +55,25 @@ void dataManagement::analyzeMonthlyFakePoliticalNews(article* fakeHead) {
     // Track fake political articles for each month.
     int monthlyCount[13] = {0};  
     int totalFakePolitical2016 = 0;  
+    
 
     // Traverse the fake news linked list.
     article* current = fakeHead;
     while (current != nullptr) {
         // Check if the article is from 2016 and is political.
         if (current->year == 2016 && isPolitical(current->category)) {
+            // cout<<"1. Current Year: " << current->year << ", Current Category: " << current->category << endl;;
             monthlyCount[current->month]++;
             totalFakePolitical2016++;
+            // cout << "Total Fake Political News Articles in 2016: " << totalFakePolitical2016 << endl;
+            // cout << "Total Fake Political News Articles in month: " << monthlyCount[current->month] << endl;
         }
+        // cout<<"2. Current Year: " << current->year << ", Current Category: " << current->category << endl;
+
         current = current->next;
     }
+
+    // cout << "Total Fake Political News Articles in 2016: " << totalFakePolitical2016 << endl;
 
     // If we found no fake political articles in 2016, report and exit.
     if (totalFakePolitical2016 == 0) {

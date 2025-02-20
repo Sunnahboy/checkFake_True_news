@@ -38,6 +38,8 @@ public:
         return size;
     }
 
+    
+
     // Sorting algorithms
     template <typename Type>
     void InsertionSort(Type*& arr, int size, int* index);

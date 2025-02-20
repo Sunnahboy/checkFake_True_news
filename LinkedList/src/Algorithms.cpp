@@ -1,17 +1,110 @@
-<<<<<<< HEAD
 // #include "LinkedList_Manipulation.hpp"
 #include "header/LinkedList.hpp"
+#include "header/LinkedList_Manipulation.hpp"
 
 // Compare the dates of two articles
-bool dataManagement::compareDates(article* a, article* b) {
+bool LinkedListAlgo::compareDates(article* a, article* b) {
     if (a->year != b->year) return a->year < b->year;
     if (a->month != b->month) return a->month < b->month;
     return a->day < b->day;
 }
 
-// Insertion Sort to sort articles by date
-void dataManagement::insertionSortByDate() {
-    if (!head || !head->next) return;  // If the list is empty or has one node, no sorting needed.
+bool LinkedListAlgo::compareSubject(article* a, article* b) {
+    return a->category < b->category;
+}
+
+
+
+template <typename Comparator>
+article* LinkedListAlgo::mergeSortedLists(article* a, article* b, Comparator comp) {
+    article* head = nullptr;
+    article* tail = nullptr;
+
+    auto appendNode = [&](article*& node) {
+        if (!head) {
+            head = tail = node;
+        } else {
+            tail->next = node;
+            tail = node;
+        }
+        node = node->next;
+    };
+
+    while (a && b) {
+        if ((this->*comp)(a, b)) {
+            appendNode(a);
+        } else {
+            appendNode(b);
+        }
+    }
+
+    tail->next = (a ? a : b);
+    return head;
+}
+
+// Bottom-up merge sort with comparator
+template <typename Comparator>
+article* LinkedListAlgo::bottomUpMergeSort(article* head, Comparator comp) {
+    if (!head || !head->next) return head;
+
+    int length = 0;
+    for (article* node = head; node; node = node->next) length++;
+
+    string empty = "";
+    article dummy(empty, empty, empty, 0, 0, 0); // Dummy node to simplify merging
+    dummy.next = head;
+
+    for (int size = 1; size < length; size *= 2) {
+        article* current = dummy.next;
+        article* tail = &dummy;
+
+        while (current) {
+            article* left = current;
+            article* right = nullptr;
+            article* nextSegment = nullptr;
+
+            int count = 1;
+            while (count < size && current->next) {
+                current = current->next;
+                count++;
+            }
+
+            if (current->next) {
+                right = current->next;
+                current->next = nullptr;
+                current = right;
+            } else {
+                break;
+            }
+
+            count = 1;
+            while (count < size && current->next) {
+                current = current->next;
+                count++;
+            }
+
+            if (current->next) {
+                nextSegment = current->next;
+                current->next = nullptr;
+            }
+            
+            tail->next = mergeSortedLists(left, right, comp);
+
+            while (tail->next) tail = tail->next;
+
+            current = nextSegment;
+        }
+        head = dummy.next;
+    }
+
+    return head;
+}
+
+
+// Template-based insertion sort
+template <typename Comparator>
+article* LinkedListAlgo::insertionSort(article* head, Comparator comp) {
+    if (!head || !head->next) return head;  // If the list is empty or has one node, no sorting needed.
 
     article* sorted = nullptr;  // Start with an empty sorted list.
     article* current = head;    // Start from the head of the original list.
@@ -20,12 +113,12 @@ void dataManagement::insertionSortByDate() {
         article* next = current->next;  // Save the next node.
         
         // Insert current node into the sorted portion of the list.
-        if (!sorted || compareDates(current, sorted)) {
+        if (!sorted || (this->*comp)(current, sorted)) {
             current->next = sorted;
             sorted = current;
         } else {
             article* temp = sorted;
-            while (temp->next && !compareDates(current, temp->next)) {
+            while (temp->next && !(this->*comp)(current, temp->next)) {
                 temp = temp->next;
             }
             current->next = temp->next;
@@ -35,215 +128,288 @@ void dataManagement::insertionSortByDate() {
         current = next;  // Move to the next node in the original list.
     }
 
-    head = sorted;  // Update head to point to the sorted list.
-=======
-#include <iostream>
-#include "../header/LinkedList.hpp"
-using namespace std;
-
-// Constructor
-LinkedList::LinkedList() {
-    head = nullptr;
+    return sorted;  // Return the sorted list head.
 }
 
-// Destructor
-LinkedList::~LinkedList() {
-    Node* current = head;
-    while (current != nullptr) {
-        Node* temp = current;
-        current = current->next;
-        delete temp;
-    }
-}
+// Template-based QuickSort
+template <typename Comparator>
+article* LinkedListAlgo::quickSort(article* head, Comparator comp) {
+    if (!head || !head->next) return head;  // Base case: empty list or single node.
 
+    // Partition the list
+    article* pivot = head;
+    article* lesserHead = nullptr, * lesserTail = nullptr;
+    article* greaterHead = nullptr, * greaterTail = nullptr;
+    article* equalHead = nullptr, * equalTail = nullptr;
 
-// --- HELPER FUNCTIONS FOR DATE COMPARISONS ---
+    article* current = head;
+    while (current) {
+        article* next = current->next;
+        current->next = nullptr;  // Disconnect the node.
 
-// Returns true if the date in node 'a' is later than in node 'b'
-bool dateGreater(Node* a, Node* b) {
-    if (a->publicationYear != b->publicationYear)
-        return a->publicationYear > b->publicationYear;
-    if (a->publicationMonth != b->publicationMonth)
-        return a->publicationMonth > b->publicationMonth;
-    return a->publicationDay > b->publicationDay;
-}
-
-// Returns true if the date in node 'a' is earlier than in node 'b'
-bool dateLess(Node* a, Node* b) {
-    if (a->publicationYear != b->publicationYear)
-        return a->publicationYear < b->publicationYear;
-    if (a->publicationMonth != b->publicationMonth)
-        return a->publicationMonth < b->publicationMonth;
-    return a->publicationDay < b->publicationDay;
-}
-
-// --- END HELPER FUNCTIONS ---
-
-// Search for an article by title
-Node* LinkedList::searchByTitle(string& title) {
-    Node* temp = head;
-    while (temp != nullptr) {
-        if (temp->title == title) {
-            return temp; // Found the article
+        if ((this->*comp)(current, pivot)) {  // Lesser
+            if (!lesserHead) lesserHead = lesserTail = current;
+            else {
+                lesserTail->next = current;
+                lesserTail = current;
+            }
+        } else if ((this->*comp)(pivot, current)) {  // Greater
+            if (!greaterHead) greaterHead = greaterTail = current;
+            else {
+                greaterTail->next = current;
+                greaterTail = current;
+            }
+        } else {  // Equal
+            if (!equalHead) equalHead = equalTail = current;
+            else {
+                equalTail->next = current;
+                equalTail = current;
+            }
         }
-        temp = temp->next;
+        current = next;
     }
-    return nullptr; // Article not found
-    delete temp;
+
+    // Recursively sort lesser and greater lists
+    lesserHead = quickSort(lesserHead, comp);
+    greaterHead = quickSort(greaterHead, comp);
+
+    // Combine lesser, equal, and greater parts
+    article* sortedHead = (lesserHead) ? lesserHead : equalHead;
+    article* sortedTail = lesserTail ? lesserTail : equalTail;
+
+    if (sortedTail) sortedTail->next = equalHead;
+    if (equalTail) equalTail->next = greaterHead;
+
+    return sortedHead;
 }
 
-// Sort articles by publication date using Bubble Sort
-void LinkedList::sortArticles() {
-    if (head == nullptr || head->next == nullptr) return; // List is empty or has one node
 
+template <typename Comparator>
+article* LinkedListAlgo::bubbleSort(article* head, Comparator comp) {
+    // If the list is empty or has one node, it is already sorted.
+    if (!head || !head->next) return head;
+    
+    // Create a dummy node to simplify pointer manipulation.
+    string empty = "";
+    article dummy(empty, empty, empty, 0, 0, 0);
+    dummy.next = head;
+    
     bool swapped;
     do {
         swapped = false;
-        Node* current = head;
-        Node* prev = nullptr;
-
-        while (current->next != nullptr) {
-            // Compare the dates using the separate date parts
-            if (dateGreater(current, current->next)) {
-                // Swap nodes
-                Node* nextNode = current->next;
-                current->next = nextNode->next;
-                nextNode->next = current;
-
-                if (prev == nullptr) {
-                    head = nextNode; // Update head if swapping the first node
-                } else {
-                    prev->next = nextNode;
-                }
-
-                prev = nextNode;
+        // Start each pass from the beginning using the dummy node.
+        article* prev = &dummy;
+        article* curr = dummy.next;
+        
+        while (curr && curr->next) {
+            // If the next node should come before the current node,
+            // swap them by rearranging pointers.
+            if ((this->*comp)(curr->next, curr)) {
+                // Perform the swap of adjacent nodes.
+                article* temp = curr->next;
+                curr->next = temp->next;
+                temp->next = curr;
+                prev->next = temp;
+                
+                // Mark that we performed a swap.
                 swapped = true;
+                
+                // Update the 'prev' pointer to the new node that is now before 'curr'.
+                prev = temp;
             } else {
-                prev = current;
-                current = current->next;
+                // Move forward if no swap is needed.
+                prev = curr;
+                curr = curr->next;
             }
         }
     } while (swapped);
-}
-
-// Helper function to convert string to lowercase for case-insensitive comparison
-string toLowerCase(string& str) {
-    string result = str;
-    for (char& c : result) {
-        if (c >= 'A' && c <= 'Z') {
-            c = c - 'A' + 'a';
-        }
-    }
-    return result;
-}
-
-
-// Optimized Linear Search
-void LinkedList::linearSearch(string& searchTerm, string& searchType) {
-    Node* current = head;
-    int matchCount = 0;
-    string searchTermLower = toLowerCase(searchTerm);
-
-    if (head == nullptr) {
-        cout << "The list is empty\n";
-        return;
-    }
-
-    cout << "\n=== Linear Search Results ===\n";
-
-    while (current != nullptr) {
-        string fieldToSearch;
-        if (searchType == "category")
-            fieldToSearch = toLowerCase(current->category);
-        else if (searchType == "title")
-            fieldToSearch = toLowerCase(current->title);
-        else {
-            cout << "Invalid search type\n";
-            return;
-        }
-
-        if (fieldToSearch.find(searchTermLower) != string::npos) {
-            cout << "\nMatch found:\n";
-            cout << "Title: " << current->title << "\n";
-            cout << "Category: " << current->category << "\n";
-            cout << "Date: " << current->publicationYear << "-"
-                 << (current->publicationMonth < 10 ? "0" : "") << current->publicationMonth << "-"
-                 << (current->publicationDay < 10 ? "0" : "") << current->publicationDay << "\n";
-            matchCount++;
-        }
-
-        current = current->next;
-    }
-
-    cout << "\nTotal matches found for Linear Search: " << matchCount << "\n";
-}
-
-
-
-// Binary Search for dates (searches by year)
-// This function creates a temporary sorted linked list using the new date format.
-void LinkedList::binarySearchByYear(string& targetYear) {
-    // Convert targetYear string to integer
-    int targetYr = stoi(targetYear);
-
-    // First, create a sorted temporary linked list of nodes by date
-    Node* sortedHead = nullptr;
-    Node* current = head;
     
-    // Copy nodes and insert them in sorted order based on their date
-    while (current != nullptr) {
-        // Create a new node with all date parts (year, month, day)
-        Node* newNode = new Node(
-            current->title, 
-            current->content, 
-            current->category, 
-            current->publicationYear, 
-            current->publicationMonth, 
-            current->publicationDay
-        );
-        
-        // Insert in sorted order (using dateLess helper)
-        if (sortedHead == nullptr || dateLess(newNode, sortedHead)) {
-            newNode->next = sortedHead;
-            sortedHead = newNode;
-        } else {
-            Node* temp = sortedHead;
-            while (temp->next != nullptr && dateLess(temp->next, newNode)) {
-                temp = temp->next;
+    return dummy.next;
+}
+
+
+//Searching Algorithhms
+
+/*// Templated Linear Search Function (Returns Node Pointer & Position)
+template <typename Comparator, typename T>
+article* dataManagement::linearSearch(const T& target, Comparator comp, int* position) {
+    if (!head) {
+        cerr << "Error: The article list is empty.\n";
+        return nullptr;
+    }
+
+    article* current = head;
+    int pos = 0;
+
+    while (current) {
+        if ((this->*comp)(current, target)) {
+            if (position) *position = pos; // Store found position
+            return current; // Found matching article
+        }
+        current = current->next;
+        pos++;
+    }
+
+    if (position) *position = -1; // Indicate not found
+    return nullptr; // Not found
+}*/
+
+template <typename Comparator, typename T>
+article* LinkedListAlgo::linearSearch(article* head, const T& target, Comparator comp, int* position) {
+    if (!head) {
+        cerr << "Error: The article list is empty.\n";
+        if (position) *position = -1;
+        return nullptr;
+    }
+
+    article* current = head;
+    article* matches = nullptr;  // First match
+    article* lastMatch = nullptr;  // Last match found
+    int pos = 0;
+    bool foundFirst = false;
+
+    while (current) {
+        if ((this->*comp)(current, target)) {
+            if (!foundFirst) {
+                matches = current;
+                if (position) *position = pos;
+                foundFirst = true;
+                lastMatch = current;
+            } else {
+                lastMatch->next = current;
+                lastMatch = current;
             }
-            newNode->next = temp->next;
-            temp->next = newNode;
-        }
-        
-        current = current->next;
-    }
-    
-    // Perform search by year on the sorted list
-    int matchCount = 0;
-    cout << "\n=== Binary Search Results for Year " << targetYear << " ===\n";
-    
-    current = sortedHead;
-    while (current != nullptr) {
-        if (current->publicationYear == targetYr) {
-            cout << "\nMatch found:\n";
-            cout << "Title: " << current->title << "\n";
-            cout << "Category: " << current->category << "\n";
-            cout << "Date: " 
-                 << current->publicationYear << "-"
-                 << (current->publicationMonth < 10 ? "0" : "") << current->publicationMonth << "-"
-                 << (current->publicationDay < 10 ? "0" : "") << current->publicationDay << "\n";
-            matchCount++;
         }
         current = current->next;
+        pos++;
     }
     
-    cout << "\nTotal matches found for Binary Search: " << matchCount << "\n";
-    
-    // Clean up temporary sorted list
-    while (sortedHead != nullptr) {
-        Node* temp = sortedHead;
-        sortedHead = sortedHead->next;
-        delete temp;
+    if (lastMatch) {
+        lastMatch->next = nullptr;  // Terminate the list of matches
     }
->>>>>>> 3b64d3a65cf0da24851784b9a3cd3a20ec39b2d6
+
+    if (!matches) {
+        if (position) *position = -1;
+    }
+
+    return matches;
+}
+
+//  template <typename Comparator, typename T>
+//  article* LinkedListAlgo::recursiveSearch(article* current, const T& target, Comparator comp, int* position, int pos) {
+//     //cout<<"Recursive Search" << pos <<endl;
+//     // Base case: if the current node is null, return nullptr (no match found)
+    
+    
+//     if (!current) {
+//         if (position) {
+//             *position = -1;}
+//             cout << "Reached end of list. No match found." << endl;
+//         return nullptr;    
+//     }
+
+//     cout << "Checking node at position " << pos << " with address " << current <<endl;
+    
+//     // Check if the current node matches the target
+//     if ((this->*comp)(current, target)) {
+//         if (position) *position = pos;
+//         cout << "Match found at position: " << pos << endl;
+//         return current; // Found the first match, return it 
+//     }
+
+//     // Recursive call to the next node
+//     return recursiveSearch(current->next, target, comp, position, pos + 1);
+//  }
+
+template <typename Comparator, typename T>
+article* LinkedListAlgo::recursiveSearch(article* current, const T& target, Comparator comp, int* position, int pos) {
+    const int batchSize = 2;
+    int count = 0;
+    
+    // If we've reached the end of the list during the batch, no match was found.
+    if (!current) {
+        if (position) {
+            *position = -1;
+        }
+        cout << "Reached end of list. No match found." << endl;
+        return nullptr;
+    }
+    
+    // Process up to batchSize nodes iteratively
+    while (current && count < batchSize) {
+        // cout << "Checking node at position " << pos << " with address " << current << endl;
+        if ((this->*comp)(current, target)) {
+            if (position) {
+                *position = pos;
+            }
+            cout << "Match found at position: " << pos << endl;
+            return current;  // Return the first matching node found in this batch
+        }
+        current = current->next;
+        pos++;
+        count++;
+    }
+    
+    // Process the next batch recursively.
+    return recursiveSearch(current, target, comp, position, pos);
+}
+
+
+
+
+
+template <typename Comparator, typename T>
+article* LinkedListAlgo::search(article* head, const T& target, Comparator comp, int* position) {
+    // Start the recursive search from the head of the list
+    return recursiveSearch(head, target, comp, position, 0);
+}
+
+
+// Case-Insensitive String Matching (Manual, No STL)
+bool LinkedListAlgo::caseInsensitiveCompare(const string& str1, const string& str2) {
+    int i = 0;
+    while (str1[i] && str2[i]) {
+        char c1 = (str1[i] >= 'A' && str1[i] <= 'Z') ? str1[i] + 32 : str1[i]; // Convert to lowercase
+        char c2 = (str2[i] >= 'A' && str2[i] <= 'Z') ? str2[i] + 32 : str2[i];
+
+        if (c1 != c2) return false;
+        i++;
+    }
+    return str1[i] == str2[i]; // Ensure full match
+}
+
+// Comparator: Search by Year
+bool LinkedListAlgo::compareByYear(article* a, int targetYear) {
+    return a->year == targetYear;
+}
+// Comparator: Search by Month
+bool LinkedListAlgo::compareByMonth(article* a, int targetMonth) {
+    return a->month == targetMonth;
+}
+
+// Comparator: Search by Category (Case-Insensitive)
+bool LinkedListAlgo::compareByCategory(article* a, const string& target) {
+   return caseInsensitiveCompare(a->category, target);
+}
+
+
+// Comparator: Search for a Matching Word in the Title (Case-Insensitive, No STL)
+bool LinkedListAlgo::compareByTitleKeyword(article* a, const string& keyword) {
+    int titleLen = a->title.length();
+    int keyLen = keyword.length();
+
+    if (keyLen > titleLen) return false;
+
+    for (int i = 0; i <= titleLen - keyLen; i++) {
+        int j = 0;
+        while (j < keyLen) {
+            char c1 = (a->title[i + j] >= 'A' && a->title[i + j] <= 'Z') ? a->title[i + j] + 32 : a->title[i + j];
+            char c2 = (keyword[j] >= 'A' && keyword[j] <= 'Z') ? keyword[j] + 32 : keyword[j];
+
+            if (c1 != c2) break;
+            j++;
+        }
+        if (j == keyLen) return true; // Found keyword in title
+    }
+    return false;
 }

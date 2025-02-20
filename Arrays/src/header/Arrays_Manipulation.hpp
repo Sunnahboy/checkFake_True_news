@@ -35,7 +35,7 @@ class dataManagement
         ifstream& getFakeData();
        void StatisticalSum(string ** articles, string datasetChoice);
        void head(string ** arr, int rows);
-       void displayStruct(int rows);
+       void DisplayArray(string** arr, int totalArticles);
        template <typename SelectedType>
        void ApplySortH(string**& arr,int size, int field, int sortType);
        void ApplySort(string**& arr,int size, int field, int sortType);

@@ -5,7 +5,7 @@
 using namespace std;
 
 //Q2. Calculate Fake News % in 2016
-void calculateFakeNewsPercentage(string** trueNews, int trueSize, string** fakeNews, int fakeSize) {
+void ArraysAlgo::calculateFakeNewsPercentage(string** trueNews, int trueSize, string** fakeNews, int fakeSize) {
     int truePolitical2016 = 0;
     int fakePolitical2016 = 0;
 
@@ -20,7 +20,7 @@ void calculateFakeNewsPercentage(string** trueNews, int trueSize, string** fakeN
     // Loop through fake news stored in 2D array
     for (int i = 0; i < fakeSize; i++) {
         if (stoi(fakeNews[i][3]) > 2016) break;  // Convert year from string to int
-        if (stoi(fakeNews[i][3]) == 2016 && fakeNews[i][2] == "politicsNews") {
+        if (stoi(fakeNews[i][3]) == 2016 && fakeNews[i][2] == "politics") {
             fakePolitical2016++;
         }
     }
@@ -41,7 +41,7 @@ void calculateFakeNewsPercentage(string** trueNews, int trueSize, string** fakeN
 
 
 //Q7 Percentage of Fake News by Month. Formatted
-void displayFakeNewsPercentageByMonth(string** trueNews, int trueSize, string** fakeNews, int fakeSize) {
+void ArraysAlgo::displayFakeNewsPercentageByMonth(string** trueNews, int trueSize, string** fakeNews, int fakeSize) {
     int truePolitical2016[12] = {0};  
     int fakePolitical2016[12] = {0};  
 
@@ -64,7 +64,7 @@ void displayFakeNewsPercentageByMonth(string** trueNews, int trueSize, string** 
     for (int i = 0; i < fakeSize; i++) {
         int year = stoi(fakeNews[i][3]);
         if (year > 2016) break;
-        if (year == 2016 && fakeNews[i][2] == "politicsNews") {
+        if (year == 2016 && fakeNews[i][2] == "politics") {
             int month = stoi(fakeNews[i][4]);
             if (month >= 1 && month <= 12) {
                 fakePolitical2016[month - 1]++;

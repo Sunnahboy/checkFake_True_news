@@ -1,4 +1,4 @@
-#include <iostream>
+/*#include <iostream>
 #include <limits>
 #include "DataManagement.cpp"
 using namespace std;
@@ -21,8 +21,8 @@ class Interface
             cout <<endl;
         }
         void prinTable(int o){
-            Interface interface;
-            string msg=interface.msg(o);
+            Interface AppInterface;
+            string msg=AppInterface.msg(o);
             columns();
             cout <<string(26, ' ') << msg;
             cout <<endl;
@@ -109,3 +109,4 @@ class Interface
             return (value==5 ||value==4||value==3||value==2||value==1);
         }
 };
+*/

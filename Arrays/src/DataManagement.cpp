@@ -1,47 +1,9 @@
-
-#ifdef _WIN32
-#include <windows.h>
-#include <psapi.h>
-long getMemoryUsageKB() {
-    PROCESS_MEMORY_COUNTERS_EX pmc;
-    if (GetProcessMemoryInfo(GetCurrentProcess(),
-        (PROCESS_MEMORY_COUNTERS*)&pmc,
-        sizeof(pmc))) {
-        // WorkingSetSize is in bytes; convert to kilobytes.
-        return static_cast<long>(pmc.WorkingSetSize / 1024);
-    }
-    return -1; // Error indicator.
-}
-#elif defined(__APPLE__)
-#include <sys/resource.h>
-long getMemoryUsageKB() {
-    struct rusage usage;
-    getrusage(RUSAGE_SELF, &usage);
-    // On macOS, ru_maxrss is in bytes; convert to kilobytes.
-    return usage.ru_maxrss / 1024;
-}
-#else
-    // Assume Linux/Unix.
-#include <sys/resource.h>
-long getMemoryUsageKB() {
-    struct rusage usage;
-    getrusage(RUSAGE_SELF, &usage);
-    // On Linux, ru_maxrss is already in kilobytes.
-    return usage.ru_maxrss;
-}
-#endif
-
-
-
 #include <iostream>
 #include <fstream>
-<<<<<<< HEAD
 #include <iomanip>
 #include <sstream>
 #include "header/Arrays_Manipulation.hpp"
-=======
 #include <sstream>
->>>>>>> 3b64d3a65cf0da24851784b9a3cd3a20ec39b2d6
 #include "header/Arrays.hpp"
 #include "header/NewsArticle.hpp"
 #include "header/HashMap.hpp"
@@ -51,8 +13,6 @@ long getMemoryUsageKB() {
 
 
 using namespace std;
-
-<<<<<<< HEAD
 
 dataManagement::dataManagement(){
     capacity=1000;
@@ -75,6 +35,9 @@ void dataManagement::ReadData(ifstream& file){
     int maxGarbage=1000;
     string garbageCollector[maxGarbage];
     int garbageIndex=0;
+    
+    getline(file, Line);  // Skip the first line
+
     while(getline(file, Line)){
 
         if (size == capacity) {
@@ -82,32 +45,11 @@ void dataManagement::ReadData(ifstream& file){
             NewsArticle* temp = new NewsArticle[capacity];
             for (int j = 0; j < size; j++) {
                 temp[j] = article[j];
-=======
-class dataManagement
-{
-    private:
-        ArraysAlgo algo;
-        NewsArticle* article;
-        ifstream TrueData;
-        ifstream FakeData;
-        int currentSize;
-        int capacity;
-
-    public:
-        dataManagement() : currentSize(0), capacity(10) {
-            article = new NewsArticle[capacity];
-            TrueData.open("dataSets/true.csv");
-            FakeData.open("dataSets/fake.csv");
-            if(!TrueData.is_open() || !FakeData.is_open()){
-                cout << "Error in reading the file";
->>>>>>> 3b64d3a65cf0da24851784b9a3cd3a20ec39b2d6
             }
 
             delete[] article;  
             article = temp;  
         }
-
-<<<<<<< HEAD
         //we create the index to parse the elements inside the file
         int index=0;
         //current field is initially set to none
@@ -328,19 +270,45 @@ void dataManagement::head(string ** arr, int rows){
     }
 }
 //a void to view the contents of the struct created
-void dataManagement::displayStruct(int rows){
-    for(int i=1; i<rows; i++){
-        cout << " Row Number: " <<i <<endl;
-        cout << "Title: " <<article[i].title<<endl; 
-        cout << "Text: " <<article[i].content<<endl<<endl; 
-        cout << "Subject: " <<article[i].category<<endl; 
-        cout <<"Year: "<< article[i].publicationYear<<endl; 
-        cout <<"Month: "<< article[i].publicationMonth<<endl; 
-        cout <<"Day: "<< article[i].publicationDay<<endl; 
-        cout << string(166,'=');
-        cout <<endl;
+void dataManagement::DisplayArray(string** arr, int totalArticles) {
+    int rows;
+    cout << "How many articles would you like to display? (Enter -1 for all): ";
+    cin >> rows;
+
+    // Validate input
+    if (cin.fail() || rows < -1) {
+        cin.clear(); // Clear the error flag
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+        cout << "Invalid input. Please enter a valid number." << endl;
+        return; // Exit the function if input is invalid
+    }
+
+    cout << "Displaying articles..." << endl;
+    // If user enters -1 or a number larger than available, display all articles.
+    int count = (rows == -1 || rows > totalArticles) ? totalArticles : rows;
+
+    for (int i = 0; i < count; i++) {
+        cout << "\n--- Article " << i + 1 << " ---\n";
+        cout << "Title: " << arr[i][0] << "\n";
+        // Uncomment below if you want to display content as well:
+        // cout << "Content: " << arr[i][1] << "\n";
+        cout << "Category: " << arr[i][2] << "\n";
+        
+        // Format month and day with a leading zero if needed:
+        string month = arr[i][4];
+        string day   = arr[i][5];
+        if (month.length() == 1) month = "0" + month;
+        if (day.length() == 1)   day = "0" + day;
+        
+        cout << "Date: " << arr[i][3] << "-" << month << "-" << day << "\n";
+    }
+    
+    if (count == 0) {
+        cout << "No articles to display." << endl;
     }
 }
+
+
 void dataManagement::ApplySort(string**& array, int size, int field, int sortType) {
     if (field >= 3) {
         ApplySortH<int>(array, size, field, sortType); 
@@ -368,7 +336,7 @@ void dataManagement::ApplySortH(string**& array, int size, int field, int sortTy
     }
 
     ArraysAlgo algo;
-    
+
 
     // Choose sorting algorithm based on sortType
     switch (sortType) {
@@ -383,6 +351,7 @@ void dataManagement::ApplySortH(string**& array, int size, int field, int sortTy
             break;
         case 4:
             algo.QuickSort(SelectedField, size ,index, 0);
+            break;
         default:
             cout << "Invalid sorting option: " << sortType << endl;
             break;
@@ -397,6 +366,8 @@ void dataManagement::ApplySortH(string**& array, int size, int field, int sortTy
     array = SortToArray(size, index);
     delete[] SelectedField;
     delete[] index;
+
+    
 }
 
 
@@ -454,7 +425,7 @@ void dataManagement::tokenizeWordsHash(string** array) {
     int* temp=new int[hashmap.getCount()];
     algo.QuickSort(freq, hashmap.getCount(), temp, 1);
     cout << "Word Frequency List:\n";
-    for(int i=0; i <500; i++){
+    for(int i=0; i <10; i++){
         cout << freq[i] << " :: " << keys[i] << endl;
     }
 
@@ -525,7 +496,7 @@ void dataManagement::tokenizeWords(string** array) {
     int * temp=new int[Unique];
     algo.QuickSort(wordsFreq, Unique, temp, 1);
     cout << "Word Frequency List:\n";
-    for(int i=0; i <20; i++){
+    for(int i=0; i <10; i++){
         cout << wordsList[i] << " :: " << wordsFreq[i] << endl;
     }
 
@@ -546,331 +517,13 @@ void dataManagement::resizeArray(Any*& arr, int old, int newS){
 
 }
 
-void dataManagement::StatisticalSum(string** articles, string datasetChoice) {
-    NewsArticleProcessor processor;
-    // Create NewsArticleProcessor and process articles
-    processor.processArticles(articles, getsize());
-    int option;
-    cout << "\nSelect analysis type:\n";
-    cout << "1. View articles per year\n";
-    cout << "2. View articles per month\n";
-    cout << "3. View articles per day\n";
-    cout << "4. Exit\n";
-    cout << "Enter your choice: ";
-    while (!(cin >> option)) {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "Invalid choice. Please enter a number between 1 and 4.\n";
-    }
-    int year, month, day;
 
-    switch (option) {
-        case 1:
-            cout << "Enter year: ";
-            cin >> year;
-            while (!processor.isValidYear(year, datasetChoice)) {
-                cout << "Invalid year. Try again.\nEnter year: ";
-                cin >> year;
-            }
-            processor.displayTable("Articles in " + to_string(year), processor.getArticleCount(year));
-            break;
-        
-        case 2:
-            cout << "Enter year: ";
-            cin >> year;
-            while (!processor.isValidYear(year, datasetChoice)) {
-                cout << "Invalid year. Try again.\nEnter year: ";
-                cin >> year;
-            }
-            
-            cout << "Enter month (1-12): ";
-            cin >> month;
-            while (!processor.isValidMonth(month)) {
-                cout << "Invalid month. Try again.\nEnter month (1-12): ";
-                cin >> month;
-=======
-        void resizeArray() {
-            capacity *= 2;
-            NewsArticle* newArticle = new NewsArticle[capacity];
-            for(int i = 0; i < currentSize; i++) {
-                newArticle[i] = article[i];
-            }
-            delete[] article;
-            article = newArticle;
-        }
-
-        // void ReadData(ifstream& file) {
-        //     auto readCSVField = [](istringstream &iss) -> string {
-        //         string field;
-        //         char c;
-        //         if (iss.peek() == '"') {
-        //             iss.get(c);
-        //             while (iss.get(c)) {
-        //                 if (c == '"') {
-        //                     if (iss.peek() == '"') {
-        //                         iss.get(c);
-        //                         field.push_back('"');
-        //                     } else {
-        //                         break;
-        //                     }
-        //                 } else {
-        //                     field.push_back(c);
-        //                 }
-        //             }
-        //             if (iss.peek() == ',')
-        //                 iss.get(c);
-        //         } else {
-        //             getline(iss, field, ',');
-        //         }
-        //         return field;
-        //     };
-        
-        //     // Skip the header row
-        //     string header;
-        //     getline(file, header);
-        //     string line;
-
-        //     while (getline(file, line)) {
-        //         // Trim leading and trailing whitespace
-        //         size_t start = line.find_first_not_of(" \t\r\n");
-        //         if (start == string::npos) { 
-        //             // Line is completely whitespace; skip it
-        //             continue;
-        //         }
-        //         size_t end = line.find_last_not_of(" \t\r\n");
-        //         string trimmedLine = line.substr(start, end - start + 1);
-        
-        //         // Skip if the trimmed line is empty (safety check)
-        //         if (trimmedLine.empty()) {
-        //             continue;
-        //         }
-        
-        //         // If we have too many articles, resize the array
-        //         if (currentSize >= capacity) {
-        //             resizeArray();
-        //         }
-        
-        //         istringstream iss(trimmedLine);
-        
-        //         string title    = readCSVField(iss);
-        //         string content  = readCSVField(iss);
-        //         string category = readCSVField(iss);
-                
-        //         string dateField;
-        //         getline(iss, dateField);
-                
-        //         // Remove any leading comma if present in the date field
-        //         if (!dateField.empty() && dateField[0] == ',') {
-        //             dateField.erase(0, 1);
-        //         }
-
-        //         if (title.empty() || content.empty() || category.empty() || dateField.empty()) {
-        //             // Skip empty or incomplete lines
-        //             continue;
-        //         }
-                
-        //         article[currentSize].title    = title;
-        //         article[currentSize].content  = content;
-        //         article[currentSize].category = category;
-                
-        //         ParseDate(dateField, 
-        //                   article[currentSize].publicationYear, 
-        //                   article[currentSize].publicationMonth, 
-        //                   article[currentSize].publicationDay);
-        //         currentSize++;
-        //     }
-        // }
-        
-
-
-        void ReadData(ifstream& file) {
-            auto readCSVField = [](istringstream &iss) -> string {
-                string field;
-                if (iss.peek() == '"') { 
-                    iss.get(); // Consume the opening quote
-                    getline(iss, field, '"'); // Read until closing quote
-                    iss.get(); // Consume the closing quote
-                    if (iss.peek() == ',') iss.get(); // Consume the comma if present
-                } else {
-                    getline(iss, field, ','); // Read until comma for unquoted fields
-                }
-                return field;
-            };
-        
-            // Skip the header row
-            string header;
-            getline(file, header);
-            string line;
-        
-            while (getline(file, line)) {
-                // Trim leading and trailing whitespace
-                size_t start = line.find_first_not_of(" \t\r\n");
-                if (start == string::npos) continue; // Skip empty or whitespace-only lines
-                size_t end = line.find_last_not_of(" \t\r\n");
-                string trimmedLine = line.substr(start, end - start + 1);
-                
-                if (trimmedLine.empty()) continue; // Double check for empty lines
-                
-                // Resize array if needed
-                if (currentSize >= capacity) resizeArray();
-        
-                istringstream iss(trimmedLine);
-        
-                // Read CSV fields efficiently
-                string title    = readCSVField(iss);
-                string content  = readCSVField(iss);
-                string category = readCSVField(iss);
-                string dateField;
-                getline(iss, dateField); // Read remaining date field
-        
-                // Remove leading comma if present in the date field
-                if (!dateField.empty() && dateField[0] == ',') {
-                    dateField.erase(0, 1);
-                }
-        
-                if (title.empty() || content.empty() || category.empty() || dateField.empty()) continue;
-        
-                // Store parsed data
-                article[currentSize].title    = title;
-                article[currentSize].content  = content;
-                article[currentSize].category = category;
-        
-                // Parse and store date
-                ParseDate(dateField, 
-                          article[currentSize].publicationYear, 
-                          article[currentSize].publicationMonth, 
-                          article[currentSize].publicationDay);
-        
-                currentSize++;
-            }
-        }
-        
-
-        void ParseDate(std::string& Date, int& year, int& month, int& day) {
-            // Remove any extraneous quotation marks from the Date string.
-            string cleanDate;
-            string monthToken, dayToken, yearToken;
-            for (char c : Date) {
-                if (c != '"') {
-                    cleanDate.push_back(c);
-                }
-            }
-            
-            // Check if the date uses dashes, e.g., "19-Feb-18"
-            if (cleanDate.find('-') != std::string::npos) {
-                // Expected format: "dd-MMM-yy"
-                  size_t firstDash = cleanDate.find('-');
-                size_t secondDash = cleanDate.find('-', firstDash + 1);
-                if (firstDash != std::string::npos && secondDash != string::npos) {
-                    dayToken = cleanDate.substr(0, firstDash);
-                    monthToken = cleanDate.substr(firstDash + 1, secondDash - firstDash - 1);
-                    yearToken = cleanDate.substr(secondDash + 1);
-
-                    // cout <<  dayToken  << monthToken <<  yearToken << endl;
-                    
-                    // Convert the tokens to the respective values.
-                    day = StringToInt(dayToken);
-                    month = monthToNumber(monthToken);
-                    year = StringToInt(yearToken);
-                    
-                    // If the year is in two-digit format, assume it's 2000+ (adjust as needed).
-                    if (year < 100) {
-                        year += 2000;
-                    }
-                    return;
-                }
-            }
-            
-            // Otherwise, assume the format is like "January 1 2016" (or "January 1, 2016")
-            istringstream ss(cleanDate);
-            
-            
-            ss >> monthToken >> dayToken >> yearToken;
-            
-            // Remove any trailing comma from the day token (e.g., "1,")
-            if (!dayToken.empty() && dayToken.back() == ',') {
-                dayToken.pop_back();
-            }
-
-           
-            
-            month = monthToNumber(monthToken);
-            day = StringToInt(dayToken);
-            year = StringToInt(yearToken);
-        }
-        
-
-        string** StoreToArray(int size, int* temp) {
-            string** arr = new string*[size];
-            string* data = new string[size * 6];
-        
-            for (int i = 0; i < size; i++) {
-                arr[i] = data + i * 6;
-            }
-            
-            for (int i = 0; i < size; i++) {
-                int index = temp[i];
-                arr[i][0] = article[index].title;
-                arr[i][1] = article[index].content;
-                arr[i][2] = article[index].category;
-                arr[i][3] = to_string(article[index].publicationYear);
-                arr[i][4] = to_string(article[index].publicationMonth);
-                arr[i][5] = to_string(article[index].publicationDay);
->>>>>>> 3b64d3a65cf0da24851784b9a3cd3a20ec39b2d6
-            }
-            
-            processor.displayTable("Articles in " + to_string(year) + " - Month " + to_string(month), processor.getArticleCount(year, month));
-            break;
-        
-        case 3:
-            cout << "Enter year: ";
-            cin >> year;
-            while (!processor.isValidYear(year, datasetChoice)) {
-                cout << "Invalid year. Try again.\nEnter year: ";
-                cin >> year;
-            }
-            
-            cout << "Enter month (1-12): ";
-            cin >> month;
-            while (!processor.isValidMonth(month)) {
-                cout << "Invalid month. Try again.\nEnter month (1-12): ";
-                cin >> month;
-            }
-            
-            cout << "Enter day: ";
-            cin >> day;
-            while (!processor.isValidDay(year, month, day)) {
-                cout << "Invalid day. Try again.\nEnter day: ";
-                cin >> day;
-            }
-            
-            processor.displayTable("Articles in " + to_string(year) + " - Month " + to_string(month) + " - Day " + to_string(day), processor.getArticleCount(year, month, day));
-            break;
-        
-        default:
-            cout << "Invalid option selected.";
-            break;
-    }
-    
-
-<<<<<<< HEAD
-    for (int i = 0; i < size; ++i) {
-        delete[] articles[i];
-    }
-    delete[] articles;
-}
-
-
-/*
-We can add more functions here in this point
-*/
-
-int main() {
-    dataManagement Data;
-    ArraysAlgo algo;
-    Data.ReadData(Data.getTrueData());
-    string** array=Data.StoreToArray(Data.getsize());
-    Data.StatisticalSum(array, "true");
+// int main() {
+//     dataManagement Data;
+//     ArraysAlgo algo;
+//     Data.ReadData(Data.getTrueData());
+//     string** array=Data.StoreToArray(Data.getsize());
+//     Data.StatisticalSum(array, "true");
     // Data.displayStruct(10000);
     // Data.tokenizeWords(array);
     // Data.tokenizeWordsHash(array);
@@ -925,267 +578,10 @@ int main() {
     //     } else if (choice == 2) {
     //         algo.BinarySearch(array, choice2 - 1, field, Data.getsize());
     //     }
-=======
-        int StringToInt(string& str) {
-            int result = 0;
-            for (char c : str) {
-                result = result * 10 + (c - '0');
-            } 
-            return result;
-        }
+//         for (int i = 0; i < Data.getsize(); ++i) {
+//             delete[] array[i];
+//         }
+//         delete[] array;
 
-        // int monthToNumber(string month) {
-        //     if (month == "January") return 1;
-        //     if (month == "February") return 2;
-        //     if (month == "March") return 3;
-        //     if (month == "April") return 4;
-        //     if (month == "May") return 5;
-        //     if (month == "June") return 6;
-        //     if (month == "July") return 7;
-        //     if (month == "August") return 8;
-        //     if (month == "September") return 9;
-        //     if (month == "October") return 10;
-        //     if (month == "November") return 11;
-        //     if (month == "December") return 12;
-        //     return -1;
-        // }
-
-        int monthToNumber(std::string month) {
-            if (month == "January" || month == "Jan") return 1;
-            if (month == "February" || month == "Feb") return 2;
-            if (month == "March" || month == "Mar") return 3;
-            if (month == "April" || month == "Apr") return 4;
-            if (month == "May") return 5;
-            if (month == "June" || month == "Jun") return 6;
-            if (month == "July" || month == "Jul") return 7;
-            if (month == "August" || month == "Aug") return 8;
-            if (month == "September" || month == "Sep") return 9;
-            if (month == "October" || month == "Oct") return 10;
-            if (month == "November" || month == "Nov") return 11;
-            if (month == "December" || month == "Dec") return 12;
-            return -1; // Invalid month
-        }
-        
-
-        ~dataManagement(){
-            delete[] article;
-            if (TrueData.is_open()) {
-                TrueData.close();
-            }
-            if (FakeData.is_open()) {
-                FakeData.close();
-            }
-        }
-
-        ifstream& getTrueData(){
-            return TrueData;
-        }
-
-        ifstream& getFakeData(){
-            return FakeData;
-        }
-
-       void head(string ** arr, int rows){
-            for(int i=1; i<rows; i++){
-                cout << " Row Number: " <<i <<endl;
-                cout << "Title: " <<arr[i][0]<<endl; 
-                cout << "Text: " <<arr[i][1]<<endl<<endl; 
-                cout << "Subject: " <<arr[i][2]<<endl; 
-                cout <<"Year: "<< arr[i][3]<<endl; 
-                cout <<"Month: "<< arr[i][4]<<endl; 
-                cout <<"Day: "<< arr[i][5]<<endl; 
-                cout << string(166,'=');
-                cout <<endl;
-            }
-       }
-
-       void displayStruct(int rows){
-            for(int i=1; i<=rows; i++){ 
-                cout << " Row Number: " <<i <<endl;
-                cout << "Title: " <<article[i].title<<endl; 
-                cout << "Text: " <<article[i].content<<endl<<endl; 
-                cout << "Subject: " <<article[i].category<<endl; 
-                cout << "Date: " << article[i].publicationDay << "-" << article[i].publicationMonth << "-" << article[i].publicationYear << endl;
-                // cout <<"Year: "<< article[i].publicationYear<<endl; 
-                // cout <<"Month: "<< article[i].publicationMonth<<endl; 
-                // cout <<"Day: "<< article[i].publicationDay<<endl; 
-                cout << string(166,'=');
-                cout <<endl;
-            }
-       }
-
-        // void ApplyMergeSort(int size){
-        //     int* newYear= new int[size];
-        //     int* index=new int[size];
-        //     for (int i=0; i<size; i++){
-        //         newYear[i]=article[i].publicationYear;
-        //         index[i]=i;
-        //     }
-        //     algo.MergeSort(newYear, 0, size-1, index);
-            
-        //     string** arr=StoreToArray(size-1, index);
-        //     head(arr, 10);
-        //     delete[] arr[0];
-        //     delete[] arr;
-        // }
-
-        void ApplyMergeSort(int size) {
-            // Create arrays to track original years and indices
-            int* newYear = new int[size];
-            int* index = new int[size];
-            
-            // Populate initial arrays with years and original indices
-            for (int i = 0; i < size; i++) {
-                newYear[i] = article[i].publicationYear;
-                index[i] = i;
-                // if (newYear[i] == 0) {
-                //     cout << "Zero year found at index: " << i << endl;
-                // }
-                // cout << newYear[i] << endl;
-            }
-
-            
-            
-            // Perform merge sort
-            algo.MergeSort(newYear, 0, size - 1, index);
-            
-            // Create a new temporary array to store sorted articles
-            NewsArticle* sortedArticles = new NewsArticle[size];
-            
-            // Remap articles based on sorted indices
-            for (int i = 0; i < 20; i++) {
-                sortedArticles[i] = article[index[i]];
-                // cout << "Index: " << index[i] <<endl;
-            }
-            
-            
-            // Copy sorted articles back to original array
-            for (int i = 0; i < 10; i++) {
-                article[i] = sortedArticles[i];
-            }
-            
-            // Clean up temporary arrays
-            delete[] newYear;
-            delete[] index;
-            delete[] sortedArticles;
-            
-            // Uncomment to display sorted articles
-            // displayStruct(20);
-        }
-        
-        void ApplyInsertionSort(int numArticles) {
-            int* indices = new int[numArticles];
-            for (int i = 0; i < numArticles; i++){
-                indices[i] = i;
-            }
-            string** arr = StoreToArray(numArticles, indices);
-            
-            algo.InsertionSort(arr, numArticles);
-            
-            head(arr, 10);
-            
-            delete[] arr[0];
-            delete[] arr;
-            delete[] indices;
-        }
-
-        void ApplyBubbleSort(int numArticles) {
-            int* indices = new int[numArticles];
-            for (int i = 0; i < numArticles; i++){
-                indices[i] = i;
-            }
-            string** arr = StoreToArray(numArticles, indices);
-
-            algo.BubbleSort();
-            
-            head(arr, 10);
-            
-            delete[] indices;
-        }
-
-        int getCurrentSize() const {
-            return currentSize;
-        }
-
-
-
-
-
-        
-
-    //Nested Performance Profiling Tools
-    struct PerformanceMetrics {
-        double timeSeconds; // Elapsed time (seconds)
-        long memoryKB;      // Memory change (in KB)
-    };
-
-    template<typename Func, typename... Args>
-    PerformanceMetrics measurePerformance(Func func, Args... args) {
-        long memBefore = getMemoryUsageKB();
-        auto start = chrono::high_resolution_clock::now();
-
-        func(args...);
-
-        auto end = chrono::high_resolution_clock::now();
-        long memAfter = getMemoryUsageKB();
-        chrono::duration<double> elapsed = end - start;
-
-        PerformanceMetrics metrics;
-        metrics.timeSeconds = elapsed.count();
-        metrics.memoryKB = memAfter - memBefore;
-        return metrics;
-    }
-
-    template<typename Func, typename... Args>
-    PerformanceMetrics profileAlgorithm(const string& algorithmName,
-                                        const string& theoreticalTime,
-                                        const string& theoreticalSpace,
-                                        Func func, Args... args) {
-        PerformanceMetrics metrics = measurePerformance(func, args...);
-
-        cout << "Algorithm: " << algorithmName << "\n";
-        cout << "  Theoretical Time Complexity: " << theoreticalTime << "\n";
-        cout << "  Theoretical Space Complexity: " << theoreticalSpace << "\n";
-        cout << "  Measured Time: " << metrics.timeSeconds << " seconds\n";
-        cout << "  Measured Memory Change: " << metrics.memoryKB << " KB\n";
-        cout << "--------------------------------------------\n";
-
-        return metrics;
-    }
-};
-
-int main() {
-    dataManagement data;
-    data.ReadData(data.getFakeData());
-    // data.ReadData(data.getTrueData());
-    // data.displayStruct(3);
-
-    const int numAlgorithms = 1;
-
-    // Use the nested type by qualifying with the class name.
-    dataManagement::PerformanceMetrics metricsArray[numAlgorithms];
-
-    // Wrap the sort call in a lambda to defer execution.
-    metricsArray[0] = data.profileAlgorithm(
-        "Process merge sort",
-        "O(n log n)",
-        "O(n)",
-        [&data]() { 
-            data.ApplyMergeSort(data.getCurrentSize());
-        }
-    );
-
-    cout << "\nSummary of Performance Metrics (stored in array):\n";
-    for (int i = 0; i < numAlgorithms; ++i) {
-        cout << "Result " << i << ": Time = " << metricsArray[i].timeSeconds
-                << " sec, Memory Change = " << metricsArray[i].memoryKB << " KB\n";
-    }
->>>>>>> 3b64d3a65cf0da24851784b9a3cd3a20ec39b2d6
-
-        for (int i = 0; i < Data.getsize(); ++i) {
-            delete[] array[i];
-        }
-        delete[] array;
-
-    return 0;   
-}
+//     return 0;   
+// }

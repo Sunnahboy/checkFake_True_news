@@ -1,3 +1,4 @@
+
 #ifndef LinkedList_Manipulation
 #define LinkedList_Manipulation
 #include <iostream>
@@ -33,88 +34,41 @@ class LinkedListAlgo{
         }
     public:
 
-        LinkedListAlgo(std::string name = "DATA") : Data(name) {}
+        LinkedListAlgo(std::string name = "DATA") {}
 
-        void linearSearch(article * head ,int index, string value){
-            article *current= head;
-            bool found=false;
-            while(current != nullptr){
-                string ListValue=getField(current, index);
-                if(ListValue == value){
-                    Data.addArticlefromEnd(current->title, current->content, current->category, current->day, current->month, current->year); 
-                    found=true;
-                }
-                else if(ListValue.find(value)!= string ::npos){
-                    Data.addArticlefromEnd(current->title, current->content, current->category, current->day, current->month, current->year); 
-                    found=true;
-                }
-                current=current -> next;
-            }
-            if(!found) cout << "value: " << value<< " doesn't exist";
-            else{
-                Data.displayArticlesfromFront();
-            }
-        }
-        
-        void BinarySearch(article *head, int index, string value) {
-            if (!head) {
-                cout << "Linked list is empty!" << endl;
-                return;
-            }
-        
-            article *start = head;
-            article *end = nullptr;
-            bool found = false;
-        
-            while (start != end && start != nullptr) {
-                article *mid = getMiddle(start, end);
-                if (!mid) break;
-        
-                string midValue = getField(mid, index);
-        
-                if (midValue == value || midValue.find(value) != string::npos) {
-                    // Store result if found
-                    Data.addArticlefromEnd(mid->title, mid->content, mid->category, mid->day, mid->month, mid->year);
-                    found = true;
-        
-                    // **Check for duplicates in the left direction**
-                    article *leftCheck = start;
-                    while (leftCheck != mid) {
-                        string leftValue = getField(leftCheck, index);
-                        if (leftValue == value || leftValue.find(value) != string::npos) {
-                            Data.addArticlefromEnd(leftCheck->title, leftCheck->content, leftCheck->category, leftCheck->day, leftCheck->month, leftCheck->year);
-                            found = true;
-                        }
-                        leftCheck = leftCheck->next;
-                    }
-                    
-                    // **Check for duplicates in the right direction**
-                    article *rightCheck = mid->next;
-                    while (rightCheck) {
-                        string rightValue = getField(rightCheck, index);
-                        if (rightValue == value || rightValue.find(value) != string::npos) {
-                            Data.addArticlefromEnd(rightCheck->title, rightCheck->content, rightCheck->category, rightCheck->day, rightCheck->month, rightCheck->year);
-                            found = true;
-                        }
-                        rightCheck = rightCheck->next;
-                    }
-        
-                    break;  
-                } 
-                else if (midValue < value) {
-                    start = mid->next;  // **Move right**
-                } 
-                else {
-                    end = mid;  // **Move left**
-                }
-            }
-        
-            if (!found) 
-                cout << "Value: " << value << " doesn't exist" << endl;
-            else 
-                Data.displayArticlesfromFront();
-        }
-        
+        bool compareDates(article* a, article* b);
+
+        bool compareSubject(article* a, article* b);
+
+        template <typename Comparator>
+        article* mergeSortedLists(article* a, article* b, Comparator comp);
+        template <typename Comparator>
+        article* bottomUpMergeSort(article* head, Comparator comp);
+        template <typename Comparator>
+        article* insertionSort(article* head, Comparator comp);
+        template <typename Comparator>
+        article* quickSort(article* head, Comparator comp);
+        template <typename Comparator>
+        article* bubbleSort(article* head, Comparator comp);
+
+
+        template <typename Comparator, typename T>
+        article* linearSearch(article* head, const T& target, Comparator comp, int* position);
+        template <typename Comparator, typename T>
+        article* recursiveSearch(article* current, const T& target, Comparator comp, int* position, int pos);
+        template <typename Comparator, typename T>
+        article* search(article* head, const T& target, Comparator comp, int* position);
+        bool compareByTitleKeyword(article* a, const string& keyword);
+        bool compareByCategory(article* a, const string& target);
+        bool compareByMonth(article* a, int targetMonth);
+        bool compareByYear(article* a, int targetYear);
+        bool caseInsensitiveCompare(const string& str1, const string& str2);
+
+        article* sortArticles(article* head, int choice, int sortType);
+
+        void userSearchAndSwitch(article* head, int SearchChoice);
+
+        void compareAndDisplayPerformance(article* head, int year, article*& result, int FunctionChoice);
         
 
 };

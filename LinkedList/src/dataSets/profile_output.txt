@@ -1,0 +1,13 @@
+Algorithm: linear Search
+  Theoretical Worse Case Time Complexity: O(n)
+  Theoretical Worse Case Space Complexity: O(n)
+  Measured Time: 0.0006243 seconds
+  Measured Memory Change: 16 KB
+--------------------------------------------
+Match found at position: 0
+Algorithm: search
+  Theoretical Worse Case Time Complexity: O(√n)
+  Theoretical Worse Case Space Complexity: O(1)
+  Measured Time: 9.15e-05 seconds
+  Measured Memory Change: 4 KB
+--------------------------------------------

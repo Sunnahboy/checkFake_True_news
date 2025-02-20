@@ -17,6 +17,8 @@ struct article{
     article* next;
 
     // Constructor to initialize node data
+    article(string& Title, string& Content, string& Category, int Day, int Month, int Year)
+        : title(Title), content(Content), category(Category), day(Day), month(Month), year(Year), next(nullptr) {}
     
 };
 
@@ -32,7 +34,7 @@ class dataManagement{
     
     public:
         // Constructor
-        dataManagement(string Name);
+        dataManagement();
         // Destructor to free memory
         ~dataManagement();
 
@@ -51,22 +53,15 @@ class dataManagement{
         ifstream& getTrueData();
         ifstream& getFakeData();
 
-        void runNewsProcessor(article * head, string datasetChoice);
+        // void userSearchAndSwitch(article* head, int SearchChoice);
 
         // Display all articles
-        void displayArticlesfromFront();
+        void DisplayArticles(article* head, int totalArticles);
         // void displayArticlesfromEnd();
         article *gethead();
         void tokenizeWords(article * Node);
-        void tokenizeWordsHash(article * Node);
-        // Search for an article by title
-
-        // Sort articles by publication date
-        void insertionSortByDate();
-        bool compareDates(article* a, article* b);
+        void tokenizeWordsHash(article* Node);
         
-        // void sortArticles();
-
         void calculatePoliticalFakePercentage(article* trueHead, article* fakeHead);
         void analyzeMonthlyFakePoliticalNews(article* fakeHead);
 
