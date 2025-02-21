@@ -38,8 +38,6 @@ public:
         return size;
     }
 
-    
-
     // Sorting algorithms
     template <typename Type>
     void InsertionSort(Type*& arr, int size, int* index);
@@ -48,7 +46,8 @@ public:
     void BinarySearch(string** arr, int index, string field, int size);
     template <typename Type>
     void BubbleSort(Type*& arr, int LEFT, int RIGHT, int*& temp);
-    // void QuickSort();
+
+    
     // // Utility methods
     void LinearSearch(string** arr, int choice, string field, int size);
     template <typename Type>
@@ -56,6 +55,9 @@ public:
 
     void calculateFakeNewsPercentage(string** trueNews, int trueSize, string** fakeNews, int fakeSize);
     void displayFakeNewsPercentageByMonth(string** trueNews, int trueSize, string** fakeNews, int fakeSize);
+    
+    // void compareAndDisplayPerformance(string** articles, int size, int searchSortChoice, string searchVar, int dataChoice, int functionChoice);
+    void compareAndDisplayPerformance(string** arr, int n, int algoType, string searchValue, const int dataChoice, int FunctionChoice);
 };
 
 #endif

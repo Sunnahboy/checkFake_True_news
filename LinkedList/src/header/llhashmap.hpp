@@ -105,6 +105,53 @@ public:
     }
     
     
+    
+    FreqTextWords* partition(FreqTextWords* low, FreqTextWords* high) {
+        int pivot = high->freq; // Use last element as pivot
+        FreqTextWords* i = low; // Pointer for greater elements
+        
+        for (FreqTextWords* j = low; j != high; j = j->next) {
+            if (j->freq >= pivot) { // Sort in descending order
+                swap(i->word, j->word);
+                swap(i->freq, j->freq);
+                i = i->next;
+            }
+        }
+        swap(i->word, high->word);
+        swap(i->freq, high->freq);
+        return i;
+    }
+    
+    void quickSort(FreqTextWords* low, FreqTextWords* high) {
+        if (low != nullptr && high != nullptr && low != high && low != high->next) {
+            FreqTextWords* p = partition(low, high);
+            FreqTextWords* prevNode = low;
+            while (prevNode && prevNode->next != p) {
+                prevNode = prevNode->next;
+            }
+            quickSort(low, prevNode);
+            quickSort(p->next, high); 
+        }
+    }
+    
+    void sortAndPrintTop10(FreqTextWords* head) {
+        if (!head) return;
+        
+        FreqTextWords* tail = head;
+        while (tail->next) tail = tail->next; // Find last node
+        
+        quickSort(head, tail);
+        
+        cout << "\nTop 10 Most Frequent Words:\n";
+        FreqTextWords* temp = head;
+        int count = 0;
+        while (temp && count < 10) {
+            cout << temp->word << " - " << temp->freq << " times\n";
+            temp = temp->next;
+            count++;
+        }
+    }
+    
 };
 
 // Day Node

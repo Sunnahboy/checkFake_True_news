@@ -227,32 +227,54 @@ article* LinkedListAlgo::bubbleSort(article* head, Comparator comp) {
     return dummy.next;
 }
 
-
-//Searching Algorithhms
-
-/*// Templated Linear Search Function (Returns Node Pointer & Position)
-template <typename Comparator, typename T>
-article* dataManagement::linearSearch(const T& target, Comparator comp, int* position) {
-    if (!head) {
-        cerr << "Error: The article list is empty.\n";
-        return nullptr;
+string LinkedListAlgo::getFieldForlinearSearch(article * node, int index){
+    if(!node) return " ";
+    if(index==0) return node -> title;
+    if(index==1) return node -> content;
+    if(index==2) return node -> category;
+    if(index==3) return to_string(node -> year);
+    if(index==4) return to_string(node -> month);
+    if(index==5) return to_string(node -> day);
+    else{
+        return "";
     }
+}
 
-    article* current = head;
-    int pos = 0;
+// void LinkedListAlgo::linearSearch2(article * head ,int index, string value){
+//     article *current= head;
+//     bool found=false;
+//     while(current != nullptr){
+//         string ListValue=getFieldForlinearSearch(current, index);
+//         if(ListValue == value){
+//             Data.addArticlefromEnd(current->title, current->content, current->category, current->day, current->month, current->year); 
+//             found=true;
+//         }
+//         else if(ListValue.find(value)!= string ::npos){
+//             Data.addArticlefromEnd(current->title, current->content, current->category, current->day, current->month, current->year); 
+//             found=true;
+//         }
+//         current=current -> next;
+//     }
+//     if(!found) cout << "value: " << value<< " doesn't exist";
+//     else{
+//         article* temp=head;
+//         int count=0;
+//         while (temp != nullptr) {
+//             cout << "\n--- Article " << count + 1 << " ---\n";
+//             cout << "Title: " << temp->title << "\n";
+//             // cout << "Content: " << temp->content << "\n";
+//             cout << "Category: " << temp->category << "\n";
+//             cout << "Date: " 
+//                  << temp->year << "-" 
+//                  << (temp->month < 10 ? "0" : "") << temp->month << "-" 
+//                  << (temp->day < 10 ? "0" : "") << temp->day << "\n";
+//             temp = temp->next;
+//             count++;
+//         }
+//         cout << "Full count: " << count;
+//     }
+// }
 
-    while (current) {
-        if ((this->*comp)(current, target)) {
-            if (position) *position = pos; // Store found position
-            return current; // Found matching article
-        }
-        current = current->next;
-        pos++;
-    }
-
-    if (position) *position = -1; // Indicate not found
-    return nullptr; // Not found
-}*/
 
 template <typename Comparator, typename T>
 article* LinkedListAlgo::linearSearch(article* head, const T& target, Comparator comp, int* position) {
@@ -269,7 +291,18 @@ article* LinkedListAlgo::linearSearch(article* head, const T& target, Comparator
     bool foundFirst = false;
 
     while (current) {
-        if ((this->*comp)(current, target)) {
+        //if ((this->*comp)(current, target)) {
+        //    if (!foundFirst) {
+        //        matches = current;
+        //        if (position) *position = pos;
+        //        foundFirst = true;
+        //        lastMatch = current;
+        //    } else {
+        //        lastMatch->next = current;
+        //        lastMatch = current;
+        //    }
+        //}
+        if (comp(current, target)) { 
             if (!foundFirst) {
                 matches = current;
                 if (position) *position = pos;
@@ -280,6 +313,7 @@ article* LinkedListAlgo::linearSearch(article* head, const T& target, Comparator
                 lastMatch = current;
             }
         }
+        
         current = current->next;
         pos++;
     }
@@ -321,7 +355,7 @@ article* LinkedListAlgo::linearSearch(article* head, const T& target, Comparator
 //     return recursiveSearch(current->next, target, comp, position, pos + 1);
 //  }
 
-template <typename Comparator, typename T>
+/*template <typename Comparator, typename T>
 article* LinkedListAlgo::recursiveSearch(article* current, const T& target, Comparator comp, int* position, int pos) {
     const int batchSize = 2;
     int count = 0;
@@ -338,13 +372,23 @@ article* LinkedListAlgo::recursiveSearch(article* current, const T& target, Comp
     // Process up to batchSize nodes iteratively
     while (current && count < batchSize) {
         // cout << "Checking node at position " << pos << " with address " << current << endl;
-        if ((this->*comp)(current, target)) {
-            if (position) {
-                *position = pos;
-            }
-            cout << "Match found at position: " << pos << endl;
-            return current;  // Return the first matching node found in this batch
+        // cout <<"Starting to check nodes" << endl;
+       //if ((this->*comp)(current, target)) {
+       //    if (position) {
+       //        *position = pos;
+       //    }
+       //    cout << "Match found at position: " << pos << endl;
+       //    return current;  // Return the first matching node found in this batch
+       //}
+       if (comp(current, target)) {  
+        if (position) {
+            *position = pos;
         }
+        cout << "Match found at position: " << pos << " with year: " << current->year << endl;
+        return current;
+    }
+
+
         current = current->next;
         pos++;
         count++;
@@ -352,9 +396,41 @@ article* LinkedListAlgo::recursiveSearch(article* current, const T& target, Comp
     
     // Process the next batch recursively.
     return recursiveSearch(current, target, comp, position, pos);
+}*/
+
+template <typename Comparator, typename T>
+article* LinkedListAlgo::recursiveSearch(article* current, const T& target, Comparator comp, int* position, int pos) {
+    if (!current) {
+        if (position) *position = -1;
+        return nullptr;
+    }
+
+    article* matchedHead = nullptr;
+    article* matchedTail = nullptr;
+    bool foundFirst = false;
+
+    while (current) {
+        if (comp(current, target)) {
+            article* newNode = new article(*current);  
+            newNode->next = nullptr;
+
+            if (!foundFirst) {
+                matchedHead = newNode;
+                if (position) *position = pos;
+                foundFirst = true;
+            } else {
+                matchedTail->next = newNode;
+            }
+
+            matchedTail = newNode;
+        }
+        
+        current = current->next;
+        pos++;
+    }
+
+    return matchedHead;
 }
-
-
 
 
 
@@ -378,8 +454,10 @@ bool LinkedListAlgo::caseInsensitiveCompare(const string& str1, const string& st
     return str1[i] == str2[i]; // Ensure full match
 }
 
+//SEARCHING comparators
 // Comparator: Search by Year
 bool LinkedListAlgo::compareByYear(article* a, int targetYear) {
+    if (a == nullptr) return false; 
     return a->year == targetYear;
 }
 // Comparator: Search by Month

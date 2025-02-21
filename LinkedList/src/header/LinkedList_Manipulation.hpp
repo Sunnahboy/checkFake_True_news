@@ -58,18 +58,21 @@ class LinkedListAlgo{
         article* recursiveSearch(article* current, const T& target, Comparator comp, int* position, int pos);
         template <typename Comparator, typename T>
         article* search(article* head, const T& target, Comparator comp, int* position);
-        bool compareByTitleKeyword(article* a, const string& keyword);
-        bool compareByCategory(article* a, const string& target);
-        bool compareByMonth(article* a, int targetMonth);
-        bool compareByYear(article* a, int targetYear);
-        bool caseInsensitiveCompare(const string& str1, const string& str2);
+        static bool compareByTitleKeyword(article* a, const string& keyword);
+        static bool compareByCategory(article* a, const string& target);
+        static bool compareByMonth(article* a, int targetMonth);
+        static bool compareByYear(article* a, int targetYear);
+        static bool caseInsensitiveCompare(const string& str1, const string& str2);
 
         article* sortArticles(article* head, int choice, int sortType);
 
         void userSearchAndSwitch(article* head, int SearchChoice);
 
-        void compareAndDisplayPerformance(article* head, int year, article*& result, int FunctionChoice);
+        void compareAndDisplayPerformance(article* head, int SearchChoice, string SearchVar, article*& result, int FunctionChoice);
         
+        //New
+        void linearSearch2(article * head ,int index, string value);
+        string getFieldForlinearSearch(article * node, int index);
 
 };
 #endif

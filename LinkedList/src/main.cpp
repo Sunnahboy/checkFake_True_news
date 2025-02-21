@@ -14,6 +14,7 @@
 #include "../../header/PerformanceProfiler.hpp"
 
 using namespace std;
+article* result = nullptr;
 
 class AppInterface
 {   
@@ -32,10 +33,7 @@ class AppInterface
             Fake.ReadData(Fake.getFakeData());
 
             trueSize = True.getsize();
-            cout << "True Size: " << trueSize << endl;
             fakeSize = Fake.getsize();
-            cout << "Fake Size: " << fakeSize << endl;
-
         }
 
         void clearScreen() {
@@ -134,7 +132,8 @@ class AppInterface
                                     Fake.tokenizeWordsHash(Fake.gethead());
                                 });
                             });
-                            // Fake.tokenizeWordsHash(Fake.gethead());
+                            
+                            algo.compareAndDisplayPerformance(Fake.gethead(), 0, "0", result, 1);
                             pauseProgram();  
                             break;
 
@@ -144,6 +143,8 @@ class AppInterface
                                     Fake.tokenizeWords(Fake.gethead());
                                 });
                             });
+                            
+                            algo.compareAndDisplayPerformance(Fake.gethead(), 0, "0", result, 1);
                             // Fake.tokenizeWords(Fake.gethead());
                             pauseProgram();  
                             break;
@@ -169,6 +170,7 @@ class AppInterface
 
         void SortData(){
             int choice, sortType;
+            // article* result = nullptr;
             clearScreen();
             prinTable(1);
             cout << " Select Sorting Algorithm" << endl;
@@ -225,9 +227,9 @@ class AppInterface
                                 algo.sortArticles(Fake.gethead(), 2, sortType);
                             });
                         });
-                        
-                        cout << "After sort" << endl;
                     }
+                    algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
+                    
                     pauseProgram();  
                     break;
                 case 2: 
@@ -245,6 +247,8 @@ class AppInterface
                             });
                         });
                     }
+                    algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
+                    // compareAndDisplayPerformance(head, year, result, 2);
                     pauseProgram();  
                     break;
                 case 3: 
@@ -262,7 +266,8 @@ class AppInterface
                             });
                         });
                     }
-                   
+                    algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
+                    // compareAndDisplayPerformance(head, year, result, 2);
                     pauseProgram();  
                     break;
                 case 4: 
@@ -280,6 +285,8 @@ class AppInterface
                             });
                         });
                     }
+                    algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
+                    // compareAndDisplayPerformance(head, year, result, 2);
                     pauseProgram();  
                     break;
                 case 5: 
@@ -326,8 +333,27 @@ class AppInterface
                 case 1: 
                     if (field == 1) {
                         algo.userSearchAndSwitch(True.gethead(), choice);
+                        
                     } else {
                         algo.userSearchAndSwitch(Fake.gethead(), choice);
+                        // cout << "Chose a field to search for"<<endl;
+                        // cout << "1. Title "<<endl; 
+                        // cout << "2. Text "<<endl;
+                        // cout << "3. Subject "<<endl;
+                        // cout << "4. Year "<<endl;
+                        // cout << "5. Month "<<endl;
+                        // cout << "6. Day "<<endl;
+                        // cout << "Please Enter your choice.... ";
+                        // while(!(cin>>choice)){
+                        //     cin.clear();
+                        //     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        //     cout << "Invalid.. Please Enter your choice again.... ";
+                        // }
+                        // cin.ignore();
+                        // string field;
+                        // cout << "Enter the keyword or value to search for: ";
+                        // getline(cin, field);          
+                        // algo.linearSearch2(Fake.gethead(), choice-1, field);
                     }
                     pauseProgram(); 
                     break;
@@ -347,104 +373,6 @@ class AppInterface
                     break;
             }
         }
-        
-        //     int datasetChoice = chooseDataset();  // Ask user to choose True or Fake dataset
-        //     article* head = nullptr;
-        //     if (datasetChoice == 1) {
-        //         head = True.gethead();  // Assuming True is an object with gethead()
-        //     } else if (datasetChoice == 2) {
-        //         head = Fake.gethead();  // Assuming Fake is an object with gethead()
-        //     } else {
-        //         cout << "Invalid dataset choice!" << endl;
-        //         return;
-        //     }        
-        //     int searchChoice = chooseSearch();
-        //     int* positions = nullptr;
-        //     int foundCount = 0;
-        //     int foundPos = -1; // For recursive search
-        //     int* foundPosPointer = &foundPos;       
-        //     if (choice == 1) {  // **Linear Search**
-        //         if (searchChoice == 1) {
-        //             string keyword;
-        //             cout << "Enter keyword to search in title: ";
-        //             cin.ignore();
-        //             getline(cin, keyword);
-        //             article* foundCount = algo.linearSearch(head, keyword, algo.compareByTitleKeyword, positions);                    
-        //         }
-        //         else if (searchChoice == 2) {
-        //             string targetCategory;
-        //             cout << "Enter category to search: ";
-        //             cin.ignore();
-        //             getline(cin, targetCategory);
-        //             article* foundCount = algo.linearSearch(head, targetCategory, algo.compareByCategory, positions);
-        //         } 
-        //         // else if (searchChoice == 3) {
-        //         //     int targetMonth;
-        //         //     cout << "Enter month to search (1-12): ";
-        //         //     cin >> targetMonth;
-        //         //     article* foundCount = algo.linearSearch(head, targetMonth, algo.compareByMonth, positions);
-        //         // } 
-        //         else if (searchChoice == 3) {
-        //             int targetYear;
-        //             cout << "Enter year to search: ";
-        //             cin >> targetYear;
-        //             article* foundCount = algo.linearSearch(head, targetYear, algo.compareByYear, positions);
-        //         } 
-        //         else {
-        //             cout << "Invalid search choice!" << endl;
-        //             return;
-        //         }        
-        //         if (foundCount > 0) {
-        //             cout << "Found " << foundCount << " matches at positions: ";
-        //             for (int i = 0; i < foundCount; i++) {
-        //                 cout << positions[i] << " ";
-        //             }
-        //             cout << endl;
-        //         } else {
-        //             cout << "No matches found." << endl;
-        //         }        
-        //         delete[] positions; // Clean up memory       
-        //     } else if (choice == 2) {  // **Recursive Search**              
-        //         if (searchChoice == 1) {
-        //             string keyword;
-        //             cout << "Enter keyword to search in title: ";
-        //             cin.ignore();
-        //             getline(cin, keyword);
-        //             algo.search(head, keyword, algo.compareByTitleKeyword, foundPosPointer);
-        //         } 
-        //         else if (searchChoice == 2) {
-        //             string targetCategory;
-        //             cout << "Enter category to search: ";
-        //             cin.ignore();
-        //             getline(cin, targetCategory);
-        //             algo.search(head, targetCategory, algo.compareByCategory, foundPosPointer);
-        //         } 
-        //         // else if (searchChoice == 3) {
-        //         //     int targetMonth;
-        //         //     cout << "Enter month to search (1-12): ";
-        //         //     cin >> targetMonth;
-        //         //     algo.search(head, targetMonth, algo.compareByMonth, foundPosPointer);
-        //         // } 
-        //         else if (searchChoice == 3) {
-        //             int targetYear;
-        //             cout << "Enter year to search: ";
-        //             cin >> targetYear;
-        //             algo.search(head, targetYear, algo.compareByYear, foundPosPointer);
-        //         } 
-        //         else {
-        //             cout << "Invalid search choice!" << endl;
-        //             return;
-        //         }       
-        //         if (foundPos != -1) {
-        //             cout << "Match found at position: " << foundPos << endl;
-        //         } else {
-        //             cout << "No matches found." << endl;
-        //         }
-        //     }       
-        //     cout << "Press any key to continue" << endl;
-        //     pauseProgram(); 
-        // }
-
 };
 
 
@@ -457,7 +385,7 @@ int main(){
     bool running = true;
 
     while(running) {
-        // appInterface.clearScreen();
+        appInterface.clearScreen();
         appInterface.prinTable(3);
         cout << "1. Sort Data" << endl;
         cout << "2. Search Data" << endl;

@@ -32,6 +32,7 @@ class MasterList{
 private:
     WordNode* head;
     WordNode* tail;
+    LinkedListAlgo algo;
 
 public:
     MasterList() {
@@ -42,7 +43,7 @@ public:
     // Insert a new word or update frequency
     void insertOrUpdate(string word) {
         WordNode* temp = head;
-
+        
         // Check if word already exists in the main list
         while (temp) {
             if (temp->word == word) {
@@ -65,17 +66,49 @@ public:
             tail = newNode;
         }
     }
-    // Display words and their frequencies
-    void displayWords() {
+    
+    void displayTopWords() {
+        if (!head) {
+            return;
+        }
+    
+        cout << "Most frequently used words in government-related fake news:\n";
+    
         WordNode* temp = head;
-        cout << "Words and their Frequencies:";
-        int i=0;
-        while (temp) {
-            cout << temp->word << " - " << temp->freqPtr->count << " times\n";
-            temp = temp->nextWord;
-            i++;
-            if(i==20)break;
+        WordNode* mostFrequent = nullptr;
+    
+        int countDisplayed = 0;
+        const int minWordsToShow = 10; // Ensure at least 10 words are displayed
+    
+        while (countDisplayed < minWordsToShow) {
+            temp = head;
+            mostFrequent = nullptr;
+    
+            // Find the word with the highest frequency
+            while (temp) {
+                if (!mostFrequent || temp->freqPtr->count > mostFrequent->freqPtr->count) {
+                    mostFrequent = temp;
+                }
+                temp = temp->nextWord;
+                // cout << "Found highest Freq word." << endl;
+            }
+    
+            // If no more words are found, break
+            if (!mostFrequent) break;
+    
+            // Display the most frequent word
+            cout << mostFrequent->word << " - " << mostFrequent->freqPtr->count << " times\n";
+    
+            countDisplayed++;
+    
+            // Mark this word as "used" by setting its frequency to -1 (so it's not picked again)
+            mostFrequent->freqPtr->count = -1;
         }
     }
+    
+    
+    
+    
+    
 };
 #endif

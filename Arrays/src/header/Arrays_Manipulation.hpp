@@ -30,6 +30,7 @@ class dataManagement
         int monthToNumber(string month);
         int getsize();
         void setsize(ifstream& file);
+        void DeleteArray(string**& arr, int size);
         ~dataManagement();
         ifstream& getTrueData();
         ifstream& getFakeData();

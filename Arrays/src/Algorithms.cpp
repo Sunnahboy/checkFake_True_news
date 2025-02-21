@@ -168,6 +168,7 @@ void QuickSortRecursion(Type*& arr, int*& temp, int left, int right, int order) 
         int pivotIndex = Partition(arr, temp, left, right, order);
         QuickSortRecursion(arr, temp, left, pivotIndex - 1, order);
         QuickSortRecursion(arr, temp, pivotIndex + 1, right, order);
+        
     }
 }
 
@@ -175,7 +176,6 @@ void QuickSortRecursion(Type*& arr, int*& temp, int left, int right, int order) 
 template <typename Type>
 void ArraysAlgo::QuickSort(Type*& arr, int length, int*& temp, int order) {
     if (length <= 1) return; // No need to sort if array has 0 or 1 element
-
     QuickSortRecursion(arr, temp, 0, length - 1, order); // Call recursive QuickSort
 }
 

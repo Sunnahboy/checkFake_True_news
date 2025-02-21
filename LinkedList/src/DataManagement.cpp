@@ -250,7 +250,7 @@ ifstream& dataManagement::getFakeData(){
     return FakeData;
 }
 
-void dataManagement::DisplayArticles(article* head, int totalArticles) {
+void dataManagement::DisplayArticles(article* head) {
     int rows;
     cout << "How many articles would you like to display? (Enter -1 for all): ";
 
@@ -283,138 +283,18 @@ void dataManagement::DisplayArticles(article* head, int totalArticles) {
 }
 
 
-
-/*void LinkedListAlgo::userSearchAndSwitch(article* head, int SearchChoice) {
-    int choice, year, month;
-    string input;
-    article* result = nullptr;
-
-    cout << "Choose search option:\n";
-    cout << "1. Search by Year\n";
-    cout << "2. Search by Month\n";
-    cout << "3. Search by Title (Matching Word)\n";
-    cout << "4. Search by Category\n";
-    cout << "5. Exit\n";
-    cout << "Enter choice: ";
-    while(!(cin >> choice)|| !ValidInput(choice, 2, 1)){
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(),'\n');
-        cout << "Invalid Input... Enter Your choice Again: ";
-    }
-
-    if (SearchChoice == 1) {
-        switch (choice) {
-            case 1:
-                cout << "Enter year: ";
-                cin >> year;
-                cin.ignore(); // Clear input buffer
-                // result = linearSearch(head, year, compareByYear, nullptr);  // Don't need &pos anymore
-                //profileAlgorithm("linear Search", "O(n)", "O(n)", [&]() {
-                   // result = linearSearch(head, year, compareByYear, nullptr);
-                //}); 
-                 {   // redirect profiling output to a file so terminal doesn't flood
-                    streambuf* origBuf = cout.rdbuf();
-                    ofstream profileFile("dataSets/profile_output.txt");
-                    if (!profileFile) {
-                        cerr << "Error openin profile file.\n";
-                    } else {
-                        cout.rdbuf(profileFile.rdbuf());
-                        profileAlgorithm("linear Search", "O(n)", "O(n)", [&]() {
-                            result = linearSearch(head, year, compareByYear, nullptr);
-                        });
-                        // restore cout so next output goes to terminal
-                        cout.rdbuf(origBuf);
-                        profileFile.close();
-                    }
-                }                  
-                
-                break;
-            case 2:
-                cout << "Enter month: ";
-                cin >> month;
-                result = linearSearch(head, month, compareByMonth, nullptr);
-                break;
-            case 3:
-                cout << "Enter keyword in title: ";
-                getline(cin, input);
-                result = linearSearch(head, input, compareByTitleKeyword, nullptr);
-                break;
-            case 4:
-                cout << "Enter category: ";
-                getline(cin, input);
-                result = linearSearch(head, input, compareByCategory, nullptr);
-                break;
-            case 5:
-                cout << "Exiting the program.\n";
-                return;
-            default:
-                cout << "Invalid choice! Please try again.\n";
-                userSearchAndSwitch(head, SearchChoice);
-                return;
-        }
-    }
-    else {
-        switch (choice) {
-            case 1:
-                cout << "Enter year: ";
-                cin >> year;
-                cin.ignore(); // Clear input buffer
-                result = search(head, year, compareByYear, nullptr);  // Don't need &pos anymore
-                break;
-            case 2:
-                cout << "Enter month: ";
-                cin >> month;
-                result = search(head, month, compareByMonth, nullptr);
-                break;
-            case 3:
-                cout << "Enter keyword in title: ";
-                getline(cin, input);
-                result = search(head, input, compareByTitleKeyword, nullptr);
-                break;
-            case 4:
-                cout << "Enter category: ";
-                getline(cin, input);
-                result = search(head, input, compareByCategory, nullptr);
-                break;
-            case 5:
-                cout << "Exiting the program.\n";
-                return;
-            default:
-                cout << "Invalid choice! Please try again.\n";
-                userSearchAndSwitch(head, SearchChoice);
-                return;
-        }
-    }
-
-    if (result) {
-        // Count and display all matches
-        int matchCount = 0;
-        article* current = result;
-        
-        cout << "\nFound matching articles:\n";
-        cout << "------------------------\n";
-        
-        while (current) {
-            matchCount++;
-            cout << "\nMatch #" << matchCount << ":\n";
-            cout << "Title: " << current->title << "\n";
-            cout << "Category: " << current->category << "\n";
-            cout << "Date: " << current->day << "/" << current->month << "/" << current->year << "\n";
-            current = current->next;
-        }
-        
-        cout << "\nTotal matches found: " << matchCount << "\n";
-    } else {
-        cout << "No matching articles found.\n";
-    }
- }*/
-
  
 
+string IntToString(int num) {
+    return to_string(num);
+}
+
+int StringToInt(string num) {
+    return stoi(num);
+}
 
 
-
- // Helper function to redirect cout to a file while executing a given function
+// Helper function to redirect cout to a file while executing a given function
 void runWithRedirectedOutput(const string& filePath, const function<void()>& func) {
     // Save original cout buffer
     streambuf* origBuf = cout.rdbuf();
@@ -438,7 +318,9 @@ void runWithRedirectedOutput(const string& filePath, const function<void()>& fun
 }
 
 // display performance info and optionally compare with another function
-void LinkedListAlgo::compareAndDisplayPerformance(article* head, int year, article*& result, int FunctionChoice) {
+void LinkedListAlgo::compareAndDisplayPerformance(article* head, int SearchSortChoice, string SearchVar, article*& result, int FunctionChoice) {
+    dataManagement data;
+    int compareOption;
     ifstream profileIn("dataSets/profile_output.txt");
     if (profileIn.is_open()) {
         cout << "\nCurrent Performance Info:\n";
@@ -450,236 +332,289 @@ void LinkedListAlgo::compareAndDisplayPerformance(article* head, int year, artic
     } else {
         cout << "\nNo performance info available.\n";
     }
-
-    //compare performance with another function
-    int compareOption;
-    cout << "\nDo you want to compare performance with another algorithm ?\n";
-    cout << "1. Yes\n2. No\nEnter your choice: ";
-    cin >> compareOption;
-    cin.ignore();
-
-    switch(FunctionChoice) {
-        case 1: // FAQ Tokenization comparison
-            if (compareOption == 1) {
-                int funcOption;
-                cout << "\nSelect a algorithm to compare performance:\n";
-                cout << "1. Hashmap Tokenization\n";
-                cout << "2. Linear Search Tokenization\n";
-                cout << "Enter your choice: ";
-                cin >> funcOption;
-                cin.ignore();
-
-                // Append new performance info to the same profile file
-                streambuf* origBuf = cout.rdbuf();
-                ofstream profileAppend("dataSets/profile_output.txt", ios::app);
-                if (!profileAppend) {
-                    cerr << "Error opening profile file for appending.\n";
+    
+    do {
+        //compare performance with another function
+        
+        cout << "\nDo you want to compare performance with another algorithm ?\n";
+        cout << "1. Yes\n2. No\nEnter your choice: ";
+        // cin >> compareOption;
+        while(!(cin >> compareOption)|| (compareOption != 1 && compareOption != 2)){
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(),'\n');
+            cout << "Invalid Input... Please enter a number between 1 and 2: ";
+        }
+    
+        switch(FunctionChoice) {
+            case 1: // FAQ Tokenization comparison
+                if (compareOption == 1) {
+                    int funcOption;
+                    cout << "\nSelect a algorithm to compare performance:\n";
+                    cout << "1. Hashmap Tokenization\n";
+                    cout << "2. Linear Search Tokenization\n";
+                    cout << "Enter your choice: ";
+                    cin >> funcOption;
+                    cin.ignore();
+    
+                    // Append new performance info to the same profile file
+                    streambuf* origBuf = cout.rdbuf();
+                    ofstream profileAppend("dataSets/profile_output.txt", ios::app);
+                    if (!profileAppend) {
+                        cerr << "Error opening profile file for appending.\n";
+                    } else {
+                        cout.rdbuf(profileAppend.rdbuf());
+                        switch (funcOption) {
+                            case 1:
+                                profileAlgorithm("Hashmap Tokenization", "O(n)", "O(1)", [&]() {
+                                    data.tokenizeWordsHash(head);
+                                });
+                                break;
+                            case 2:
+                                profileAlgorithm("Linear Search Tokenization", "O(n)", "O(1)", [&]() {
+                                    data.tokenizeWords(head);
+                                });
+                                break;
+                            default:
+                                cout << "Invalid function choice.\n";
+                        }
+                        cout.rdbuf(origBuf);
+                        profileAppend.close();
+                    }
+    
+                    // Display the updated performance info
+                    ifstream updatedProfile("dataSets/profile_output.txt");
+                    if (updatedProfile.is_open()) {
+                        cout << "\nUpdated Performance Info (Comparison):\n";
+                        string line;
+                        while (getline(updatedProfile, line)) {
+                            cout << line << "\n";
+                        }
+                        updatedProfile.close();
+                    }
                 } else {
-                    cout.rdbuf(profileAppend.rdbuf());
-                    switch (funcOption) {
-                        case 1:
-                            profileAlgorithm("Hashmap Tokenization", "O(n)", "O(1)", [&]() {
-                                tokenizeWordsHash(head);
-                            });
-                            break;
-                        case 2:
-                            profileAlgorithm("Linear Search Tokenization", "O(n)", "O(1)", [&]() {
-                                tokenizeWords(head);
-                            });
-                            break;
-                        default:
-                            cout << "Invalid function choice.\n";
+                    // If no comparison, clear the profile file
+                    ofstream clearFile("dataSets/profile_output.txt", ios::trunc);
+                    if (clearFile.is_open()) {
+                        clearFile.close();
+                        cout << "\nProfile performance file cleared.\n";
                     }
-                    cout.rdbuf(origBuf);
-                    profileAppend.close();
                 }
-
-                // Display the updated performance info
-                ifstream updatedProfile("dataSets/profile_output.txt");
-                if (updatedProfile.is_open()) {
-                    cout << "\nUpdated Performance Info (Comparison):\n";
-                    string line;
-                    while (getline(updatedProfile, line)) {
-                        cout << line << "\n";
-                    }
-                    updatedProfile.close();
-                }
-            } else {
-                // If no comparison, clear the profile file
-                ofstream clearFile("dataSets/profile_output.txt", ios::trunc);
-                if (clearFile.is_open()) {
-                    clearFile.close();
-                    cout << "\nProfile performance file cleared.\n";
-                }
-            }
-            
-        case 2: // Sorting comparison
-            if (compareOption == 1) {
+                
+                break;
+                
+            case 2: // Sorting comparison
                 int funcOption, dataChoice;
-                cout << "\nSelect a algorithm to compare performance:\n";
-                cout << "1. Insertion Sort" << endl;
-                cout << "2. Bubble Sort" << endl;
-                cout << "3. Quick Sort" << endl;
-                cout << "4. Merge Sort" << endl;
-                cout << "Enter your choice: ";
-                cin >> funcOption;
-                cin.ignore();
-                
-                cout << "Select data set to sort:\n";
-                cout << "1. True\n";
-                cout << "2. Fake\n";
-                cout << "Enter your choice: ";
-                cin >> dataChoice;
-                cin.ignore();
-                
-
-                // Append new performance info to the same profile file
-                streambuf* origBuf = cout.rdbuf();
-                ofstream profileAppend("dataSets/profile_output.txt", ios::app);
-                if (!profileAppend) {
-                    cerr << "Error opening profile file for appending.\n";
-                } else {
-                    cout.rdbuf(profileAppend.rdbuf());
-                    switch (funcOption) {
-                        
-                        case 1:
-                            if(dataChoice == 1){
-                                profileAlgorithm("Insertion Sort for True: ", "O(n^2)", "O(n)", [&]() {
-                                    algo.sortArticles(True.gethead(), 2, sortType);
-                                });
-                                
-                           }else{
-                                profileAlgorithm("insertion Sort for Fake: ", "O(n^2)",  "O(n)", [&]() {
-                                    algo.sortArticles(Fake.gethead(), 2, sortType);
-                                });
-                            }
-                           
+                dataChoice = StringToInt(SearchVar);
+                if (compareOption == 1) {
+                    
+                    cout << "\nSelect a algorithm to compare performance:\n";
+                    cout << "1. Insertion Sort" << endl;
+                    cout << "2. Bubble Sort" << endl;
+                    cout << "3. Quick Sort" << endl;
+                    cout << "4. Merge Sort" << endl;
+                    cout << "Enter your choice: ";
+                    cin >> funcOption;
+                    cin.ignore();
+                    
+                    // cout << "Select data set to sort:\n";
+                    // cout << "1. True\n";
+                    // cout << "2. Fake\n";
+                    // cout << "Enter your choice: ";
+                    // cin >> dataChoice;
+                    // cin.ignore();
+                    
+    
+                    // Append new performance info to the same profile file
+                    streambuf* origBuf = cout.rdbuf();
+                    ofstream profileAppend("dataSets/profile_output.txt", ios::app);
+                    if (!profileAppend) {
+                        cerr << "Error opening profile file for appending.\n";
+                    } else {
+                        cout.rdbuf(profileAppend.rdbuf());
+                        switch (funcOption) {
                             
-                            break;
-                        case 2:
-                            if(dataChoice == 1){
-                                profileAlgorithm("Bubble Sort for Fake: ", "O(n^2)", "O(n)", [&]() {
-                                algo.sortArticles(True.gethead(), 2, sortType);
-                            });
-                            }else{
-                                profileAlgorithm("Bubble Sort for True: ", "O(n^2)", "O(n)", [&]() {
-                                    algo.sortArticles(Fake.gethead(), 2, sortType);
-                                });
-
-                            }
-                            break;
-                        case 3:
-                            if(dataChoice == 1) {
-                                profileAlgorithm("Quick Sort for True: ", "O(n^2)", "O(n)", [&]() {
-                                    algo.sortArticles(True.gethead(), 2, sortType);
-                                });
-                            } else {
-                                profileAlgorithm("Quick Sort for Fake: ", "O(n^2)", "O(n)", [&]() {
-                                    algo.sortArticles(Fake.gethead(), 2, sortType);
-                                });
-                            }
-                        
-                            break;
-                        case 4:
-                            if (dataChoice == 1) {
-                                profileAlgorithm("Bottom Up Merge Sort for True: ", "O(n log n)", "O(1)", [&]() {
-                                    algo.sortArticles(True.gethead(), 4, sortType);
-                                });
-                            } 
-                            else {
-                                profileAlgorithm("Bottom Up Merge Sort for Fake: ", "O(n log n)", "O(1)", [&]() {
-                                    algo.sortArticles(Fake.gethead(), 4, sortType);
-                                });
-                            }
-                        
-                            break;
-                        default:
-                            cout << "Invalid function choice.\n";
+                            case 1:
+                                if(dataChoice == 1){
+                                    profileAlgorithm("Insertion Sort for True: ", "O(n^2)", "O(n)", [&]() {
+                                        sortArticles(head, 2, SearchSortChoice);
+                                    });              
+                               }
+                               else{
+                                    profileAlgorithm("insertion Sort for Fake: ", "O(n^2)",  "O(n)", [&]() {
+                                        sortArticles(head, 2, SearchSortChoice);
+                                    });
+                                }
+                               
+                                
+                                break;
+                            case 2:
+                                if(dataChoice == 1){
+                                    profileAlgorithm("Bubble Sort for Fake: ", "O(n^2)", "O(n)", [&]() {
+                                        sortArticles(head, 2, SearchSortChoice);
+                                    });
+                                }else{
+                                    profileAlgorithm("Bubble Sort for True: ", "O(n^2)", "O(n)", [&]() {
+                                        sortArticles(head, 2, SearchSortChoice);
+                                    });
+    
+                                }
+                                break;
+                            case 3:
+                                if(dataChoice == 1) {
+                                    profileAlgorithm("Quick Sort for True: ", "O(n^2)", "O(n)", [&]() {
+                                        sortArticles(head, 2, SearchSortChoice);
+                                    });
+                                } else {
+                                    profileAlgorithm("Quick Sort for Fake: ", "O(n^2)", "O(n)", [&]() {
+                                        sortArticles(head, 2, SearchSortChoice);
+                                    });
+                                }
+                            
+                                break;
+                            case 4:
+                                if (dataChoice == 1) {
+                                    profileAlgorithm("Bottom Up Merge Sort for True: ", "O(n log n)", "O(1)", [&]() {
+                                        sortArticles(head, 4, SearchSortChoice);
+                                    });
+                                } 
+                                else {
+                                    profileAlgorithm("Bottom Up Merge Sort for Fake: ", "O(n log n)", "O(1)", [&]() {
+                                        sortArticles(head, 4, SearchSortChoice);
+                                    });
+                                }
+                            
+                                break;
+                            default:
+                                cout << "Invalid function choice.\n";
+                        }
+                        cout.rdbuf(origBuf);
+                        profileAppend.close();
                     }
-                    cout.rdbuf(origBuf);
-                    profileAppend.close();
-                }
-
-                // Display the updated performance info
-                ifstream updatedProfile("dataSets/profile_output.txt");
-                if (updatedProfile.is_open()) {
-                    cout << "\nUpdated Performance Info (Comparison):\n";
-                    string line;
-                    while (getline(updatedProfile, line)) {
-                        cout << line << "\n";
+    
+                    // Display the updated performance info
+                    ifstream updatedProfile("dataSets/profile_output.txt");
+                    if (updatedProfile.is_open()) {
+                        cout << "\nUpdated Performance Info (Comparison):\n";
+                        string line;
+                        while (getline(updatedProfile, line)) {
+                            cout << line << "\n";
+                        }
+                        updatedProfile.close();
                     }
-                    updatedProfile.close();
-                }
-            } else {
-                // If no comparison, clear the profile file
-                ofstream clearFile("dataSets/profile_output.txt", ios::trunc);
-                if (clearFile.is_open()) {
-                    clearFile.close();
-                    cout << "\nProfile performance file cleared.\n";
-                }
-            }
-
-        case 3: // Searching comparison
-            if (compareOption == 1) {
-                int funcOption;
-                cout << "\nSelect a algorithm to compare performance:\n";
-                cout << "1. Linear search\n";
-                cout << "2. Recursive search\n";
-                cout << "Enter your choice: ";
-                cin >> funcOption;
-                cin.ignore();
-
-                // Append new performance info to the same profile file
-                streambuf* origBuf = cout.rdbuf();
-                ofstream profileAppend("dataSets/profile_output.txt", ios::app);
-                if (!profileAppend) {
-                    cerr << "Error opening profile file for appending.\n";
                 } else {
-                    cout.rdbuf(profileAppend.rdbuf());
-                    switch (funcOption) {
-                        
-                        case 1:
-                            profileAlgorithm("search", "O(n)", "O(1)", [&]() {
-                                result = linearSearch(head, year, compareByYear, nullptr);
-                            });
-                            break;
-                        case 2:
-                            profileAlgorithm("recursive search", "O(n)", "O(log n)", [&]() {
-                                result = search(head, year, compareByYear, nullptr);
-                            });
-                            break;
-                        default:
-                            cout << "Invalid function choice.\n";
+                    // If no comparison, clear the profile file
+                    ofstream clearFile("dataSets/profile_output.txt", ios::trunc);
+                    if (clearFile.is_open()) {
+                        clearFile.close();
+                        cout << "\nProfile performance file cleared.\n";
                     }
-                    cout.rdbuf(origBuf);
-                    profileAppend.close();
                 }
-
-                // Display the updated performance info
-                ifstream updatedProfile("dataSets/profile_output.txt");
-                if (updatedProfile.is_open()) {
-                    cout << "\nUpdated Performance Info (Comparison):\n";
-                    string line;
-                    while (getline(updatedProfile, line)) {
-                        cout << line << "\n";
+                break;
+    
+            case 3: // Searching comparison
+                if (compareOption == 1) {
+                    int funcOption;
+                    cout << "\nSelect a algorithm to compare performance:\n";
+                    cout << "1. Linear search\n";
+                    cout << "2. Recursive search\n";
+                    cout << "Enter your choice: ";
+                    cin >> funcOption;
+                    cin.ignore();
+    
+                    // Append new performance info to the same profile file
+                    streambuf* origBuf = cout.rdbuf();
+                    ofstream profileAppend("dataSets/profile_output.txt", ios::app);
+                    if (!profileAppend) {
+                        cerr << "Error opening profile file for appending.\n";
+                    } else {
+                        cout.rdbuf(profileAppend.rdbuf());
+                        switch (funcOption) {
+                            
+                            case 1:
+                                if (SearchSortChoice == 1) {
+                                    int year = StringToInt(SearchVar);
+                                    profileAlgorithm("Linear search", "O(n)", "O(1)", [&]() {
+                                        result = linearSearch(head, year, compareByYear, nullptr);
+                                    });
+                                }
+                                else if (SearchSortChoice == 2) {
+                                    int month = StringToInt(SearchVar);
+                                    profileAlgorithm("Linear search", "O(n)", "O(1)", [&]() {
+                                        result = linearSearch(head, month, compareByMonth, nullptr);
+                                    });
+                                }
+                                else if (SearchSortChoice == 3) {
+                                        profileAlgorithm("Linear search", "O(n)", "O(1)", [&]() {
+                                        result = linearSearch(head, SearchVar, compareByTitleKeyword, nullptr);
+                                    });
+                                }
+                                else if (SearchSortChoice == 4) {
+                                    profileAlgorithm("Linear search", "O(n)", "O(1)", [&]() {
+                                        result = linearSearch(head, SearchVar, compareByCategory, nullptr);
+                                    });
+                                }
+                                break;
+                            
+                            case 2:
+                                if (SearchSortChoice == 1) {
+                                    int year = StringToInt(SearchVar);
+                                    profileAlgorithm("Recursive search", "O(n)", "O(1)", [&]() {
+                                        result = search(head, year, compareByYear, nullptr);
+                                    });
+                                }
+                                else if (SearchSortChoice == 2) {
+                                    int month = StringToInt(SearchVar);
+                                    profileAlgorithm("Recursive search", "O(n)", "O(1)", [&]() {
+                                        result = search(head, month, compareByMonth, nullptr);
+                                    });
+                                }
+                                else if (SearchSortChoice == 3) {
+                                        profileAlgorithm("Recursive search", "O(n)", "O(1)", [&]() {
+                                            result = search(head, SearchVar, compareByTitleKeyword, nullptr);
+                                    });
+                                }
+                                else if (SearchSortChoice == 4) {
+                                    profileAlgorithm("Recursive search", "O(n)", "O(1)", [&]() {
+                                        result = search(head, SearchVar, compareByCategory, nullptr);
+                                    });
+                                }
+                                break;
+                                
+                            default:
+                                cout << "Invalid function choice.\n";
+                        }
+                        cout.rdbuf(origBuf);
+                        profileAppend.close();
                     }
-                    updatedProfile.close();
+    
+                    // Display the updated performance info
+                    ifstream updatedProfile("dataSets/profile_output.txt");
+                    if (updatedProfile.is_open()) {
+                        cout << "\nUpdated Performance Info (Comparison):\n";
+                        string line;
+                        while (getline(updatedProfile, line)) {
+                            cout << line << "\n";
+                        }
+                        updatedProfile.close();
+                    }
+                } else {
+                    // If no comparison, clear the profile file
+                    ofstream clearFile("dataSets/profile_output.txt", ios::trunc);
+                    if (clearFile.is_open()) {
+                        clearFile.close();
+                        cout << "\nProfile performance file cleared.\n";
+                    }
                 }
-            } else {
-                // If no comparison, clear the profile file
-                ofstream clearFile("dataSets/profile_output.txt", ios::trunc);
-                if (clearFile.is_open()) {
-                    clearFile.close();
-                    cout << "\nProfile performance file cleared.\n";
-                }
-            }
+                break;
+        }
+    } while (compareOption != 2);
 }
 
 
 // Revised function integrating the changes
 void LinkedListAlgo::userSearchAndSwitch(article* head, int SearchChoice) {
     int choice, year, month;
-    string input;
+    string input, SearchVar;
     article* result = nullptr;
 
     cout << "Choose search option:\n";
@@ -735,7 +670,7 @@ void LinkedListAlgo::userSearchAndSwitch(article* head, int SearchChoice) {
                 runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
                     profileAlgorithm("linear Search", "O(n)", "O(n)", [&]() {
                         result = linearSearch(head, input, compareByCategory, nullptr);
-                        
+
                     });
                 });
                 break;
@@ -788,8 +723,7 @@ void LinkedListAlgo::userSearchAndSwitch(article* head, int SearchChoice) {
               
                 runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
                     profileAlgorithm("recursive Search", "O(n)", "O(n)", [&]() {
-                        result = search(head, input, compareByCategory, nullptr);
-                        
+                        result = search(head, input, compareByCategory, nullptr);     
                     });
                 });
                 break;
@@ -818,19 +752,26 @@ void LinkedListAlgo::userSearchAndSwitch(article* head, int SearchChoice) {
             current = current->next;
         }
         cout << "\nTotal matches found: " << matchCount << "\n";
-    } else {
+    } else { 
         cout << "No matching articles found.\n";
     }
+    
+    
+    // if (choice == 1) {
+    //     SearchVar = IntToString(year);
+    // }
+    // else (choice == 2) {
+    //     SearchVar = IntToString(month);
+    // }
+    // else {
+    //     SearchVar = input;
+    // }
+    SearchVar = (choice == 1) ? IntToString(year) : (choice == 2) ? IntToString(month) : input;
+
 
     // Compare and display performance info (or clear the file)
-    compareAndDisplayPerformance(head, year, result);
+    compareAndDisplayPerformance(head, choice, SearchVar, result, 3);
 }
-
-
-    
-
-
-
 
 
 
@@ -867,13 +808,35 @@ void LinkedListAlgo::userSearchAndSwitch(article* head, int SearchChoice) {
 
 void dataManagement::tokenizeWords(article * Node) {
     MasterList wordList; // Using MasterList instead of hashmap or arrays
+    
+    cout << "Inside Tokenise Words" << endl;
 
     // List of filler words to ignore
     const string filler_words[] = {
         "a", "the", "is", "it", "to", "and", "of", "on", "for", "in", "at", "this",
         "that", "was", "were", "with", "between", "infront", "have", "had", "has", 
-        "been", "about", "into", "are", "after", "before", "not", "where", "when", "thus"
+        "been", "about", "into", "are", "after", "before", "not", "where", "when", "thus",
+        "s", "he", "as", "by", "from", "we", "be", "they", "said", "who",
+        "an", "his", "i", "you", "t", "their", "will", "us", "but",
+        "more", "or", "our", "would", "all", "what", "she",
+        "one", "her", "out", "if", "which",
+        "just", "there", "can", "no", "so", "up",
+        "do", "does", "did", "done", "could", "should", "would", "shall", "may", "might",
+        "because", "although", "while", "since", "though", "unless", "whether",
+        "me", "him", "them", "my", "mine", "your", "yours", "ours", "theirs",
+        "any", "some", "every", "each", "either", "neither",
+        "over", "under", "inside", "outside", "above", "below",
+        "towards", "onto", "upon", "against", "beside", "among", "through",
+        "again", "already", "yet", "ever", "never", "always", "sometimes",
+        "soon", "later", "now", "then", "here", "there", "everywhere",
+        "am", "are", "is", "was", "were", "being", "been",
+        "also", "even", "however", "furthermore", "nevertheless",
+        "somewhere", "anywhere", "nowhere", "wherever"
     };
+    
+    
+    
+    
     int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
 
     article* temp = Node; // Start from the first article node
@@ -925,8 +888,10 @@ void dataManagement::tokenizeWords(article * Node) {
 
         temp = temp->next; // Move to the next article
     }
-
-    wordList.displayWords();
+    
+    cout << "Start of Display" << endl;
+    wordList.displayTopWords();
+    cout << "End of Display" << endl;
 }
 
 
@@ -936,9 +901,25 @@ void dataManagement::tokenizeWordsHash(article* Node) {
     // List of filler words to ignore
     const string filler_words[] = {
         "a", "the", "is", "it", "to", "and", "of", "on", "for", "in", "at", "this",
-        "that", "was", "were", "with", "between", "infront", "have", "had", "has",
-        "been", "about", "into", "are", "after", "before", "not", "where", "when", "thus"
+        "that", "was", "were", "with", "between", "infront", "have", "had", "has", 
+        "been", "about", "into", "are", "after", "before", "not", "where", "when", "thus",
+        "s", "he", "as", "by", "from", "we", "be", "they", "said", "who",
+        "an", "his", "i", "you", "t", "their", "will", "us", "but",
+        "more", "or", "our", "would", "all", "what", "she",
+        "one", "her", "out", "if", "which", "just", "there", "can", "no", "so", "up",
+        "do", "does", "did", "done", "could", "should", "would", "shall", "may", "might",
+        "because", "although", "while", "since", "though", "unless", "whether",
+        "me", "him", "them", "my", "mine", "your", "yours", "ours", "theirs",
+        "any", "some", "every", "each", "either", "neither",
+        "over", "under", "inside", "outside", "above", "below",
+        "towards", "onto", "upon", "against", "beside", "among", "through",
+        "again", "already", "yet", "ever", "never", "always", "sometimes",
+        "soon", "later", "now", "then", "here", "there", "everywhere",
+        "am", "are", "is", "was", "were", "being", "been",
+        "also", "even", "however", "furthermore", "nevertheless",
+        "somewhere", "anywhere", "nowhere", "wherever"
     };
+    
     int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
 
     article* temp = Node; // Start from the first article node
@@ -990,14 +971,22 @@ void dataManagement::tokenizeWordsHash(article* Node) {
 
         temp = temp->next; // Move to the next article
     }
-
-    // Get keys and frequencies from HashMap
+    
     FreqTextWords* wordlist = wordMap.getKeysAndFrequencies();
-        cout << "\nTop 20 Most Frequent Words in Government Fake News:\n";
-        while(wordlist) {
-            cout << wordlist ->word << " - " << wordlist -> freq << " times\n";
-            wordlist=wordlist -> next;
-        }
+    if (!wordlist) {
+        cout << "No words found." << endl;
+        return;
+    }
+    
+    wordMap.sortAndPrintTop10(wordlist);
+
+    // // Get keys and frequencies from HashMap
+    // FreqTextWords* wordlist = wordMap.getKeysAndFrequencies();
+    //     cout << "\nTop 20 Most Frequent Words in Government Fake News:\n";
+    //     while(wordlist) {
+    //         cout << wordlist ->word << " - " << wordlist -> freq << " times\n";
+    //         wordlist=wordlist -> next;
+    //     }
 }
 
 
@@ -1054,28 +1043,7 @@ article* LinkedListAlgo::sortArticles(article* head, int choice, int sortType) {
 }
 
 
-// template <typename Any>
-// void dataManagement::resizeArray2(Any*& arr, int old, int newS){
-//     Any* temp=new Any[newS];
-//     int Iterations=(old < newS) ? old : newS;
-//     for(int i=0; i <Iterations; i++){
-//         temp[i]=arr[i];
-//     }
-//     delete []arr;
-//     arr=temp;
-// }
 
-bool RegInput(int value){
-    return (value==3||value==2||value==1);
-}
-
-bool RegInput2(int value){
-return (value==5 ||value==4||value==3||value==2||value==1);
-}
-
-bool RegInput3(int value){
-return (value==6||value==5 ||value==4||value==3||value==2||value==1);
-}
 
 // void dataManagement::runNewsProcessor(article* head, string datasetChoice) {
 //     NewsArticleProcessor processor;

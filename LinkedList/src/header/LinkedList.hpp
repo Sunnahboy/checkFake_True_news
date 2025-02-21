@@ -56,7 +56,7 @@ class dataManagement{
         // void userSearchAndSwitch(article* head, int SearchChoice);
 
         // Display all articles
-        void DisplayArticles(article* head, int totalArticles);
+        void DisplayArticles(article* head); //, int totalArticles);
         // void displayArticlesfromEnd();
         article *gethead();
         void tokenizeWords(article * Node);

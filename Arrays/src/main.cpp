@@ -4,6 +4,8 @@
 #ifdef byte
   #undef byte
 #endif
+
+
 // checkFake_True_news\header\PerformanceProfiler.hpp
 #include <limits>
 #include <fstream>
@@ -13,7 +15,6 @@
 #include "DataManagement.cpp"
 #include "Statistics.cpp"
 #include "header/Arrays.hpp"
-// #include "header/PerformanceProfiler.hpp"
 #include "../../header/PerformanceProfiler.hpp"
 
 using namespace std;
@@ -46,6 +47,18 @@ class AppInterface
             trueArticles = True.StoreToArray(trueSize);
             fakeArticles = Fake.StoreToArray(fakeSize);
         }
+                
+        string** duplicateArticles(string** original, int size) {
+            string** copy = new string*[size];
+            for (int i = 0; i < size; i++) {
+                copy[i] = new string[6];
+                for (int j = 0; j < 6; j++) {
+                    copy[i][j] = original[i][j];
+                }
+            }
+            return copy;
+        }
+        
         
         void clearScreen() {
             cout << "\033[2J\033[1;1H";  // ANSI escape code to clear screen and move cursor to top-left
@@ -109,10 +122,11 @@ class AppInterface
                     True.ApplySort(trueArticles, trueSize, 3, 4);
                     cout << "Sorting Fake Articles" << endl;
                     Fake.ApplySort(fakeArticles, fakeSize, 3, 4);
-                    // algo.calculateFakeNewsPercentage(trueArticles, trueSize, fakeArticles, fakeSize);
-                    profileAlgorithm("Calculate Fake News %", "O(n)", "O(1)", [&]() {
+                    
+                    profileAlgorithm("Calculate Fake News Percentage: %", "O(n)", "O(1)", [&]() {
                         algo.calculateFakeNewsPercentage(trueArticles, trueSize, fakeArticles, fakeSize);
                     });
+                    
                     pauseProgram(); 
                     break;
 
@@ -120,11 +134,13 @@ class AppInterface
                     cout << "Sorting True Articles" << endl;
                     True.ApplySort(trueArticles, trueSize, 3, 4);
                     cout << "Sorting Fake Articles" << endl;
-                    Fake.ApplySort(fakeArticles, fakeSize, 3, 4);
-                    // algo.displayFakeNewsPercentageByMonth(trueArticles, trueSize, fakeArticles, fakeSize);
-                    profileAlgorithm("Display Fake News %", "O(n)", "O(1)", [&]() {
+                    Fake.ApplySort(fakeArticles, fakeSize, 3, 4);                    
+                   
+                    profileAlgorithm("Calculate Fake News Percentage: %", "O(n)", "O(1)", [&]() {
                         algo.displayFakeNewsPercentageByMonth(trueArticles, trueSize, fakeArticles, fakeSize);
                     });
+                   
+                    
                     pauseProgram();  
                     break;
 
@@ -143,17 +159,24 @@ class AppInterface
                     }
                     switch(choice) {
                         case 1:
-                            // Fake.tokenizeWordsHash(fakeArticles);
-                            profileAlgorithm("Tokenization hashMap", "O(n)", "O(n)", [&]() {
-                                Fake.tokenizeWordsHash(fakeArticles);
+                            runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
+                                profileAlgorithm("Tokenization Words using Hash: ", "O(n)", "O(1)", [&]() {
+                                    Fake.tokenizeWordsHash(fakeArticles);
+                                });
                             });
+                            
+                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, 0, " ", 0, 1);
                             pauseProgram();  
                             break;
                         case 2:
-                            // Fake.tokenizeWords(fakeArticles);
-                            profileAlgorithm("Tokenization Linear", "O(n)", "O(1)", [&]() {
-                                Fake.tokenizeWords(fakeArticles);
+                            runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
+                                profileAlgorithm("Tokenization Linear", "O(n)", "O(1)", [&]() {
+                                    Fake.tokenizeWords(fakeArticles);
+                                });
                             });
+                            
+                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, 0, " ", 0, 1);
+                            
                             pauseProgram();  
                             break;
                         case 3:
@@ -164,7 +187,9 @@ class AppInterface
                     break;
 
                 case 4:
-                    cout << "Nothing here yet." << endl;
+                    cout << "True Data Size: " << trueSize << endl;
+                    cout << "Fake Data Size: " << fakeSize << endl;
+                    cout << "Total Size of both datasets: " << trueSize + fakeSize << endl;
                     break;
 
                 case 5:
@@ -208,69 +233,87 @@ class AppInterface
                     cin.ignore(numeric_limits<streamsize>::max(),'\n');
                     cout << "Invalid Input... Enter Your choice Again: ";
                 }
-
+                // string** trueArticlesCopy = duplicateArticles(trueArticles, trueSize);
+                // string** fakeArticlesCopy = duplicateArticles(fakeArticles, fakeSize);
+                
                 switch(choice){
                     case 1: 
                         if (field == 1) {
-                            // True.DisplayArray(trueArticles, trueSize);
-                            // True.ApplySort(trueArticles, trueSize, 4, 3);
-                            profileAlgorithm("Insertion Sort", "O(n^2)", "O(n)", [&]() {
-                                True.ApplySort(trueArticles, trueSize, 4, 3);
+                            runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
+                                profileAlgorithm("Insertion Sort for True: ", "O(n^2)", "O(n)", [&]() {
+                                    True.ApplySort(trueArticles, trueSize, 3, choice);
+                                });
+
                             });
+                            True.DeleteArray(trueArticles, trueSize);
+                            cout << "Insertion Sort dataChoice Field: " << field << endl;
+                            algo.compareAndDisplayPerformance(trueArticles, trueSize, choice, " ", field, 2);
+                            
                         } else {
-                            // Fake.ApplySort(fakeArticles, fakeSize, 4, 3);
-                            profileAlgorithm("Insertion Sort", "O(n^2)", "O(n)", [&]() {
-                                Fake.ApplySort(fakeArticles, fakeSize, 4, 3);
+                            runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
+                                profileAlgorithm("Insertion Sort for False: ", "O(n^2)", "O(n)", [&]() {
+                                    Fake.ApplySort(fakeArticles, fakeSize, 3, choice);
+                                });
                             });
+                            
+                            
+                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice, " ", field, 2);
                         }
                         pauseProgram();  
                         break;
                     case 2: 
                         if (field == 1) {
-                            // True.ApplySort(trueArticles, trueSize, 3, 2);
-                            profileAlgorithm("Bubble Sort", "O(n^2)", "O(n)", [&]() {
-                                True.ApplySort(trueArticles, trueSize, 3, 2);
+                            runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
+                                profileAlgorithm("Bubble Sort for True: ", "O(n^2)", "O(n)", [&]() {
+                                    True.ApplySort(trueArticles, trueSize, 3, choice);
+                                });
                             });
+                            
+                        
+                            algo.compareAndDisplayPerformance(trueArticles, trueSize, choice, " ", field, 2);
                         } else {
-                            // Fake.ApplySort(fakeArticles, fakeSize, 3, 2);
-                            profileAlgorithm("Bubble Sort", "O(n^2)", "O(n)", [&]() {
-                                Fake.ApplySort(fakeArticles, fakeSize, 3, 2);
+                            runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
+                                profileAlgorithm("Bubble Sort for False: ", "O(n^2)", "O(n)", [&]() {
+                                    Fake.ApplySort(fakeArticles, fakeSize, 3, choice);
+                                });
                             });
+                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice, " ", field, 2);
                         }
                         pauseProgram();  
                         break;
                     case 3: 
                         if (field == 1) {
-                            // True.ApplySort(trueArticles, trueSize, 3, 4);
-                            profileAlgorithm("Quick Sort", "O(n^2)", "O(n)", [&]() {
-                                Fake.ApplySort(trueArticles, trueSize, 3, 4);
+                            runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
+                                profileAlgorithm("Quick Sort for True: ", "O(n^2)", "O(n)", [&]() {
+                                    True.ApplySort(trueArticles, trueSize, 3, choice);
+                                });
                             });
+                            algo.compareAndDisplayPerformance(trueArticles, trueSize, choice, " ", field, 2);
                         } else {
-                            // Fake.ApplySort(fakeArticles, fakeSize, 3, 4);
-                            
-                            profileAlgorithm("Quick Sort", "O(n^2)", "O(n)", [&]() {
-                                Fake.ApplySort(fakeArticles, fakeSize, 3, 4);
+                            runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
+                                profileAlgorithm("Quick Sort for False: ", "O(n^2)", "O(n)", [&]() {
+                                    Fake.ApplySort(fakeArticles, fakeSize, 3, choice);
+                                });
                             });
-                            
-
+                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice, " ", field, 2);
                         }
                         pauseProgram();  
                         break;
                     case 4: 
                         if (field == 1) {
-                            // True.DisplayArray(trueArticles, trueSize);
-                            True.ApplySort(trueArticles, trueSize, 3, 1);
-                            // True.displayStruct(5);
-                            profileAlgorithm("Merge Sort", "O(nlog(n))", "O(n)", [&]() {
-                                True.ApplySort(trueArticles, trueSize, 3, 1);
+                            runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
+                                profileAlgorithm("Bottom Up Merge Sort for True: ", "O(n log n)", "O(n)", [&]() {
+                                    True.ApplySort(trueArticles, trueSize, 3, choice);
+                                });
                             });
-                            
+                            algo.compareAndDisplayPerformance(trueArticles, trueSize, choice, " ", field, 2);
                         } else {
-                            // Fake.ApplySort(fakeArticles, fakeSize, 3, 1);
-                            profileAlgorithm("Merge Sort", "O(nlog(n))", "O(n)", [&]() {
-                                Fake.ApplySort(fakeArticles, fakeSize, 3, 1);
+                            runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
+                                profileAlgorithm("Merge Sort for False: ", "O(nlog(n))", "O(n)", [&]() {
+                                    Fake.ApplySort(fakeArticles, fakeSize, 3, choice);
+                                });
                             });
-
+                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice, " ", field, 2);
                         }
                         pauseProgram();  
                         break;
@@ -317,12 +360,11 @@ class AppInterface
                 case 1:
                     cout << "Chose a field to search for"<<endl;
                     cout << "1. Title "<<endl;
-                    cout << "2. Text "<<endl;
-                    cout << "3. Subject "<<endl;
-                    cout << "4. Year "<<endl;
-                    cout << "5. Month "<<endl;
+                    cout << "2. Subject "<<endl;
+                    cout << "3. Year "<<endl;
+                    cout << "4. Month "<<endl;
                     cout << "Please Enter your choice.... ";
-                    while(!(cin>>choice2)|| !ValidInput(choice2, 5, 1)){
+                    while(!(cin>>choice2)|| !ValidInput(choice2, 4, 1)){
                         cin.clear();
                         cin.ignore(numeric_limits<streamsize>::max(), '\n');
                         cout << "Invalid.. Please Enter your choice again.... ";
@@ -332,19 +374,29 @@ class AppInterface
                     getline(cin, field);
                     
                     if (setChoice == 1) {
-                        // algo.LinearSearch(trueArticles, choice2-1, field, trueSize);
-                        profileAlgorithm("Linear Search", "O(n)", "O(1)", [&]() {
-                            algo.LinearSearch(trueArticles, choice2-1, field, trueSize);
+                        True.ApplySort(trueArticles, trueSize, 3, 2);
+                        
+                        runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
+                            profileAlgorithm("Linear Search", "O(n)", "O(1)", [&]() {
+                                algo.LinearSearch(trueArticles, choice2-1, field, trueSize);
+                            });
                         });
+                        algo.compareAndDisplayPerformance(trueArticles, trueSize, choice, field, setChoice, 3);
+                        
                         for (int i = 0; i < trueSize; ++i) {
                             delete[] trueArticles[i];
                         }
                         delete[] trueArticles;
                     } else {
-                        // algo.LinearSearch(fakeArticles, choice2-1, field, fakeSize);
-                        profileAlgorithm("Linear Search", "O(n)", "O(1)", [&]() {
-                            algo.LinearSearch(fakeArticles, choice2-1, field, fakeSize);
+                        Fake.ApplySort(fakeArticles, fakeSize, 3, 2);
+                        
+                        runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
+                            profileAlgorithm("Linear Search", "O(n)", "O(1)", [&]() {
+                                algo.LinearSearch(fakeArticles, choice2-1, field, fakeSize);
+                            });
                         });
+                        algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice, field, setChoice, 3);
+                        
                         for (int i = 0; i < fakeSize; ++i) {
                             delete[] fakeArticles[i];
                         }
@@ -371,19 +423,25 @@ class AppInterface
                     getline(cin, field);
                     
                     if (setChoice == 1) {
-                        // algo.BinarySearch(trueArticles, choice2-1, field, trueSize);
-                        profileAlgorithm("Binary Search", "O(log n)", "O(1)", [&]() {
-                            algo.BinarySearch(trueArticles, choice2-1, field, trueSize);
+                        runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
+                            profileAlgorithm("Binary Search", "O(log n)", "O(1)", [&]() {
+                                algo.BinarySearch(trueArticles, choice2-1, field, trueSize);
+                            });
                         });
+                        algo.compareAndDisplayPerformance(trueArticles, trueSize, choice, field, setChoice, 3);
+                        
                         for (int i = 0; i < trueSize; ++i) {
                             delete[] trueArticles[i];
                         }
                         delete[] trueArticles;
                     } else {
-                        // algo.BinarySearch(fakeArticles, choice2-1, field, fakeSize);
-                        profileAlgorithm("Binary Search", "O(log n)", "O(1)", [&]() {
-                            algo.BinarySearch(fakeArticles, choice2-1, field, fakeSize);
+                        runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
+                            profileAlgorithm("Binary Search", "O(log n)", "O(1)", [&]() {
+                                algo.BinarySearch(fakeArticles, choice2-1, field, fakeSize);
+                            });
                         });
+                        algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice, field, setChoice, 3);
+                        
                         for (int i = 0; i < fakeSize; ++i) {
                             delete[] fakeArticles[i];
                         }

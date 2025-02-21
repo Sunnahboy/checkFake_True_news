@@ -118,4 +118,4 @@ PerformanceMetrics profileAlgorithm(T* instance, const std::string& algorithmNam
     return metrics;
 }
 
-#endif // PERFORMANCE_PROFILER_HPP
+#endif 
