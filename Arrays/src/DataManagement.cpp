@@ -12,6 +12,7 @@
 #include <chrono>
 #include <string>
 #include <functional>
+#include <algorithm>
 
 
 using namespace std;
@@ -179,25 +180,68 @@ bool dataManagement::ParseDate(string& Date, int& year, int& month, int& day) {
     return true;
 }
 
-
-
-string** dataManagement::SortToArray(int size, int* temp) {
+string** dataManagement::SortToArray(string** sourceArray, int size, int* temp) {
     string** arr = new string*[size];
     for (int i = 0; i < size; i++) {
-        arr[i] = new string[6];  // Allocate 6 columns for each row
+        arr[i] = new string[6];
     }
     
     for (int i = 0; i < size; i++) {
-        int index=temp[i];
-        arr[i][0] = article[index].title;
-        arr[i][1] = article[index].content;
-        arr[i][2] = article[index].category;
-        arr[i][3] = to_string(article[index].publicationYear);
-        arr[i][4] = to_string(article[index].publicationMonth);
-        arr[i][5] = to_string(article[index].publicationDay);
+        int index = temp[i];
+        if (index < 0 || index >= size) {
+            cerr << "Error: Invalid index " << index << " at position " << i << endl;
+            continue;
+        }
+        
+        // Use sourceArray instead of article
+        arr[i][0] = sourceArray[index][0];
+        arr[i][1] = sourceArray[index][1];
+        arr[i][2] = sourceArray[index][2];
+        arr[i][3] = sourceArray[index][3];
+        arr[i][4] = sourceArray[index][4];
+        arr[i][5] = sourceArray[index][5];
     }
     return arr;
 }
+
+
+// string** dataManagement::SortToArray(int size, int* temp) {
+//     string** arr = new string*[size];
+//     for (int i = 0; i < size; i++) {
+//         arr[i] = new string[6];  // Allocate 6 columns for each row
+//     }
+    
+//     // for (int i = 0; i < size; i++) {
+//     //     // cout << "index[" << i << "] = " << index[i] << endl;
+//     //     if (temp[i] < 0 || temp[i] >= size) {
+//     //         cerr << "Error: index[" << i << "] out-of-bounds!" << endl;
+//     //     }
+//     // }
+    
+//     cout << "SortToArray Sorting: " << endl;
+    
+//     for (int i = 0; i < size; i++) {
+        
+//     cout << "SortToArray for loop: Temp = " << temp[i] << endl;
+//         int index=temp[i];
+        
+//         if (index < 0 || index >= size) {
+//             cerr << "Error: Invalid index " << index << " at position " << i << endl;
+//             // Handle error appropriately
+//             continue;
+//         }
+        
+//         arr[i][0] = article[index].title;
+//         arr[i][1] = article[index].content;
+//         arr[i][2] = article[index].category;
+//         arr[i][3] = to_string(article[index].publicationYear);
+//         arr[i][4] = to_string(article[index].publicationMonth);
+//         arr[i][5] = to_string(article[index].publicationDay);
+//         // cout << "SortToArray Index: " << index << endl;
+//     }
+//     cout << "SortToArray Done!" << endl;
+//     return arr;
+// }
 
 string** dataManagement::StoreToArray(int size) {
     string** arr = new string*[size];
@@ -325,8 +369,6 @@ void dataManagement::ApplySort(string**& array, int size, int field, int sortTyp
     } else {
         ApplySortH<string>(array, size, field, sortType);
     }
-    
-    cout << "Exit ApplySort " << endl;
 }
 
 template <typename SelectedType>
@@ -345,7 +387,6 @@ void dataManagement::ApplySortH(string**& array, int size, int field, int sortTy
         }
         index[i] = i;  
     }
-    cout << sortType << " Inside Array " << SelectedField[10]<< endl;
 
     ArraysAlgo algo;
 
@@ -370,24 +411,19 @@ void dataManagement::ApplySortH(string**& array, int size, int field, int sortTy
             break;
     }
     
-    cout << "Exit ApplySortH " << endl;
     
+    // Before deleting the old array, store it for use as source
+    string** sourceArray = array;
+    array = SortToArray(sourceArray, size, index);
 
+    // Now delete the old array
     for (int i = 0; i < size; i++) {
-        delete[] array[i];
+        delete[] sourceArray[i];
     }
-    delete[] array;
-    
-    
-    array = SortToArray(size, index);
-    // DeleteArray(array, size);
-    
-    cout << "K: Finished Sorting to Array!!! " << endl;
+    delete[] sourceArray;
     
     delete[] SelectedField;
     delete[] index;
-
-    
 }
 
 
@@ -403,25 +439,112 @@ bool RegInput3(int value){
     return (value==6||value==5 ||value==4||value==3||value==2||value==1);
 }
 
-void dataManagement::tokenizeWordsHash(string** array) {
+// void dataManagement::tokenizeWordsHash(string** array) {
+//     ArraysAlgo algo;
+//     HashMap hashmap;
+    
+//     cout << "Inside Tokenization Word hash" << endl;
+    
+//     if (array == nullptr) {
+//         cout << "Array Empty" << endl;
+//     }
+    
+//     string filler_words[] = {"a", "the", "is", "it", "to", "and", "of", "on", 
+//                             "for", "in", "at", "this", "that", "was", "were", "with", "between", "infront",
+//                             "have", "had", "has", "been", "about", "into", "are", "after", "before", "not", "where", "when","those", "thus"};    
+//     int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
+//     for (int i = 0; i < size; i++) {
+//         if(array[i][2].compare("Government News")!=0) continue; //filter the data only the government once are taken
+//         string text = array[i][1];  // Extract text from article
+//         string word = ""; // Temporary string for building words
+//         // Loop through each character in the text
+//         for (char c : text) {
+//             // Convert to lowercase
+//             c = tolower(c);
+//             // Check for word boundaries
+//             if (isspace(c) || ispunct(c)) {
+//                 if (!word.empty()) { // If a word has been formed
+//                     // Check if it's a filler array
+//                     bool isFiller = false;
+//                     for (int k = 0; k < filler_size; k++) {
+//                         if (word == filler_words[k]) {
+//                             isFiller = true;
+//                             break;
+//                         }
+//                     }
+//                     if (!isFiller) {
+//                         hashmap.insert(word);
+//                         cout << "Hashmpa word added: " << word << endl;
+//                     }
+//                     word = ""; 
+//                 }
+//             } else {
+//                 word += c;
+//             }
+//         }
+//     }
+//     auto result=hashmap.getKeysAndFrequencies();
+//     string* keys=result.first;
+//     int* freq=result.second;
+//     int* temp=new int[hashmap.getCount()];
+//     algo.QuickSort(freq, hashmap.getCount(), temp, 1);
+//     cout << "Word Frequency List:\n";
+
+//     for(int i=0; i <10; i++){
+        
+//         cout << freq[i] << " :: " << keys[i] << endl;
+//     }
+
+//     delete[] keys;
+//     delete[] freq;
+// }
+
+
+void dataManagement::tokenizeWordsHash(string** array, int size) {
     ArraysAlgo algo;
     HashMap hashmap;
-    string filler_words[] = {"a", "the", "is", "it", "to", "and", "of", "on", 
-                            "for", "in", "at", "this", "that", "was", "were", "with", "between", "infront",
-                            "have", "had", "has", "been", "about", "into", "are", "after", "before", "not", "where", "when","those", "thus"};    
+    
+    cout << "Inside Tokenization Word hash" << endl;
+    
+    if (array == nullptr) {
+        cout << "Array Empty" << endl;
+    }
+    
+    string filler_words[] = {
+        "a", "the", "is", "it", "to", "and", "of", "on", "for", "in", "at", "this",
+        "that", "was", "were", "with", "between", "infront", "have", "had", "has", 
+        "been", "about", "into", "are", "after", "before", "not", "where", "when", "thus",
+        "s", "he", "as", "by", "from", "we", "be", "they", "said", "who",
+        "an", "his", "i", "you", "t", "their", "will", "us", "but",
+        "more", "or", "our", "would", "all", "what", "she",
+        "one", "her", "out", "if", "which",
+        "just", "there", "can", "no", "so", "up",
+        "do", "does", "did", "done", "could", "should", "would", "shall", "may", "might",
+        "because", "although", "while", "since", "though", "unless", "whether",
+        "me", "him", "them", "my", "mine", "your", "yours", "ours", "theirs",
+        "any", "some", "every", "each", "either", "neither",
+        "over", "under", "inside", "outside", "above", "below",
+        "towards", "onto", "upon", "against", "beside", "among", "through",
+        "again", "already", "yet", "ever", "never", "always", "sometimes",
+        "soon", "later", "now", "then", "here", "there", "everywhere",
+        "am", "are", "is", "was", "were", "being", "been",
+        "also", "even", "however", "furthermore", "nevertheless",
+        "somewhere", "anywhere", "nowhere", "wherever"
+    };    
+    
     int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
+    
+    cout << "Size in Tokenisation Hash: " << size << endl;
+    
     for (int i = 0; i < size; i++) {
-        if(array[i][2].compare("Government News")!=0) continue; //filter the data only the government once are taken
-        string text = array[i][1];  // Extract text from article
-        string word = ""; // Temporary string for building words
-        // Loop through each character in the text
+        if(array[i][2].compare("Government News")!=0) continue;
+        string text = array[i][1];
+        string word = "";
+        
         for (char c : text) {
-            // Convert to lowercase
             c = tolower(c);
-            // Check for word boundaries
             if (isspace(c) || ispunct(c)) {
-                if (!word.empty()) { // If a word has been formed
-                    // Check if it's a filler array
+                if (!word.empty()) {
                     bool isFiller = false;
                     for (int k = 0; k < filler_size; k++) {
                         if (word == filler_words[k]) {
@@ -432,36 +555,88 @@ void dataManagement::tokenizeWordsHash(string** array) {
                     if (!isFiller) {
                         hashmap.insert(word);
                     }
-                    word = ""; 
+                    word = "";
                 }
             } else {
                 word += c;
             }
         }
+        // Process last word if exists
+        if (!word.empty()) {
+            bool isFiller = false;
+            for (int k = 0; k < filler_size; k++) {
+                if (word == filler_words[k]) {
+                    isFiller = true;
+                    break;
+                }
+            }
+            if (!isFiller) {
+                hashmap.insert(word);
+            }
+        }
     }
-    auto result=hashmap.getKeysAndFrequencies();
-    string* keys=result.first;
-    int* freq=result.second;
-    int* temp=new int[hashmap.getCount()];
-    algo.QuickSort(freq, hashmap.getCount(), temp, 1);
+
+    auto result = hashmap.getKeysAndFrequencies();
+    string* keys = result.first;
+    int* freq = result.second;
+    int count = hashmap.getCount();
+
+    // Create index array to maintain word-frequency correspondence
+    int* indices = new int[count];
+    for(int i = 0; i < count; i++) {
+        indices[i] = i;
+    }
+
+    // Sort indices based on frequencies
+    for(int i = 0; i < count - 1; i++) {
+        for(int j = 0; j < count - i - 1; j++) {
+            if(freq[j] < freq[j + 1]) {
+                // Swap frequencies
+                swap(freq[j], freq[j + 1]);
+                // Swap corresponding words
+                swap(keys[j], keys[j + 1]);
+            }
+        }
+    }
+    
     cout << "Word Frequency List:\n";
-    for(int i=0; i <10; i++){
+    for(int i = 0; i < 10 && i < count; i++) {
+        cout << "Count: " << count << endl;
         cout << freq[i] << " :: " << keys[i] << endl;
     }
 
+    // Clean up
     delete[] keys;
     delete[] freq;
+    delete[] indices;
 }
 
 
-void dataManagement::tokenizeWords(string** array) {
+void dataManagement::tokenizeWords(string** array, int size) {
     ArraysAlgo algo;
     int capacity=1000;
     string* wordsList = new string[capacity];  
     int* wordsFreq = new int[capacity];     
-    string filler_words[] = {"a", "the", "is", "it", "to", "and", "of", "on", 
-                            "for", "in", "at", "this", "that", "was", "were", "with", "between", "infront",
-                            "have", "had", "has", "been", "about", "into", "are", "after", "before", "not", "where", "when","those", "thus"};    
+    string filler_words[] = {"a", "the", "is", "it", "to", "and", "of", "on", "for", "in", "at", "this",
+        "that", "was", "were", "with", "between", "infront", "have", "had", "has", 
+        "been", "about", "into", "are", "after", "before", "not", "where", "when", "thus",
+        "s", "he", "as", "by", "from", "we", "be", "they", "said", "who",
+        "an", "his", "i", "you", "t", "their", "will", "us", "but",
+        "more", "or", "our", "would", "all", "what", "she",
+        "one", "her", "out", "if", "which",
+        "just", "there", "can", "no", "so", "up",
+        "do", "does", "did", "done", "could", "should", "would", "shall", "may", "might",
+        "because", "although", "while", "since", "though", "unless", "whether",
+        "me", "him", "them", "my", "mine", "your", "yours", "ours", "theirs",
+        "any", "some", "every", "each", "either", "neither",
+        "over", "under", "inside", "outside", "above", "below",
+        "towards", "onto", "upon", "against", "beside", "among", "through",
+        "again", "already", "yet", "ever", "never", "always", "sometimes",
+        "soon", "later", "now", "then", "here", "there", "everywhere",
+        "am", "are", "is", "was", "were", "being", "been",
+        "also", "even", "however", "furthermore", "nevertheless",
+        "somewhere", "anywhere", "nowhere", "wherever"};   
+        
     int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
     int Unique = 0; 
     for (int i = 0; i < size; i++) {
@@ -522,6 +697,7 @@ void dataManagement::tokenizeWords(string** array) {
 
     delete[] wordsList;
     delete[] wordsFreq;
+    delete[] temp;
 }
 
 
@@ -536,9 +712,6 @@ void dataManagement::resizeArray(Any*& arr, int old, int newS){
     arr=temp;
 
 }
-
-
-
 
 
 // Helper function to redirect cout to a file while executing a given function
@@ -564,297 +737,16 @@ void runWithRedirectedOutput(const string& filePath, const function<void()>& fun
     outFile.close();
 }
 
-// display performance info and optionally compare with another function
-// void ArraysAlgo::compareAndDisplayPerformance(string** articles, int size, int SearchSortChoice, string SearchVar, int dataChoice, int FunctionChoice)
-// {
-//     dataManagement data;
-//     int compareOption;
-//     ifstream profileIn("dataSets/profile_output.txt");
-//     if (profileIn.is_open()) {
-//         cout << "\nCurrent Performance Info:\n";
-//         string line;
-//         while (getline(profileIn, line)) {
-//             cout << line << "\n";
-//         }
-//         profileIn.close();
-//     } else {
-//         cout << "\nNo performance info available.\n";
-//     }
-    
-//     do {
-//         //compare performance with another function
-        
-//         cout << "\nDo you want to compare performance with another algorithm ?\n";
-//         cout << "1. Yes\n2. No\nEnter your choice: ";
-//         // cin >> compareOption;
-//         while(!(cin >> compareOption)|| (compareOption != 1 && compareOption != 2)){
-//             cin.clear();
-//             cin.ignore(numeric_limits<streamsize>::max(),'\n');
-//             cout << "Invalid Input... Please enter a number between 1 and 2: ";
-//         }
-    
-//         switch(FunctionChoice) {
-//             case 1: // FAQ Tokenization comparison
-//                 if (compareOption == 1) {
-//                     int funcOption;
-//                     cout << "\nSelect a algorithm to compare performance:\n";
-//                     cout << "1. Hashmap Tokenization\n";
-//                     cout << "2. Linear Search Tokenization\n";
-//                     cout << "Enter your choice: ";
-//                     while(!(cin >> funcOption)|| (funcOption > 2 || funcOption < 1)){
-//                         cin.clear();
-//                         cin.ignore(numeric_limits<streamsize>::max(),'\n');
-//                         cout << "Invalid Input... Enter Your choice Again: ";
-//                     }
-    
-//                     // Append new performance info to the same profile file
-//                     streambuf* origBuf = cout.rdbuf();
-//                     ofstream profileAppend("dataSets/profile_output.txt", ios::app);
-//                     if (!profileAppend) {
-//                         cerr << "Error opening profile file for appending.\n";
-//                     } else {
-//                         cout.rdbuf(profileAppend.rdbuf());
-//                         switch (funcOption) {
-//                             case 1:
-//                                 profileAlgorithm("Hashmap Tokenization", "O(n)", "O(1)", [&]() {
-//                                     data.tokenizeWordsHash(articles);
-//                                 });
-//                                 break;
-//                             case 2:
-//                                 profileAlgorithm("Linear Search Tokenization", "O(n)", "O(1)", [&]() {
-//                                     data.tokenizeWords(articles);
-//                                 });
-//                                 break;
-//                             default:
-//                                 cout << "Invalid function choice.\n";
-//                         }
-//                         cout.rdbuf(origBuf);
-//                         profileAppend.close();
-//                     }
-    
-//                     // Display the updated performance info
-//                     ifstream updatedProfile("dataSets/profile_output.txt");
-//                     if (updatedProfile.is_open()) {
-//                         cout << "\nUpdated Performance Info (Comparison):\n";
-//                         string line;
-//                         while (getline(updatedProfile, line)) {
-//                             cout << line << "\n";
-//                         }
-//                         updatedProfile.close();
-//                     }
-//                 } else {
-//                     // If no comparison, clear the profile file
-//                     ofstream clearFile("dataSets/profile_output.txt", ios::trunc);
-//                     if (clearFile.is_open()) {
-//                         clearFile.close();
-//                         cout << "\nProfile performance file cleared.\n";
-//                     }
-//                 }
-                
-//                 break;
-                
-//             case 2: // Sorting comparison
-//                 int funcOption;
-//                 if (compareOption == 1) {
-                    
-//                     cout << "\nSelect a algorithm to compare performance:\n";
-//                     cout << "1. Insertion Sort" << endl;
-//                     cout << "2. Bubble Sort" << endl;
-//                     cout << "3. Quick Sort" << endl;
-//                     cout << "4. Merge Sort" << endl;
-//                     cout << "Enter your choice: ";
-//                     while(!(cin >> funcOption)|| (funcOption >4 || funcOption < 1)){
-//                         cin.clear();
-//                         cin.ignore(numeric_limits<streamsize>::max(),'\n');
-//                         cout << "Invalid Input... Enter Your choice Again: ";
-//                     }
-    
-//                     // Append new performance info to the same profile file
-//                     streambuf* origBuf = cout.rdbuf();
-//                     ofstream profileAppend("dataSets/profile_output.txt", ios::app);
-//                     if (!profileAppend) {
-//                         cerr << "Error opening profile file for appending.\n";
-//                     } else {
-//                         cout.rdbuf(profileAppend.rdbuf());
-//                         switch (funcOption) {                            
-//                             case 1:
-//                                 if(dataChoice == 1){
-//                                     profileAlgorithm("Insertion Sort for True: ", "O(n^2)", "O(n)", [&]() {
-//                                         data.ApplySort(articles, size, 3, funcOption);
-//                                     });              
-//                                }
-//                                else{
-//                                     profileAlgorithm("insertion Sort for Fake: ", "O(n^2)",  "O(n)", [&]() {
-//                                         data.ApplySort(articles, size, 3, funcOption);
-//                                     });
-//                                 }
-                               
-                                
-//                                 break;
-//                             case 2:
-//                                 if(dataChoice == 1){
-//                                     profileAlgorithm("Bubble Sort for Fake: ", "O(n^2)", "O(n)", [&]() {
-//                                         data.ApplySort(articles, size, 3, funcOption);
-//                                     });
-//                                 }else{
-//                                     profileAlgorithm("Bubble Sort for True: ", "O(n^2)", "O(n)", [&]() {
-//                                         data.ApplySort(articles, size, 3, funcOption);
-//                                     });
-//                                 }
-//                                 break;
-//                             case 3:
-//                                 if(dataChoice == 1) {
-//                                     profileAlgorithm("Quick Sort for True: ", "O(n^2)", "O(n)", [&]() {
-//                                         data.ApplySort(articles, size, 3, funcOption);
-//                                     });
-//                                 } else {
-//                                     profileAlgorithm("Quick Sort for Fake: ", "O(n^2)", "O(n)", [&]() {
-//                                         data.ApplySort(articles, size, 3, funcOption);
-//                                     });
-//                                 }
-                            
-//                                 break;
-//                             case 4:
-//                                 cout << "Compare Merge Sort: " << endl;
-//                                 if (dataChoice == 1) {
-//                                     profileAlgorithm("Bottom Up Merge Sort for True: ", "O(n log n)", "O(1)", [&]() {
-//                                         data.ApplySort(articles, size, 3, funcOption);
-//                                     });
-//                                 } 
-//                                 else {
-//                                     profileAlgorithm("Bottom Up Merge Sort for Fake: ", "O(n log n)", "O(1)", [&]() {
-//                                         data.ApplySort(articles, size, 3, funcOption);
-//                                     });
-//                                 }
-                            
-//                                 break;
-//                             default:
-//                                 cout << "Invalid function choice.\n";
-//                         }
-//                         cout.rdbuf(origBuf);
-//                         profileAppend.close();
-//                     }
-    
-//                     // Display the updated performance info
-//                     ifstream updatedProfile("dataSets/profile_output.txt");
-//                     if (updatedProfile.is_open()) {
-//                         cout << "\nUpdated Performance Info (Comparison):\n";
-//                         string line;
-//                         while (getline(updatedProfile, line)) {
-//                             cout << line << "\n";
-//                         }
-//                         updatedProfile.close();
-//                     }
-//                 } else {
-//                     // If no comparison, clear the profile file
-//                     ofstream clearFile("dataSets/profile_output.txt", ios::trunc);
-//                     if (clearFile.is_open()) {
-//                         clearFile.close();
-//                         cout << "\nProfile performance file cleared.\n";
-//                     }
-//                 }
-//                 break;
-    
-//             case 3: // Searching comparison
-//                 if (compareOption == 1) {
-//                     int funcOption;
-//                     cout << "\nSelect a algorithm to compare performance:\n";
-//                     cout << "1. Linear search\n";
-//                     cout << "2. Recursive search\n";
-//                     cout << "Enter your choice: ";
-//                     cin >> funcOption;
-//                     cin.ignore();
-    
-//                     // Append new performance info to the same profile file
-//                     streambuf* origBuf = cout.rdbuf();
-//                     ofstream profileAppend("dataSets/profile_output.txt", ios::app);
-//                     if (!profileAppend) {
-//                         cerr << "Error opening profile file for appending.\n";
-//                     } else {
-//                         cout.rdbuf(profileAppend.rdbuf());
-//                         switch (funcOption) {                           
-//                             case 1:
-//                                 if (SearchSortChoice == 1) {
-//                                     int year = StringToInt(SearchVar);
-//                                     profileAlgorithm("Linear search", "O(n)", "O(1)", [&]() {
-//                                         LinearSearch(articles, SearchSortChoice -1, SearchVar, size);
-//                                     });
-//                                 }
-//                                 else if (SearchSortChoice == 2) {
-//                                     int month = StringToInt(SearchVar);
-//                                     profileAlgorithm("Linear search", "O(n)", "O(1)", [&]() {
-//                                         LinearSearch(articles, SearchSortChoice, SearchVar, size);
-//                                     });
-//                                 }
-//                                 else if (SearchSortChoice == 3) {
-//                                         profileAlgorithm("Linear search", "O(n)", "O(1)", [&]() {
-//                                             LinearSearch(articles, SearchSortChoice, SearchVar, size);
-//                                     });
-//                                 }
-//                                 else if (SearchSortChoice == 4) {
-//                                     profileAlgorithm("Linear search", "O(n)", "O(1)", [&]() {
-//                                         LinearSearch(articles, SearchSortChoice, SearchVar, size);
-//                                     });
-//                                 }
-//                                 break;
-                            
-//                             case 2:
-//                                 if (SearchSortChoice == 1) {
-//                                     int year = StringToInt(SearchVar);
-//                                     profileAlgorithm("Recursive search", "O(n)", "O(1)", [&]() {
-//                                         BinarySearch(articles, SearchSortChoice -1, SearchVar, size);
-//                                     });
-//                                 }
-//                                 else if (SearchSortChoice == 2) {
-//                                     int month = StringToInt(SearchVar);
-//                                     profileAlgorithm("Recursive search", "O(n)", "O(1)", [&]() {
-//                                         BinarySearch(articles, SearchSortChoice, SearchVar, size);
-//                                     });
-//                                 }
-//                                 else if (SearchSortChoice == 3) {
-//                                     profileAlgorithm("Recursive search", "O(n)", "O(1)", [&]() {
-//                                         BinarySearch(articles, SearchSortChoice, SearchVar, size);
-//                                     });
-//                                 }
-//                                 else if (SearchSortChoice == 4) {
-//                                     profileAlgorithm("Recursive search", "O(n)", "O(1)", [&]() {
-//                                         BinarySearch(articles, SearchSortChoice, SearchVar, size);
-//                                     });
-//                                 }
-//                                 break;
-                                
-//                             default:
-//                                 cout << "Invalid function choice.\n";
-//                         }
-//                         cout.rdbuf(origBuf);
-//                         profileAppend.close();
-//                     }
-    
-//                     // Display the updated performance info
-//                     ifstream updatedProfile("dataSets/profile_output.txt");
-//                     if (updatedProfile.is_open()) {
-//                         cout << "\nUpdated Performance Info (Comparison):\n";
-//                         string line;
-//                         while (getline(updatedProfile, line)) {
-//                             cout << line << "\n";
-//                         }
-//                         updatedProfile.close();
-//                     }
-//                 } else {
-//                     // If no comparison, clear the profile file
-//                     ofstream clearFile("dataSets/profile_output.txt", ios::trunc);
-//                     if (clearFile.is_open()) {
-//                         clearFile.close();
-//                         cout << "\nProfile performance file cleared.\n";
-//                     }
-//                 }
-//         }
-//     } while (compareOption != 2);
-// }
 
-
-void ArraysAlgo::compareAndDisplayPerformance(string** arr, int n, int algoType, string searchValue, const int dataChoice, int FunctionChoice) {
+void ArraysAlgo::compareAndDisplayPerformance(string** originalArr, int n, int algoType, string searchValue, const int dataChoice, int FunctionChoice) {
     dataManagement data;
+    string** arr = new string*[n];
+    for(int i = 0; i < n; i++) {
+        arr[i] = new string[6];
+        for(int j = 0; j < 6; j++) {
+            arr[i][j] = originalArr[i][j];
+        }
+    }
     
     // Display current performance info
     ifstream profileIn("dataSets/profile_output.txt");
@@ -889,8 +781,10 @@ void ArraysAlgo::compareAndDisplayPerformance(string** arr, int n, int algoType,
                     cout << "2. Linear Search Tokenization\n";
                     cout << "Enter your choice: ";
                     cin >> funcOption;
-                    cin.ignore();
-                    
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            
+        
                     // Append new performance info to the profile file
                     streambuf* origBuf = cout.rdbuf();
                     ofstream profileAppend("dataSets/profile_output.txt", ios::app);
@@ -900,15 +794,16 @@ void ArraysAlgo::compareAndDisplayPerformance(string** arr, int n, int algoType,
                         cout.rdbuf(profileAppend.rdbuf());
                         switch (funcOption) {
                             case 1:
+                              
                                 profileAlgorithm("Hashmap Tokenization", "O(n)", "O(1)", [&]() {
                                     // Assumes a tokenizeWordsHash(string** arr, int n) exists
-                                    data.tokenizeWordsHash(arr);
+                                    data.tokenizeWordsHash(originalArr, n);
                                 });
                                 break;
                             case 2:
                                 profileAlgorithm("Linear Search Tokenization", "O(n)", "O(1)", [&]() {
                                     // Assumes a tokenizeWords(string** arr, int n) exists
-                                    data.tokenizeWords(arr);
+                                    data.tokenizeWords(originalArr, n);
                                 });
                                 break;
                             default:
@@ -993,7 +888,10 @@ void ArraysAlgo::compareAndDisplayPerformance(string** arr, int n, int algoType,
                                 });
                                 break;
                             case 3:
+                                cout << "Quick Sort Start!" << endl;
                                 algoName = (dataChoice == 1 ? "Quick Sort for True: " : "Quick Sort for False: ");
+                                
+                                cout << "Algo Name: " << algoName << endl;
                                 
                                 profileAlgorithm(algoName, "O(n^2)", "O(n)", [&]() {
                                     data.ApplySort(arr, n, 3, funcOption);
@@ -1053,14 +951,13 @@ void ArraysAlgo::compareAndDisplayPerformance(string** arr, int n, int algoType,
                     cin.ignore();
                     
                     // For searching, prompt again for the field number (since the original call did not pass it)
-                    int fieldIndex;
-                    cout << "Enter the field number to search for (e.g., 1 for Title, 2 for Subject, etc.): ";
-                    while (!(cin >> fieldIndex)) {
-                        cin.clear();
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                        cout << "Invalid input. Please enter a number: ";
-                    }
-                    cin.ignore();
+                    // int fieldIndex;
+                    // cout << "Enter the field number to search for (e.g., 1 for Title, 2 for Subject, etc.): ";
+                    // while (!(cin >> fieldIndex)) {
+                    //     cin.clear();
+                    //     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    //     cout << "Invalid input. Please enter a number: ";
+                    // }
                     
                     streambuf* origBuf = cout.rdbuf();
                     ofstream profileAppend("dataSets/profile_output.txt", ios::app);
@@ -1072,13 +969,13 @@ void ArraysAlgo::compareAndDisplayPerformance(string** arr, int n, int algoType,
                             case 1:
                                 profileAlgorithm("Linear Search", "O(n)", "O(1)", [&]() {
                                     // Assumes LinearSearch(string** arr, int fieldIndex, string value, int n)
-                                    LinearSearch(arr, fieldIndex - 1, searchValue, n);
+                                    LinearSearch(arr, algoType, searchValue, n);
                                 });
                                 break;
                             case 2:
                                 profileAlgorithm("Binary Search", "O(log n)", "O(1)", [&]() {
                                     // Assumes BinarySearch(string** arr, int fieldIndex, string value, int n)
-                                    BinarySearch(arr, fieldIndex - 1, searchValue, n);
+                                    BinarySearch(arr, algoType, searchValue, n);
                                 });
                                 break;
                             default:

@@ -24,7 +24,10 @@ class dataManagement
         void ReadData(ifstream& file);
         bool isEnglishWordCharacter(char c);
         bool ParseDate(string& Date, int& year, int& month, int& day);
-        string** SortToArray(int size, int* temp);
+        
+        string** SortToArray(string** sourceArray, int size, int* temp);  //int size, int* temp);
+        
+        
         string** StoreToArray(int size);
         int StringToInt(string& str);
         int monthToNumber(string month);
@@ -40,8 +43,8 @@ class dataManagement
        template <typename SelectedType>
        void ApplySortH(string**& arr,int size, int field, int sortType);
        void ApplySort(string**& arr,int size, int field, int sortType);
-       void tokenizeWordsHash(string** arr);
-       void tokenizeWords(string** arr);
+       void tokenizeWordsHash(string** arr, int size);
+       void tokenizeWords(string** arr, int size);
        template <typename Any> 
        void resizeArray(Any*& array, int oldsize, int newSize);
 };

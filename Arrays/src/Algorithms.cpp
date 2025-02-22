@@ -77,7 +77,7 @@ template <typename Type>
 void ArraysAlgo::BubbleSort(Type*& arr, int left, int right, int*& temp) {
     
     if (left >= right) {
-        cout << "Skipping sorting since left >= right!" << endl;
+        // cout << "Skipping sorting since left >= right!" << endl;
         return;  // Avoid infinite recursion
     }
 
@@ -93,8 +93,6 @@ void ArraysAlgo::BubbleSort(Type*& arr, int left, int right, int*& temp) {
         }
         if (!swapped) break;  // Stop early if no swaps
     }
-
-    cout << "BubbleSort completed!" << endl;
 }
 
 
@@ -178,6 +176,9 @@ void ArraysAlgo::QuickSort(Type*& arr, int length, int*& temp, int order) {
     if (length <= 1) return; // No need to sort if array has 0 or 1 element
     QuickSortRecursion(arr, temp, 0, length - 1, order); // Call recursive QuickSort
 }
+
+
+
 
 
 //Searching Algorithms
