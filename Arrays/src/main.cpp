@@ -118,15 +118,14 @@ class AppInterface
 
             switch(FAQchoice) {
                 case 1:
-                    cout << "Sorting True Articles" << endl;
-                    True.ApplySort(trueArticles, trueSize, 3, 4);
-                    cout << "Sorting Fake Articles" << endl;
-                    Fake.ApplySort(fakeArticles, fakeSize, 3, 4);
+                    cout << "Sorting True Articles........" << endl;
+                    True.ApplySort(trueArticles, trueSize, 3, 3);
+                    cout << "Sorting Fake Articles........" << endl;
+                    Fake.ApplySort(fakeArticles, fakeSize, 3, 3);
                     
                     profileAlgorithm("Calculate Fake News Percentage: %", "O(n)", "O(1)", [&]() {
                         algo.calculateFakeNewsPercentage(trueArticles, trueSize, fakeArticles, fakeSize);
                     });
-                    
                     pauseProgram(); 
                     break;
 
@@ -168,17 +167,17 @@ class AppInterface
                                 });
                             });
                             
-                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, 0, " ", 0, 1);
+                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, 0, " ", 0, 1,0);
                             pauseProgram();  
                             break;
                         case 2:
                             runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
-                                profileAlgorithm("Tokenization Linear", "O(n)", "O(1)", [&]() {
+                                profileAlgorithm("Tokenization Linear", "O(n(m+u)) ", "O(1)", [&]() {
                                     Fake.tokenizeWords(fakeArticlesCopy, fakeSize);
                                 });
                             });
                             
-                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, 0, " ", 0, 1);
+                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, 0, " ", 0, 1,0);
                             
                             pauseProgram();  
                             break;
@@ -226,7 +225,10 @@ class AppInterface
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(),'\n');
                     cout << "Invalid Input... Enter Your choice Again: ";
-                }
+            }
+            if(choice ==5){
+                return;
+            }
 
                 int field;
                 cout << "Chose to sort by true or false."<<endl;
@@ -243,28 +245,40 @@ class AppInterface
                 string** trueArticlesCopy = duplicateArticles(trueArticles, trueSize);
                 string** fakeArticlesCopy = duplicateArticles(fakeArticles, fakeSize);
                 
+                int basis;
+                cout << "Sort By: "<<endl;
+                cout << "1. Title "<<endl;
+                cout << "2. Text "<<endl;
+                cout << "3. Subject "<<endl;
+                cout << "4. Date "<<endl;
+
+                while(!(cin >> basis)|| !ValidInput(basis, 4, 1)){
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(),'\n');
+                    cout << "Invalid Input... Enter Your choice Again: ";
+                }
                 switch(choice){
                     case 1: 
                         if (field == 1) {
                             runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
                                 profileAlgorithm("Insertion Sort for True: ", "O(n^2)", "O(n)", [&]() {
-                                    True.ApplySort(trueArticlesCopy, trueSize, 3, choice);
+                                    True.ApplySort(trueArticlesCopy, trueSize, basis-1, choice);
                                 });
-
                             });
+                            True.DisplayArray(trueArticlesCopy, trueSize);
                             
                             cout << "Insertion Sort dataChoice Field: " << field << endl;
-                            algo.compareAndDisplayPerformance(trueArticles, trueSize, choice, " ", field, 2);
+                            algo.compareAndDisplayPerformance(trueArticles, trueSize, choice, " ", field, 2, basis-1);
                             True.DeleteArray(trueArticlesCopy, trueSize);
                         } else {
                             runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
                                 profileAlgorithm("Insertion Sort for False: ", "O(n^2)", "O(n)", [&]() {
-                                    Fake.ApplySort(fakeArticlesCopy, fakeSize, 3, choice);
+                                    Fake.ApplySort(fakeArticlesCopy, fakeSize, basis-1, choice);
                                 });
                             });
-                            
-                            
-                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice, " ", field, 2);
+                            Fake.DisplayArray(fakeArticlesCopy, fakeSize);
+
+                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice, " ", field, 2, basis-1);
                             Fake.DeleteArray(fakeArticlesCopy, fakeSize);
                         }
                         pauseProgram();  
@@ -273,20 +287,23 @@ class AppInterface
                         if (field == 1) {
                             runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
                                 profileAlgorithm("Bubble Sort for True: ", "O(n^2)", "O(n)", [&]() {
-                                    True.ApplySort(trueArticlesCopy, trueSize, 3, choice);
+                                    True.ApplySort(trueArticlesCopy, trueSize, basis-1, choice);
                                 });
                             });
-                            
+                            True.DisplayArray(trueArticlesCopy, trueSize);
+
                         
-                            algo.compareAndDisplayPerformance(trueArticles, trueSize, choice, " ", field, 2);
+                            algo.compareAndDisplayPerformance(trueArticles, trueSize, choice, " ", field, 2, basis-1);
                             True.DeleteArray(trueArticlesCopy, trueSize);
                         } else {
                             runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
                                 profileAlgorithm("Bubble Sort for False: ", "O(n^2)", "O(n)", [&]() {
-                                    Fake.ApplySort(fakeArticlesCopy, fakeSize, 3, choice);
+                                    Fake.ApplySort(fakeArticlesCopy, fakeSize, basis-1, choice);
                                 });
                             });
-                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice, " ", field, 2);
+                            Fake.DisplayArray(fakeArticlesCopy, fakeSize);
+
+                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice, " ", field, 2, basis-1);
                             Fake.DeleteArray(fakeArticlesCopy, fakeSize);
                         }
                         pauseProgram();  
@@ -295,19 +312,23 @@ class AppInterface
                         if (field == 1) {
                             runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
                                 profileAlgorithm("Quick Sort for True: ", "O(n^2)", "O(n)", [&]() {
-                                    True.ApplySort(trueArticlesCopy, trueSize, 3, choice);
+                                    True.ApplySort(trueArticlesCopy, trueSize, basis-1, choice);
                                 });
                             });
-                            algo.compareAndDisplayPerformance(trueArticles, trueSize, choice, " ", field, 2);
+                            True.DisplayArray(trueArticlesCopy, trueSize);
+
+                            algo.compareAndDisplayPerformance(trueArticles, trueSize, choice, " ", field, 2, basis-1);
                             True.DeleteArray(trueArticlesCopy, trueSize);
                             
                         } else {
                             runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
                                 profileAlgorithm("Quick Sort for False: ", "O(n^2)", "O(n)", [&]() {
-                                    Fake.ApplySort(fakeArticlesCopy, fakeSize, 3, choice);
+                                    Fake.ApplySort(fakeArticlesCopy, fakeSize, basis-1, choice);
                                 });
                             });
-                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice, " ", field, 2);
+                            Fake.DisplayArray(fakeArticlesCopy, fakeSize);
+
+                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice, " ", field, 2, basis-1);
                             Fake.DeleteArray(fakeArticlesCopy, fakeSize);
                         }
                         pauseProgram();  
@@ -315,27 +336,28 @@ class AppInterface
                     case 4: 
                         if (field == 1) {
                             runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
-                                profileAlgorithm("Bottom Up Merge Sort for True: ", "O(n log n)", "O(n)", [&]() {
-                                    True.ApplySort(trueArticlesCopy, trueSize, 3, choice);
+                                profileAlgorithm("Merge Sort for True: ", "O(n log n)", "O(n)", [&]() {
+                                    True.ApplySort(trueArticlesCopy, trueSize, basis-1, choice);
                                 });
                             });
-                            algo.compareAndDisplayPerformance(trueArticles, trueSize, choice, " ", field, 2);
+                            True.DisplayArray(trueArticlesCopy, trueSize);
+
+                            algo.compareAndDisplayPerformance(trueArticles, trueSize, choice, " ", field, 2, basis-1);
                             True.DeleteArray(trueArticlesCopy, trueSize);
                             
                         } else {
                             runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
                                 profileAlgorithm("Merge Sort for False: ", "O(nlog(n))", "O(n)", [&]() {
-                                    Fake.ApplySort(fakeArticlesCopy, fakeSize, 3, choice);
+                                    Fake.ApplySort(fakeArticlesCopy, fakeSize, basis-1, choice);
                                 });
                             });
-                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice, " ", field, 2);
+                            Fake.DisplayArray(fakeArticlesCopy, fakeSize);
+
+                            algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice, " ", field, 2, basis-1);
                             Fake.DeleteArray(fakeArticlesCopy, fakeSize);
                         }
                         pauseProgram();  
                         break;
-                    case 5: 
-                        cout << "Returning to Arrays Menu..." << endl;
-                        return;
                     default: cout << "Invalid";
                 }
                             
@@ -358,61 +380,63 @@ class AppInterface
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 cout << "Invalid.. Please Enter your choice again.... ";
             }
+            
+            if(choice==3){
+                return;
+            }
 
             int setChoice;
-                cout << "Chose to sort by true or false."<<endl;
-                cout << "1. True "<<endl;
-                cout << "2. False "<<endl;
-                columns();
-                cout << "Please enter your choice: ";
-                
-                while(!(cin >> setChoice)|| !ValidInput(setChoice, 2, 1)){
-                    cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(),'\n');
-                    cout << "Invalid Input... Enter Your choice Again: ";
-                }
+            cout << "Chose to sort by true or false."<<endl;
+            cout << "1. True "<<endl;
+            cout << "2. False "<<endl;
+            columns();
+            cout << "Please enter your choice: ";
+            
+            while(!(cin >> setChoice)|| !ValidInput(setChoice, 2, 1)){
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(),'\n');
+                cout << "Invalid Input... Enter Your choice Again: ";
+            }
 
+            cout << "Chose a field to search for"<<endl;
+            cout << "1. Title "<<endl;
+            cout << "2. Text " << endl;
+            cout << "3. Subject "<<endl;
+            cout << "4. Year "<<endl;
+            cout << "5. Month "<<endl;
+            cout << "Please Enter your choice.... ";
+            while(!(cin>>choice2)|| !ValidInput(choice2, 5, 1)){
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid.. Please Enter your choice again.... ";
+            }
+            cin.ignore();
+            cout << "Enter the keyword or value to search for: ";
+            getline(cin, field);
+            
             switch(choice){
-                case 1:
-                    cout << "Chose a field to search for"<<endl;
-                    cout << "1. Title "<<endl;
-                    cout << "2. Text " << endl;
-                    cout << "3. Subject "<<endl;
-                    cout << "4. Year "<<endl;
-                    cout << "5. Month "<<endl;
-                    cout << "Please Enter your choice.... ";
-                    while(!(cin>>choice2)|| !ValidInput(choice2, 5, 1)){
-                        cin.clear();
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                        cout << "Invalid.. Please Enter your choice again.... ";
-                    }
-                    cin.ignore();
-                    cout << "Enter the keyword or value to search for: ";
-                    getline(cin, field);
-                    
-                    if (setChoice == 1) {
-                        True.ApplySort(trueArticles, trueSize, 3, 2);
-                        
+                case 1:         
+                if (setChoice == 1) {   
+                        True.MergeSortForBinarySearch(trueArticles, trueSize, choice2-1);
                         runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
                             profileAlgorithm("Linear Search", "O(n)", "O(1)", [&]() {
                                 algo.LinearSearch(trueArticles, choice2-1, field, trueSize);
                             });
                         });
-                        algo.compareAndDisplayPerformance(trueArticles, trueSize, choice2-1, field, setChoice, 3);
+                        algo.compareAndDisplayPerformance(trueArticles, trueSize, choice2-1, field, setChoice, 3, 0);
                         
                         for (int i = 0; i < trueSize; ++i) {
                             delete[] trueArticles[i];
                         }
                         delete[] trueArticles;
                     } else {
-                        Fake.ApplySort(fakeArticles, fakeSize, 3, 2);
-                        
+                        Fake.MergeSortForBinarySearch(fakeArticles, fakeSize, choice2-1);
                         runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
                             profileAlgorithm("Linear Search", "O(n)", "O(1)", [&]() {
                                 algo.LinearSearch(fakeArticles, choice2-1, field, fakeSize);
                             });
                         });
-                        algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice2-1, field, setChoice, 3);
+                        algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice2-1, field, setChoice, 3,0);
                         
                         for (int i = 0; i < fakeSize; ++i) {
                             delete[] fakeArticles[i];
@@ -423,41 +447,27 @@ class AppInterface
                     break;
 
                 case 2:
-                    cout << "Chose a field to search for"<<endl;
-                    cout << "1. Title "<<endl;
-                    cout << "2. Text "<<endl;
-                    cout << "3. Subject "<<endl;
-                    cout << "4. Year "<<endl;
-                    cout << "5. Month "<<endl;
-                    cout << "Please Enter your choice.... ";
-                    while(!(cin>>choice2)|| !ValidInput(choice2, 5, 1)){
-                        cin.clear();
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                        cout << "Invalid.. Please Enter your choice again.... ";
-                    }
-                    cin.ignore();
-                    cout << "Enter the keyword or value to search for: ";
-                    getline(cin, field);
-                    
                     if (setChoice == 1) {
+                        True.MergeSortForBinarySearch(trueArticles, trueSize, choice2-1);
                         runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
                             profileAlgorithm("Binary Search", "O(log n)", "O(1)", [&]() {
                                 algo.BinarySearch(trueArticles, choice2-1, field, trueSize);
                             });
                         });
-                        algo.compareAndDisplayPerformance(trueArticles, trueSize, choice2-1, field, setChoice, 3);
+                        algo.compareAndDisplayPerformance(trueArticles, trueSize, choice2-1, field, setChoice, 3,0);
                         
                         for (int i = 0; i < trueSize; ++i) {
                             delete[] trueArticles[i];
                         }
                         delete[] trueArticles;
                     } else {
+                        Fake.MergeSortForBinarySearch(fakeArticles, fakeSize, choice2-1);
                         runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
                             profileAlgorithm("Binary Search", "O(log n)", "O(1)", [&]() {
                                 algo.BinarySearch(fakeArticles, choice2-1, field, fakeSize);
                             });
                         });
-                        algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice2-1, field, setChoice, 3);
+                        algo.compareAndDisplayPerformance(fakeArticles, fakeSize, choice2-1, field, setChoice, 3,0);
                         
                         for (int i = 0; i < fakeSize; ++i) {
                             delete[] fakeArticles[i];
@@ -466,10 +476,6 @@ class AppInterface
                     }  
                     pauseProgram();   
                     break;
-
-                case 3:
-                    cout << "Returning to Arrays Menu..." << endl;
-                    return;
                 default: cout << "Invalid" << endl;
             }
         }

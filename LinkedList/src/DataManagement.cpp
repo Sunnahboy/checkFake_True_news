@@ -8,7 +8,6 @@
 #include "header/LinkedList_Manipulation.hpp"
 #include "../../header/PerformanceProfiler.hpp"
 #include "header/llhashmap.hpp"
-#include "header/NewsArticle.hpp"
 #include "Algorithms.cpp"
 #include <functional>
 using namespace std;
@@ -28,14 +27,6 @@ dataManagement::dataManagement(){
 
 article * dataManagement::CreateNewNode(string Title, string Content, string Category, int Day, int Month, int Year){
     article * newArticle=new article(Title, Content, Category, Day, Month, Year);
-    // newArticle -> title =Title;
-    // newArticle -> content =Content;
-    // newArticle -> category=Category;
-    // newArticle -> day= Day;
-    // newArticle -> month= Month;
-    // newArticle -> year= Year;
-    // newArticle -> next =nullptr;
-
     return newArticle;
 }
 
@@ -123,10 +114,7 @@ void dataManagement::ReadData(ifstream& file){
             
             addArticlefromEnd(title, content, category, day, month, year);
         }
-        // if (head != nullptr) {
-        //     size++;
-        //     cout << size << " articles loaded." << endl;
-        // }
+
     }
         file.clear();
         cout << "Data Loading Complete!" << endl; 
@@ -138,7 +126,6 @@ bool dataManagement::ParseDate(string& Date, int& year, int& month, int& day) {
     int parseStage = 0;
 
     if(Date.find('-')!=string::npos){
-        //format DD-MMM-YYYY
         int dashcount=0;
         for(char c :Date){
             if(c=='-'){
@@ -191,7 +178,7 @@ bool dataManagement::ParseDate(string& Date, int& year, int& month, int& day) {
             year = StringToInt(field);
         }
     }
-    if(year <=0){
+    if(year <=0 || year >2025){
         return false;
     }
     return true;
@@ -268,7 +255,7 @@ void dataManagement::DisplayArticles(article* head) {
     while (temp != nullptr && (rows == -1 || count < rows)) {
         cout << "\n--- Article " << count + 1 << " ---\n";
         cout << "Title: " << temp->title << "\n";
-        // cout << "Content: " << temp->content << "\n";
+        cout << "Content: " << temp->content << "\n";
         cout << "Category: " << temp->category << "\n";
         cout << "Date: " 
              << temp->year << "-" 
@@ -334,7 +321,6 @@ void LinkedListAlgo::compareAndDisplayPerformance(article* head, int SearchSortC
     }
     
     do {
-        //compare performance with another function
         
         cout << "\nDo you want to compare performance with another algorithm ?\n";
         cout << "1. Yes\n2. No\nEnter your choice: ";
@@ -416,15 +402,6 @@ void LinkedListAlgo::compareAndDisplayPerformance(article* head, int SearchSortC
                     cin >> funcOption;
                     cin.ignore();
                     
-                    // cout << "Select data set to sort:\n";
-                    // cout << "1. True\n";
-                    // cout << "2. Fake\n";
-                    // cout << "Enter your choice: ";
-                    // cin >> dataChoice;
-                    // cin.ignore();
-                    
-    
-                    // Append new performance info to the same profile file
                     streambuf* origBuf = cout.rdbuf();
                     ofstream profileAppend("dataSets/profile_output.txt", ios::app);
                     if (!profileAppend) {
@@ -756,55 +733,13 @@ void LinkedListAlgo::userSearchAndSwitch(article* head, int SearchChoice) {
         cout << "No matching articles found.\n";
     }
     
-    
-    // if (choice == 1) {
-    //     SearchVar = IntToString(year);
-    // }
-    // else (choice == 2) {
-    //     SearchVar = IntToString(month);
-    // }
-    // else {
-    //     SearchVar = input;
-    // }
+   
     SearchVar = (choice == 1) ? IntToString(year) : (choice == 2) ? IntToString(month) : input;
 
 
     // Compare and display performance info (or clear the file)
     compareAndDisplayPerformance(head, choice, SearchVar, result, 3);
 }
-
-
-
-// void dataManagement::ApplySort(int size){
-//     dataManagement data;
-//     int* newYear= new int[size];
-//     int* index=new int[size];
-//     for (int i=0; i<size; i++){
-//         newYear[i]=article[i].publicationYear;
-//         index[i]=i;
-//     }
-//     algo.MergeSort(newYear, 0, size-1, index);
-   
-//     string** arr=SortToArray(size-1, index);
-//     head(arr, currentSize);
-//     for (int i = 0; i < size; i++) {
-//         delete[] arr[i];
-//     }
-//     delete[] arr;
-
-// }
-
-// bool RegInput(int value){
-//             return (value==3||value==2||value==1);
-// }
-
-// bool RegInput2(int value){
-//     return (value==5 ||value==4||value==3||value==2||value==1);
-// }
-
-// bool RegInput3(int value){
-//     return (value==6||value==5 ||value==4||value==3||value==2||value==1);
-// }
 
 void dataManagement::tokenizeWords(article * Node) {
     MasterList wordList; // Using MasterList instead of hashmap or arrays
@@ -980,26 +915,11 @@ void dataManagement::tokenizeWordsHash(article* Node) {
     
     wordMap.sortAndPrintTop10(wordlist);
 
-    // // Get keys and frequencies from HashMap
-    // FreqTextWords* wordlist = wordMap.getKeysAndFrequencies();
-    //     cout << "\nTop 20 Most Frequent Words in Government Fake News:\n";
-    //     while(wordlist) {
-    //         cout << wordlist ->word << " - " << wordlist -> freq << " times\n";
-    //         wordlist=wordlist -> next;
-    //     }
+
 }
 
 
 article* LinkedListAlgo::sortArticles(article* head, int choice, int sortType) {
-            
-    // auto comparator = [&](article* a, article* b) -> bool {
-    //     if (sortType == 1) { 
-    //         return compareSubject(a, b); // Sort by Subject
-    //     } else if (sortType == 2) { 
-    //         return compareDates(a, b); // Sort by Date
-    //     }
-    //     return false;
-    // };
 
     switch (choice) {
         case 1:
@@ -1041,144 +961,3 @@ article* LinkedListAlgo::sortArticles(article* head, int choice, int sortType) {
         }
     return head;
 }
-
-
-
-
-// void dataManagement::runNewsProcessor(article* head, string datasetChoice) {
-//     NewsArticleProcessor processor;
-    
-    
-//     processor.processArticles(head); // Pass the linked list to process
-//     int option;
-//     cout << "\nSelect analysis type:\n";
-//     cout << "1. View articles per year\n";
-//     cout << "2. View articles per month\n";
-//     cout << "3. View articles per day\n";
-//     cout << "4. Exit\n";
-//     cout << "Enter your choice: ";
-//     while (!(cin >> option)) {
-//         cin.clear();
-//         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-//         cout << "Invalid choice. Please enter a number between 1 and 4.\n";
-//     }
-//     int year, month, day;
-
-//     switch (option) {
-//         case 1:
-//             cout << "Enter year: ";
-//             cin >> year;
-//             while (!processor.isValidYear(year, datasetChoice)) {
-//                 cout << "Invalid year. Try again.\nEnter year: ";
-//                 cin >> year;
-//             }
-//             processor.displayTable("Articles in " + to_string(year), processor.getArticleCount(year));
-//             break;
-        
-//         case 2:
-//             cout << "Enter year: ";
-//             cin >> year;
-//             while (!processor.isValidYear(year, datasetChoice)) {
-//                 cout << "Invalid year. Try again.\nEnter year: ";
-//                 cin >> year;
-//             }
-            
-//             cout << "Enter month (1-12): ";
-//             cin >> month;
-//             while (!processor.isValidMonth(month)) {
-//                 cout << "Invalid month. Try again.\nEnter month (1-12): ";
-//                 cin >> month;
-//             }
-            
-//             processor.displayTable("Articles in " + to_string(year) + " - Month " + to_string(month), processor.getArticleCount(year, month));
-//             break;
-        
-//         case 3:
-//             cout << "Enter year: ";
-//             cin >> year;
-//             while (!processor.isValidYear(year, datasetChoice)) {
-//                 cout << "Invalid year. Try again.\nEnter year: ";
-//                 cin >> year;
-//             }
-            
-//             cout << "Enter month (1-12): ";
-//             cin >> month;
-//             while (!processor.isValidMonth(month)) {
-//                 cout << "Invalid month. Try again.\nEnter month (1-12): ";
-//                 cin >> month;
-//             }
-            
-//             cout << "Enter day: ";
-//             cin >> day;
-//             while (!processor.isValidDay(year, month, day)) {
-//                 cout << "Invalid day. Try again.\nEnter day: ";
-//                 cin >> day;
-//             }
-            
-//             processor.displayTable("Articles in " + to_string(year) + " - Month " + to_string(month) + " - Day " + to_string(day), processor.getArticleCount(year, month, day));
-//             break;
-        
-//         default:
-//             cout << "Invalid option selected.";
-//             break;
-//     }
-    
-// }
-
-
-
-/*
-We can add more functions here in this point
-*/
-
-// int main() {
-//     dataManagement Data("News Articles");
-//     LinkedListAlgo algo;
-//     Data.ReadData(Data.getTrueData());
-//     // Use linked list head directly
-//     Data.runNewsProcessor(Data.gethead(), "true");
-//     // Data.displayArticlesfromEnd();
-//    // Data.tokenizeWordsHash(Data.gethead());
-//     // cout << Data.getsize();
-//     // Data.head(array, 9028);
-//     // Data.ApplySort(Data.getsize());
-//     // int choice;
-//     // int choice2;
-//     // string field;
-//     // cout << " Select Searching Algorithm" << endl;
-//     // cout << "1. Linear Search" << endl;
-//     // cout << "2. Binary Search" << endl;
-//     // cout << "3. Return to Arrays Menu" << endl;
-//     // cout << "Please Enter your choice.... ";
-//     // while(!(cin>>choice)|| !(RegInput(choice))){
-//     //     cin.clear();
-//     //     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-//     //     cout << "Invalid.. Please Enter your choice again.... ";
-//     // }
-//     // cout << "Chose a field to search for"<<endl;
-//     // cout << "1. Title "<<endl; 
-//     // cout << "2. Text "<<endl;
-//     // cout << "3. Subject "<<endl;
-//     // cout << "4. Year "<<endl;
-//     // cout << "5. Month "<<endl;
-//     // cout << "6. Day "<<endl;
-//     // cout << "Please Enter your choice.... ";
-//     // while(!(cin>>choice2)|| !(RegInput3(choice2))){
-//     //     cin.clear();
-//     //     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-//     //     cout << "Invalid.. Please Enter your choice again.... ";
-//     // }
-//     // cin.ignore();
-//     // cout << "Enter the keyword or value to search for: ";
-//     // getline(cin, field);
-    
-//     // if (choice == 1) {
-//     //         algo.linearSearch(Data.gethead(), choice2-1, field);
-//     // } 
-//     // else if (choice == 2) {
-//     //         algo.BinarySearch(Data.gethead(), choice2-1, field);
-//     // }
-
-
-//     return 0;   
-// }

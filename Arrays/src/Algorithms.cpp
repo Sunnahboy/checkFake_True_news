@@ -113,7 +113,7 @@ void ArraysAlgo::InsertionSort(Type*& arr, int size, int* index) {
 
 
 template <typename Type>
-int compare(Type a, Type b, int order) {
+bool compare(Type a, Type b, int order) {
     if (order == 1) { // Descending order
         return a >= b;
     } else { // Ascending order
@@ -289,7 +289,7 @@ void ArraysAlgo::LinearSearch(string** arr, int indx, string value, int size){
         cout << string(166,'=');
         cout <<endl;
     }
-    cout << "Total Rows -> "<< Total;
+    cout << "Total Rows -> "<< Total << endl;
     delete[] temp;
 }
 

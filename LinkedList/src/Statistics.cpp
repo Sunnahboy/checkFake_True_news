@@ -22,6 +22,7 @@ void dataManagement::calculatePoliticalFakePercentage(article* trueHead, article
     while (current != nullptr) {
         if (current->year == 2016 && isPolitical(current->category)) {
             totalPolitical++;
+            cout << "Debug here..." <<endl;
         }
         current = current->next;
     }

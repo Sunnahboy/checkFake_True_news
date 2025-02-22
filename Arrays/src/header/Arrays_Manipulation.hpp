@@ -6,7 +6,6 @@
 #include <fstream>
 #include "Arrays.hpp"
 #include "HashMap.hpp"
-#include "NewsArticle.hpp"
 
 using namespace std;
 class dataManagement
@@ -47,5 +46,8 @@ class dataManagement
        void tokenizeWords(string** arr, int size);
        template <typename Any> 
        void resizeArray(Any*& array, int oldsize, int newSize);
+       template <typename SelectedType>
+       void MergeSortBinary(string**& array, int size, int field);
+       void MergeSortForBinarySearch(string**& array, int size, int field);
 };
 #endif

@@ -220,15 +220,17 @@ class AppInterface
                                 algo.sortArticles(True.gethead(), 2, sortType);
                             });
                         });
-                        
+                        True.DisplayArticles(True.gethead());
+                        algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
                     } else {
                         runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
                             profileAlgorithm("Insertion Sort for Fake: ", "O(n)", "O(1)", [&]() {
                                 algo.sortArticles(Fake.gethead(), 2, sortType);
                             });
                         });
+                        Fake.DisplayArticles(Fake.gethead());
+                        algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
                     }
-                    algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
                     
                     pauseProgram();  
                     break;
@@ -239,16 +241,19 @@ class AppInterface
                                 algo.sortArticles(True.gethead(), 4, sortType);
                             });
                         });
-                        
-                    } else {
-                        runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
-                            profileAlgorithm("Bubble Sort for Fake: ", "O(n^2)", "O(1)", [&]() {
-                                algo.sortArticles(Fake.gethead(), 4, sortType);
-                            });
+
+                        True.DisplayArticles(True.gethead());
+                        algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
+                } else {
+                    runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
+                        profileAlgorithm("Bubble Sort for Fake: ", "O(n^2)", "O(1)", [&]() {
+                            algo.sortArticles(Fake.gethead(), 4, sortType);
                         });
-                    }
-                    algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
-                    // compareAndDisplayPerformance(head, year, result, 2);
+                    });
+                    Fake.DisplayArticles(Fake.gethead());
+                    algo.compareAndDisplayPerformance(Fake.gethead(), sortType, IntToString(field), result, 2);
+                }
+
                     pauseProgram();  
                     break;
                 case 3: 
@@ -258,16 +263,19 @@ class AppInterface
                                 algo.sortArticles(True.gethead(), 3, sortType);
                             });
                         });
-                        
+
+                        True.DisplayArticles(True.gethead());
+                        algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
                     } else {
                         runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
                             profileAlgorithm("Quick Sort for Fake: ", "O(n^2)", "O(1)", [&]() {
                                 algo.sortArticles(Fake.gethead(), 3, sortType);
                             });
                         });
+
+                        Fake.DisplayArticles(Fake.gethead());
+                        algo.compareAndDisplayPerformance(Fake.gethead(), sortType, IntToString(field), result, 2);
                     }
-                    algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
-                    // compareAndDisplayPerformance(head, year, result, 2);
                     pauseProgram();  
                     break;
                 case 4: 
@@ -277,16 +285,18 @@ class AppInterface
                                 algo.sortArticles(True.gethead(), 4, sortType);
                             });
                         });
-
+                        True.DisplayArticles(True.gethead());
+                        algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
                     } else {
                         runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
                             profileAlgorithm("Bottom Up Merge Sort for Fake: ", "O(n log n)", "O(n)", [&]() {
                                 algo.sortArticles(Fake.gethead(), 4, sortType);
                             });
                         });
+
+                        Fake.DisplayArticles(Fake.gethead());
+                        algo.compareAndDisplayPerformance(Fake.gethead(), sortType, IntToString(field), result, 2);
                     }
-                    algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
-                    // compareAndDisplayPerformance(head, year, result, 2);
                     pauseProgram();  
                     break;
                 case 5: 
@@ -336,24 +346,6 @@ class AppInterface
                         
                     } else {
                         algo.userSearchAndSwitch(Fake.gethead(), choice);
-                        // cout << "Chose a field to search for"<<endl;
-                        // cout << "1. Title "<<endl; 
-                        // cout << "2. Text "<<endl;
-                        // cout << "3. Subject "<<endl;
-                        // cout << "4. Year "<<endl;
-                        // cout << "5. Month "<<endl;
-                        // cout << "6. Day "<<endl;
-                        // cout << "Please Enter your choice.... ";
-                        // while(!(cin>>choice)){
-                        //     cin.clear();
-                        //     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                        //     cout << "Invalid.. Please Enter your choice again.... ";
-                        // }
-                        // cin.ignore();
-                        // string field;
-                        // cout << "Enter the keyword or value to search for: ";
-                        // getline(cin, field);          
-                        // algo.linearSearch2(Fake.gethead(), choice-1, field);
                     }
                     pauseProgram(); 
                     break;

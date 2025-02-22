@@ -16,7 +16,7 @@ void ArraysAlgo::calculateFakeNewsPercentage(string** trueNews, int trueSize, st
             truePolitical2016++;
         }
     }
-
+    
     // Loop through fake news stored in 2D array
     for (int i = 0; i < fakeSize; i++) {
         if (stoi(fakeNews[i][3]) > 2016) break;  // Convert year from string to int

@@ -57,7 +57,7 @@ public:
     void displayFakeNewsPercentageByMonth(string** trueNews, int trueSize, string** fakeNews, int fakeSize);
     
     // void compareAndDisplayPerformance(string** articles, int size, int searchSortChoice, string searchVar, int dataChoice, int functionChoice);
-    void compareAndDisplayPerformance(string** arr, int n, int algoType, string searchValue, const int dataChoice, int FunctionChoice);
+    void compareAndDisplayPerformance(string** arr, int n, int algoType, string searchValue, const int dataChoice, int FunctionChoice, int basis);
 };
 
 #endif

@@ -1,39 +1,9 @@
-
-Top 10 Most Frequent Words:
-obama - 1854 times
-president - 1483 times
-people - 1346 times
-state - 1229 times
-government - 1085 times
-clinton - 1056 times
-trump - 1031 times
-than - 965 times
-new - 911 times
-other - 863 times
-Algorithm: Tokenization Words using Hash: 
+Percentage of political news articles from 2016 that are fake: 37%
+Total political articles from 2016: 7457
+Total fake political articles from 2016: 2741
+Algorithm: Calculate Fake News Percentage: 
   Theoretical Worse Case Time Complexity: O(n)
   Theoretical Worse Case Space Complexity: O(1)
-  Measured Time: 3.5484 seconds
-  Measured Memory Change: 5812 KB
---------------------------------------------
-Inside Tokenise Words
-Start of Display
-Most frequently used words in government-related fake news:
-obama - 1854 times
-president - 1483 times
-people - 1346 times
-state - 1229 times
-government - 1085 times
-clinton - 1056 times
-trump - 1031 times
-than - 965 times
-new - 911 times
-other - 863 times
-End of Display
-List of  is removed from the memory now
-Algorithm: Linear Search Tokenization
-  Theoretical Worse Case Time Complexity: O(n)
-  Theoretical Worse Case Space Complexity: O(1)
-  Measured Time: 21.6531 seconds
-  Measured Memory Change: 3932 KB
+  Measured Time: 0 seconds
+  Measured Memory Change: 0 KB
 --------------------------------------------
