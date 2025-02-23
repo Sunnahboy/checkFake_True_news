@@ -428,8 +428,6 @@ void dataManagement::tokenizeWordsHash(string** array, int size) {
     ArraysAlgo algo;
     HashMap hashmap;
     
-    cout << "Inside Tokenization Word hash" << endl;
-    
     if (array == nullptr) {
         cout << "Array Empty" << endl;
     }

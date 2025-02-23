@@ -227,7 +227,14 @@ int dataManagement::monthToNumber(string month) {
 }
 
 dataManagement::~dataManagement(){
-    cout << "List of "<< ListName << " is removed from the memory now" <<endl;
+    cout << "List of " << ListName << " is removed from memory now" << endl;
+    article* current = head;
+    while (current != nullptr) {
+        article* temp = current;
+        current = current->next;
+        delete temp;
+    }
+    head = nullptr; // Avoid dangling pointer
 }
 
 
@@ -637,6 +644,8 @@ void LinkedListAlgo::compareAndDisplayPerformance(article* head, int SearchSortC
                 }
                 break;
         }
+        deleteList(TrueUnsortedCopy);
+        deleteList(FakeUnsortedCopy);
     } while (compareOption != 2);
 }
 
