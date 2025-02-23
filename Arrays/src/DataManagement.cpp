@@ -204,6 +204,25 @@ string** dataManagement::SortToArray(string** sourceArray, int size, int* temp) 
     return arr;
 }
 
+string** dataManagement::SortToArrayHash(string** sourceArray, int size, int* temp) {
+    string** arr = new string*[size];
+    for (int i = 0; i < size; i++) {
+        arr[i] = new string[2];
+    }
+    
+    for (int i = 0; i < size; i++) {
+        int index = temp[i];
+        if (index < 0 || index >= size) {
+            cerr << "Error: Invalid index " << index << " at position " << i << endl;
+            continue;
+        }
+        // Use sourceArray instead of article
+        arr[i][0] = sourceArray[index][0];
+        arr[i][1] = sourceArray[index][1];
+    }
+    return arr;
+}
+
 
 string** dataManagement::StoreToArray(int size) {
     string** arr = new string*[size];
@@ -220,6 +239,9 @@ string** dataManagement::StoreToArray(int size) {
     }
     return arr;
 }
+
+
+
 
 
 void dataManagement::DeleteArray(string**& arr, int size) {
@@ -325,7 +347,7 @@ void dataManagement::DisplayArray(string** arr, int totalArticles) {
 
 
 void dataManagement::ApplySort(string**& array, int size, int field, int sortType) {
-    if (field >= 3) {
+    if (field >= 3 || (field==1 && sortType==5)) {
         ApplySortH<int>(array, size, field, sortType); 
     } else {
         ApplySortH<string>(array, size, field, sortType);
@@ -340,7 +362,11 @@ void dataManagement::ApplySortH(string**& array, int size, int field, int sortTy
 
     for (int i = 0; i < size; i++) {
         if constexpr (is_same<SelectedType, int>::value) {
-            SelectedField[i] = (stoi(array[i][3]) *10000)+(stoi(array[i][4]) *100)+(stoi(array[i][5])) ;  
+            if (sortType==5){
+                SelectedField[i]=stoi(array[i][field]);
+            }else{
+                SelectedField[i] = (stoi(array[i][3]) *10000)+(stoi(array[i][4]) *100)+(stoi(array[i][5])) ;  
+            }
         } else {
             SelectedField[i] = array[i][field];  
         }
@@ -348,7 +374,6 @@ void dataManagement::ApplySortH(string**& array, int size, int field, int sortTy
     }
 
     ArraysAlgo algo;
-
 
     // Choose sorting algorithm based on sortType
     switch (sortType) {
@@ -360,21 +385,30 @@ void dataManagement::ApplySortH(string**& array, int size, int field, int sortTy
             algo.BubbleSort(SelectedField, 0, size - 1, index);
             break;
         case 3:
+        //ascending order
             algo.QuickSort(SelectedField, size, index, 0);
             break;
         case 4:
             algo.MergeSort(SelectedField, 0, size - 1, index);
             break;
-        default:
+        case 5:
+        //Descending Order
+            algo.QuickSort(SelectedField, size, index, 1);
+            break;
+            default:
             cout << "Invalid sorting option: " << sortType << endl;
             break;
-    }
-    
-    
-    // Before deleting the old array, store it for use as source
+        }
+        
+        
+        // Before deleting the old array, store it for use as source
     string** sourceArray = array;
-    cout << index[0] << endl;
-    array = SortToArray(sourceArray, size, index);
+    if(sortType==5){
+        array = SortToArrayHash(sourceArray, size, index);
+    }
+    else{
+        array = SortToArray(sourceArray, size, index);
+    }
     // Now delete the old array
     for (int i = 0; i < size; i++) {
         delete[] sourceArray[i];
@@ -411,7 +445,6 @@ void dataManagement::MergeSortBinary(string**& array, int size, int field) {
     algo.MergeSort(SelectedField, 0, size - 1, index);
 
     string** sourceArray = array;
-    cout << index[0] << endl;
     array = SortToArray(sourceArray, size, index);
     // Now delete the old array
     for (int i = 0; i < size; i++) {
@@ -427,13 +460,11 @@ void dataManagement::MergeSortBinary(string**& array, int size, int field) {
 void dataManagement::tokenizeWordsHash(string** array, int size) {
     ArraysAlgo algo;
     HashMap hashmap;
-    
     if (array == nullptr) {
         cout << "Array Empty" << endl;
     }
     
-    string filler_words[] = {
-        "a", "the", "is", "it", "to", "and", "of", "on", "for", "in", "at", "this",
+    string filler_words[] = {"a", "the", "is", "it", "to", "and", "of", "on", "for", "in", "at", "this",
         "that", "was", "were", "with", "between", "infront", "have", "had", "has", 
         "been", "about", "into", "are", "after", "before", "not", "where", "when", "thus",
         "s", "he", "as", "by", "from", "we", "be", "they", "said", "who",
@@ -451,8 +482,7 @@ void dataManagement::tokenizeWordsHash(string** array, int size) {
         "soon", "later", "now", "then", "here", "there", "everywhere",
         "am", "are", "is", "was", "were", "being", "been",
         "also", "even", "however", "furthermore", "nevertheless",
-        "somewhere", "anywhere", "nowhere", "wherever"
-    };    
+        "somewhere", "anywhere", "nowhere", "wherever"};   
     
     int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
     
@@ -497,25 +527,20 @@ void dataManagement::tokenizeWordsHash(string** array, int size) {
             }
         }
     }
-
-    auto result = hashmap.getKeysAndFrequencies();
-    string* keys = result.first;
-    int* freq = result.second;
+    string** keysAndFreq= hashmap.getKeysAndFrequencies();
     int count = hashmap.getCount();
-    int* temp=new int[hashmap.getCount()];
-
-    algo.QuickSort(freq, count, temp, 1);
+    ApplySort(keysAndFreq, count, 1, 5);
+    
     
     cout << "Word Frequency List:\n";
-    cout << "Count: " << count << endl;
-    for(int i = 0; i < 10 && i < count; i++) {
-        cout << freq[i] << " :: " << keys[i] << endl;
+    for(int i=0; i <10; i++){
+        cout << keysAndFreq[i][0] << " :: " << keysAndFreq[i][1] << endl;
     }
-
     // Clean up
-    delete[] keys;
-    delete[] freq;
-    delete[] temp;
+    for (int i = 0; i < count; i++) {
+        delete[] keysAndFreq[i]; // Delete each row
+    }
+    delete[] keysAndFreq;
 }
 
 
@@ -544,29 +569,29 @@ void dataManagement::tokenizeWords(string** array, int size) {
         "also", "even", "however", "furthermore", "nevertheless",
         "somewhere", "anywhere", "nowhere", "wherever"};   
         
-    int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
-    int Unique = 0; 
-    for (int i = 0; i < size; i++) {
-        if(array[i][2].compare("Government News")!=0) continue; //filter the data only the government once are taken
-        string text = array[i][1];  // Extract text from article
-        string word = ""; // Temporary string for building words
-
-        // Loop through each character in the text
-        for (char c : text) {
-            // Convert to lowercase
-            c = tolower(c);
-            // Check for word boundaries
-            if (isspace(c) || ispunct(c)) {
-                if (!word.empty()) { // If a word has been formed
-                    // Check if it's a filler array
-                    bool isFiller = false;
-                    for (int k = 0; k < filler_size; k++) {
-                        if (word == filler_words[k]) {
+        int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
+        int Unique = 0; 
+        for (int i = 0; i < size; i++) {
+            if(array[i][2].compare("Government News")!=0) continue; //filter the data only the government once are taken
+            string text = array[i][1];  // Extract text from article
+            string word = ""; // Temporary string for building words
+            
+            // Loop through each character in the text
+            for (char c : text) {
+                // Convert to lowercase
+                c = tolower(c);
+                // Check for word boundaries
+                if (isspace(c) || ispunct(c)) {
+                    if (!word.empty()) { // If a word has been formed
+                        // Check if it's a filler array
+                        bool isFiller = false;
+                        for (int k = 0; k < filler_size; k++) {
+                            if (word == filler_words[k]) {
                             isFiller = true;
                             break;
                         }
                     }
-                
+                    
                     if (!isFiller) {
                         bool found = false;
                         for (int v = 0; v < Unique; v++) {
@@ -595,16 +620,27 @@ void dataManagement::tokenizeWords(string** array, int size) {
             }
         }
     }
-    int * temp=new int[Unique];
-    algo.QuickSort(wordsFreq, Unique, temp, 1);
+    string** TokenizedArray=new string*[Unique];
+    for(int i =0; i<Unique; i++){
+        TokenizedArray[i]=new string[2];
+        TokenizedArray[i][0]=wordsList[i];
+        TokenizedArray[i][1]=to_string(wordsFreq[i]);
+    }
+    
+    ApplySort(TokenizedArray, Unique, 1, 5);
+    
     cout << "Word Frequency List:\n";
     for(int i=0; i <10; i++){
-        cout << wordsList[i] << " :: " << wordsFreq[i] << endl;
+        cout << TokenizedArray[i][0] << " :: " << TokenizedArray[i][1] << endl;
     }
-
+    
     delete[] wordsList;
     delete[] wordsFreq;
-    delete[] temp;
+
+    for (int i = 0; i < Unique; i++) {
+        delete[] TokenizedArray[i]; // Delete each row
+    }
+    delete[] TokenizedArray;
 }
 
 

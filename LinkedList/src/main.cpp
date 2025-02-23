@@ -121,7 +121,9 @@ class AppInterface
                         cin.ignore(numeric_limits<streamsize>::max(),'\n');
                         cout << "Invalid Input... Enter your choice again: ";
                     }
-                    
+                    if(choice==3){
+                        return;
+                    }
                     switch(choice) {
                         case 1:
                             runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
@@ -139,15 +141,11 @@ class AppInterface
                                 profileAlgorithm("Tokenization Words using Linear: ", "O(n)", "O(1)", [&]() {
                                     Fake.tokenizeWords(Fake.gethead());
                                 });
-                            });
-                            
+                            });   
                             algo.compareAndDisplayPerformance(Fake.gethead(), 0, "0", result, 1);
-                            // Fake.tokenizeWords(Fake.gethead());
                             pauseProgram();  
                             break;
-
                         case 3:
-                            cout << "Returning to FAQ Menu..." << endl;
                             return;
                         default: cout << "Invalid" << endl;
                     }
@@ -185,7 +183,9 @@ class AppInterface
                     cin.ignore(numeric_limits<streamsize>::max(),'\n');
                     cout << "Invalid Input... Enter Your choice Again: ";
             }
-
+            if(choice==5){
+                return;
+            }
             int field;
             cout << "Chose to sort by true or false."<<endl;
             cout << "1. True "<<endl;
@@ -304,9 +304,6 @@ class AppInterface
                     pauseProgram();  
                     break;
                 }
-                case 5: 
-                    cout << "Returning to Arrays Menu..." << endl;
-                    return;
                 default: cout << "Invalid";
             }
             // delete temp;
@@ -329,9 +326,12 @@ class AppInterface
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 cout << "Invalid.. Please Enter your choice again.... ";
             }
-
+            
+            if(choice==3){
+                return;
+            }
             int field;
-            cout << "Chose to sort by true or false."<<endl;
+            cout << "Chose data true or fake."<<endl;
             cout << "1. True "<<endl;
             cout << "2. False "<<endl;
             columns();
@@ -342,7 +342,6 @@ class AppInterface
                 cin.ignore(numeric_limits<streamsize>::max(),'\n');
                 cout << "Invalid Input... Enter Your choice Again: ";
             }
-
 
             switch(choice) {
                 case 1: 
@@ -362,9 +361,6 @@ class AppInterface
                     }
                     pauseProgram(); 
                     break;
-                case 3:
-                    cout << "Returning to Linked List Menu..." << endl;
-                break;
                 default: 
                     cout << "Invalid input choose correct options" << endl;
                     break;

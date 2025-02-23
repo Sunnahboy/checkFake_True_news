@@ -10,7 +10,10 @@
         "system_error": "cpp",
         "new": "cpp",
         "variant": "cpp",
-        "format": "cpp"
+        "format": "cpp",
+        "chrono": "cpp",
+        "functional": "cpp",
+        "type_traits": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

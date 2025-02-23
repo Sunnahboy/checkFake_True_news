@@ -52,7 +52,7 @@ class dataManagement{
         int monthToNumber(string month);
         ifstream& getTrueData();
         ifstream& getFakeData();
-
+        void deleteList(article* head);
         // void userSearchAndSwitch(article* head, int SearchChoice);
 
         // Display all articles

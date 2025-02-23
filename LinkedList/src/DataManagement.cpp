@@ -293,8 +293,16 @@ void dataManagement::DisplayArticles(article* head) {
     }
 }
 
-
-
+void dataManagement::deleteList(article* head) {
+    article* current = head;
+    article* next = nullptr;
+    
+    while (current != nullptr) {
+        next = current->next;  // Store next node
+        delete current;        // Delete node
+        current = next;        
+    }
+}
  
 
 string IntToString(int num) {
@@ -644,8 +652,8 @@ void LinkedListAlgo::compareAndDisplayPerformance(article* head, int SearchSortC
                 }
                 break;
         }
-        deleteList(TrueUnsortedCopy);
-        deleteList(FakeUnsortedCopy);
+        data.deleteList(TrueUnsortedCopy);
+        data.deleteList(FakeUnsortedCopy);
     } while (compareOption != 2);
 }
 

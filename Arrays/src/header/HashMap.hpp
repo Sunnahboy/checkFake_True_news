@@ -63,24 +63,23 @@ public:
         return count;
     }
 
-    pair<string*, int*> getKeysAndFrequencies() {
+    string** getKeysAndFrequencies() {
         int count = getCount();
-        if (count == 0) return {nullptr, nullptr};
+        if (count == 0) return nullptr;
     
-        string* keys = new string[count];
-        int* freqs = new int[count];
-    
-        int index = 0;
+        string** keysAndValues = new string*[count];
+        int index=0;
         for (int i = 0; i < size; i++) {
             Node* temp = table[i];
             while (temp != nullptr) {
-                keys[index] = temp->key;
-                freqs[index] = temp->value; // Directly store frequency
+                keysAndValues[index] = new string[2];
+                keysAndValues[index][0] = temp->key;
+                keysAndValues[index][1] = to_string(temp->value); // Directly store frequency
                 index++;
                 temp = temp->next;
             }
         }
-        return {keys, freqs};
+        return keysAndValues;
     }
     
 };

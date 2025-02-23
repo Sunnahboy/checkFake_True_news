@@ -49,5 +49,6 @@ class dataManagement
        template <typename SelectedType>
        void MergeSortBinary(string**& array, int size, int field);
        void MergeSortForBinarySearch(string**& array, int size, int field);
+       string ** SortToArrayHash(string** sourceArray, int size, int* temp);
 };
 #endif
