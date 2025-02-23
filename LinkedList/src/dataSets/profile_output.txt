@@ -1,9 +1,33 @@
-Percentage of political news articles from 2016 that are fake: 37%
-Total political articles from 2016: 7457
-Total fake political articles from 2016: 2741
-Algorithm: Calculate Fake News Percentage: 
-  Theoretical Worse Case Time Complexity: O(n)
+SORTING ARTICLES IN DATAMANAGEMENT!
+List of  is removed from the memory now
+Algorithm: Quick Sort for True: 
+  Theoretical Worse Case Time Complexity: O(n^2)
+  Theoretical Worse Case Space Complexity: O(n)
+  Measured Time: 0.021783 seconds
+  Measured Memory Change: 96 KB
+--------------------------------------------
+Compare Insertion Sort 
+SORTING ARTICLES IN DATAMANAGEMENT!
+List of  is removed from the memory now
+Algorithm: Insertion Sort for True: 
+  Theoretical Worse Case Time Complexity: O(n^2)
+  Theoretical Worse Case Space Complexity: O(n)
+  Measured Time: 1.03232 seconds
+  Measured Memory Change: 0 KB
+--------------------------------------------
+SORTING ARTICLES IN DATAMANAGEMENT!
+List of  is removed from the memory now
+Algorithm: Bubble Sort for True: 
+  Theoretical Worse Case Time Complexity: O(n^2)
+  Theoretical Worse Case Space Complexity: O(n)
+  Measured Time: 4.33735 seconds
+  Measured Memory Change: 0 KB
+--------------------------------------------
+SORTING ARTICLES IN DATAMANAGEMENT!
+List of  is removed from the memory now
+Algorithm: Bottom Up Merge Sort for True: 
+  Theoretical Worse Case Time Complexity: O(n log n)
   Theoretical Worse Case Space Complexity: O(1)
-  Measured Time: 0 seconds
+  Measured Time: 0.0051842 seconds
   Measured Memory Change: 0 KB
 --------------------------------------------

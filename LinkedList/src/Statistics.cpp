@@ -22,7 +22,6 @@ void dataManagement::calculatePoliticalFakePercentage(article* trueHead, article
     while (current != nullptr) {
         if (current->year == 2016 && isPolitical(current->category)) {
             totalPolitical++;
-            cout << "Debug here..." <<endl;
         }
         current = current->next;
     }
@@ -46,7 +45,7 @@ void dataManagement::calculatePoliticalFakePercentage(article* trueHead, article
     cout << "Percentage of political news articles from 2016 that are fake: " 
          << percentage << "%" << endl;
     cout << "Total political articles from 2016: " << totalPolitical << endl;
-    cout << "Total fake political articles from 2016: " << fakePolitical << endl;
+    cout << "Total fake political articles from 2016: " << fakePolitical << endl << endl;
 }
 
 
@@ -106,6 +105,6 @@ void dataManagement::analyzeMonthlyFakePoliticalNews(article* fakeHead) {
         // Print the percentage immediately following the asterisks (or the bar if empty).
         cout << fixed << setprecision(0) << percentage << "%" << endl;
     }
-    cout << "\nNote: Each '*' represents 1% of fake political news articles.\n";
+    cout << "\nNote: Each '*' represents 1% of fake political news articles." << endl << endl;
 }
 

@@ -198,6 +198,7 @@ int dataManagement::getsize(){
 article * dataManagement::gethead(){
     return head;
 }
+
 // an integer method that converts the strings to integers
 int dataManagement::StringToInt(string& str) {
     int result = 0;
@@ -240,19 +241,26 @@ ifstream& dataManagement::getFakeData(){
 void dataManagement::DisplayArticles(article* head) {
     int rows;
     cout << "How many articles would you like to display? (Enter -1 for all): ";
+    
 
-    // Validate input
+
     while (!(cin >> rows) || (rows < -1)) {
-        cin.clear(); // Clear the error flag
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "Invalid input. Please enter a valid number." << endl;
-        return; // Exit the function if input is invalid
+        return;
     }
+ 
 
-    cout << "Displaying articles..." << endl; // Debugging line
+    cout << "Displaying articles..." << endl;
     int count = 0;
-    article* temp = head; // Assuming head is the pointer to the start of the linked list
-    while (temp != nullptr && (rows == -1 || count < rows)) {
+    article* temp = head;
+
+    while (temp != nullptr) { // Always iterate through all articles
+        // Debugging: Check if the loop is running correctly
+        cout << "Debug: Visiting article " << count + 1 << " with date: " 
+             << temp->year << "-" << temp->month << "-" << temp->day << endl;
+
         cout << "\n--- Article " << count + 1 << " ---\n";
         cout << "Title: " << temp->title << "\n";
         cout << "Content: " << temp->content << "\n";
@@ -261,13 +269,23 @@ void dataManagement::DisplayArticles(article* head) {
              << temp->year << "-" 
              << (temp->month < 10 ? "0" : "") << temp->month << "-" 
              << (temp->day < 10 ? "0" : "") << temp->day << "\n";
-        temp = temp->next;
+
         count++;
+
+        // Stop after displaying the requested number of articles
+        if (rows != -1 && count >= rows) {
+            cout << "Stopping after " << count << " articles." << endl; // Debug message
+            break;
+        }
+
+        temp = temp->next; // Move to the next article
     }
+
     if (count == 0) {
-        cout << "No articles to display." << endl; // Debugging line
+        cout << "No articles to display." << endl;
     }
 }
+
 
 
  
@@ -279,6 +297,35 @@ string IntToString(int num) {
 int StringToInt(string num) {
     return stoi(num);
 }
+
+article* dataManagement::copyList(article* head) {
+    if (head == nullptr)
+        return nullptr;
+    
+    // Create a new head node using the copy constructor.
+    article* newHead = new article(*head);
+    newHead->next = nullptr; // Ensure the new list is separated.
+    
+    article* currentOrig = head->next; // Start from the second node in the original list.
+    article* currentNew = newHead;     // Pointer to the last node in the new list.
+    
+    // Iterate through the original list and copy each node.
+    while (currentOrig != nullptr) {
+        // Use the copy constructor for each node.
+        article* newNode = new article(*currentOrig);
+        newNode->next = nullptr;
+        
+        // Link the new node to the new list.
+        currentNew->next = newNode;
+        currentNew = newNode;
+        
+        // Move to the next node in the original list.
+        currentOrig = currentOrig->next;
+    }
+    
+    return newHead;
+}
+
 
 
 // Helper function to redirect cout to a file while executing a given function
@@ -307,6 +354,9 @@ void runWithRedirectedOutput(const string& filePath, const function<void()>& fun
 // display performance info and optionally compare with another function
 void LinkedListAlgo::compareAndDisplayPerformance(article* head, int SearchSortChoice, string SearchVar, article*& result, int FunctionChoice) {
     dataManagement data;
+    
+    
+            
     int compareOption;
     ifstream profileIn("dataSets/profile_output.txt");
     if (profileIn.is_open()) {
@@ -321,7 +371,8 @@ void LinkedListAlgo::compareAndDisplayPerformance(article* head, int SearchSortC
     }
     
     do {
-        
+        article* TrueUnsortedCopy = data.copyList(head);
+        article* FakeUnsortedCopy = data.copyList(head);
         cout << "\nDo you want to compare performance with another algorithm ?\n";
         cout << "1. Yes\n2. No\nEnter your choice: ";
         // cin >> compareOption;
@@ -412,13 +463,15 @@ void LinkedListAlgo::compareAndDisplayPerformance(article* head, int SearchSortC
                             
                             case 1:
                                 if(dataChoice == 1){
+                                    cout << "Compare Insertion Sort " << endl;
                                     profileAlgorithm("Insertion Sort for True: ", "O(n^2)", "O(n)", [&]() {
-                                        sortArticles(head, 2, SearchSortChoice);
+                                        sortArticles(TrueUnsortedCopy, 1, SearchSortChoice);
                                     });              
                                }
                                else{
+                                    cout << "Compare Insertion Sort " << endl;
                                     profileAlgorithm("insertion Sort for Fake: ", "O(n^2)",  "O(n)", [&]() {
-                                        sortArticles(head, 2, SearchSortChoice);
+                                    sortArticles(FakeUnsortedCopy, 1, SearchSortChoice);
                                     });
                                 }
                                
@@ -426,12 +479,12 @@ void LinkedListAlgo::compareAndDisplayPerformance(article* head, int SearchSortC
                                 break;
                             case 2:
                                 if(dataChoice == 1){
-                                    profileAlgorithm("Bubble Sort for Fake: ", "O(n^2)", "O(n)", [&]() {
-                                        sortArticles(head, 2, SearchSortChoice);
+                                    profileAlgorithm("Bubble Sort for True: ", "O(n^2)", "O(n)", [&]() {
+                                        sortArticles(TrueUnsortedCopy, 2, SearchSortChoice);
                                     });
                                 }else{
-                                    profileAlgorithm("Bubble Sort for True: ", "O(n^2)", "O(n)", [&]() {
-                                        sortArticles(head, 2, SearchSortChoice);
+                                    profileAlgorithm("Bubble Sort for Fake: ", "O(n^2)", "O(n)", [&]() {
+                                        sortArticles(FakeUnsortedCopy, 2, SearchSortChoice);
                                     });
     
                                 }
@@ -439,11 +492,11 @@ void LinkedListAlgo::compareAndDisplayPerformance(article* head, int SearchSortC
                             case 3:
                                 if(dataChoice == 1) {
                                     profileAlgorithm("Quick Sort for True: ", "O(n^2)", "O(n)", [&]() {
-                                        sortArticles(head, 2, SearchSortChoice);
+                                        sortArticles(TrueUnsortedCopy, 3, SearchSortChoice);
                                     });
                                 } else {
                                     profileAlgorithm("Quick Sort for Fake: ", "O(n^2)", "O(n)", [&]() {
-                                        sortArticles(head, 2, SearchSortChoice);
+                                        sortArticles(FakeUnsortedCopy, 3, SearchSortChoice);
                                     });
                                 }
                             
@@ -451,12 +504,12 @@ void LinkedListAlgo::compareAndDisplayPerformance(article* head, int SearchSortC
                             case 4:
                                 if (dataChoice == 1) {
                                     profileAlgorithm("Bottom Up Merge Sort for True: ", "O(n log n)", "O(1)", [&]() {
-                                        sortArticles(head, 4, SearchSortChoice);
+                                        sortArticles(TrueUnsortedCopy, 4, SearchSortChoice);
                                     });
                                 } 
                                 else {
                                     profileAlgorithm("Bottom Up Merge Sort for Fake: ", "O(n log n)", "O(1)", [&]() {
-                                        sortArticles(head, 4, SearchSortChoice);
+                                        sortArticles(FakeUnsortedCopy, 4, SearchSortChoice);
                                     });
                                 }
                             
@@ -535,23 +588,23 @@ void LinkedListAlgo::compareAndDisplayPerformance(article* head, int SearchSortC
                             case 2:
                                 if (SearchSortChoice == 1) {
                                     int year = StringToInt(SearchVar);
-                                    profileAlgorithm("Recursive search", "O(n)", "O(1)", [&]() {
+                                    profileAlgorithm("Iterative search", "O(n)", "O(1)", [&]() {
                                         result = search(head, year, compareByYear, nullptr);
                                     });
                                 }
                                 else if (SearchSortChoice == 2) {
                                     int month = StringToInt(SearchVar);
-                                    profileAlgorithm("Recursive search", "O(n)", "O(1)", [&]() {
+                                    profileAlgorithm("Iterative search", "O(n)", "O(1)", [&]() {
                                         result = search(head, month, compareByMonth, nullptr);
                                     });
                                 }
                                 else if (SearchSortChoice == 3) {
-                                        profileAlgorithm("Recursive search", "O(n)", "O(1)", [&]() {
+                                        profileAlgorithm("Iterative search", "O(n)", "O(1)", [&]() {
                                             result = search(head, SearchVar, compareByTitleKeyword, nullptr);
                                     });
                                 }
                                 else if (SearchSortChoice == 4) {
-                                    profileAlgorithm("Recursive search", "O(n)", "O(1)", [&]() {
+                                    profileAlgorithm("Iterative search", "O(n)", "O(1)", [&]() {
                                         result = search(head, SearchVar, compareByCategory, nullptr);
                                     });
                                 }
@@ -667,7 +720,7 @@ void LinkedListAlgo::userSearchAndSwitch(article* head, int SearchChoice) {
                 cin.ignore(); // Clear input buffer
                 
                 runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
-                    profileAlgorithm("recursive Search", "O(n)", "O(n)", [&]() {
+                    profileAlgorithm("Iterative Search", "O(n)", "O(n)", [&]() {
                         result = search(head, year, compareByYear, nullptr);
                         
                     });
@@ -677,7 +730,7 @@ void LinkedListAlgo::userSearchAndSwitch(article* head, int SearchChoice) {
                 cout << "Enter month: ";
                 cin >> month;
                 runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
-                    profileAlgorithm("recursive Search", "O(n)", "O(n)", [&]() {
+                    profileAlgorithm("Iterative Search", "O(n)", "O(1)", [&]() {
                         result = search(head, month, compareByMonth, nullptr);
                         
                     });
@@ -688,7 +741,7 @@ void LinkedListAlgo::userSearchAndSwitch(article* head, int SearchChoice) {
                 getline(cin, input);
                 
                 runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
-                    profileAlgorithm("recursive Search", "O(n)", "O(n)", [&]() {
+                    profileAlgorithm("Iterative Search", "O(n)", "O(1)", [&]() {
                         result = search(head, input, compareByTitleKeyword, nullptr);
                         
                     });
@@ -699,7 +752,7 @@ void LinkedListAlgo::userSearchAndSwitch(article* head, int SearchChoice) {
                 getline(cin, input);
               
                 runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
-                    profileAlgorithm("recursive Search", "O(n)", "O(n)", [&]() {
+                    profileAlgorithm("Iterative Search", "O(n)", "O(1)", [&]() {
                         result = search(head, input, compareByCategory, nullptr);     
                     });
                 });
@@ -920,6 +973,9 @@ void dataManagement::tokenizeWordsHash(article* Node) {
 
 
 article* LinkedListAlgo::sortArticles(article* head, int choice, int sortType) {
+    dataManagement data;
+
+    cout << "SORTING ARTICLES IN DATAMANAGEMENT!" << endl;
 
     switch (choice) {
         case 1:
@@ -932,7 +988,7 @@ article* LinkedListAlgo::sortArticles(article* head, int choice, int sortType) {
             break;
         case 2:
             if (sortType == 1) {
-                head = bubbleSort(head, compareSubject);
+                head = bubbleSort(head, compareSubject);                    
             }
             else {
                 head = bubbleSort(head, compareDates);
@@ -958,6 +1014,9 @@ article* LinkedListAlgo::sortArticles(article* head, int choice, int sortType) {
             cout << "Invalid sorting choice." << endl;
             break;
         
-        }
+    }
+    
+    // data.DisplayArticles(head);
+        
     return head;
 }

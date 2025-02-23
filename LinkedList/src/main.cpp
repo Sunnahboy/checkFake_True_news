@@ -93,21 +93,18 @@ class AppInterface
 
             switch(FAQchoice) {
                 case 1: {
-                    runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
-                        profileAlgorithm("Calculate Fake News Percentage: ", "O(n)", "O(1)", [&]() {
-                            True.calculatePoliticalFakePercentage(True.gethead(), Fake.gethead());
-                        });
+                    profileAlgorithm("Calculate Fake News Percentage: ", "O(n)", "O(1)", [&]() {
+                        True.calculatePoliticalFakePercentage(True.gethead(), Fake.gethead());
                     });
+                    
                     pauseProgram(); 
                     break;}
 
                 case 2:
-                    runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
-                        profileAlgorithm("Calculate Fake News Precentage Monthly: ", "O(n)", "O(1)", [&]() {
-                            True.analyzeMonthlyFakePoliticalNews(Fake.gethead());
-                        });
+                    profileAlgorithm("Calculate Fake News Precentage Monthly: ", "O(n)", "O(1)", [&]() {
+                        True.analyzeMonthlyFakePoliticalNews(Fake.gethead());
                     });
-
+                    
                     pauseProgram(); 
                     break;
 
@@ -211,94 +208,102 @@ class AppInterface
                 cin.ignore(numeric_limits<streamsize>::max(),'\n');
                 cout << "Invalid Input... Enter Your choice Again: ";
             }
-
+            article* TrueUnsortedCopy = True.copyList(True.gethead());
+            article* FakeUnsortedCopy = Fake.copyList(Fake.gethead());
+            
             switch(choice){
                 case 1: 
                     if (field == 1) {
+                        article* sortedHead = nullptr;
                         runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
-                            profileAlgorithm("Insertion Sort for True: ", "O(n)", "O(1)", [&]() {
-                                algo.sortArticles(True.gethead(), 2, sortType);
+                            profileAlgorithm("Insertion Sort for True: ", "O(n^2)", "O(n)", [&]() {
+                                sortedHead = algo.sortArticles(TrueUnsortedCopy, choice, sortType);
                             });
                         });
-                        True.DisplayArticles(True.gethead());
+                        True.DisplayArticles(sortedHead);
                         algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
                     } else {
+                        article* sortedHead = nullptr;
                         runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
-                            profileAlgorithm("Insertion Sort for Fake: ", "O(n)", "O(1)", [&]() {
-                                algo.sortArticles(Fake.gethead(), 2, sortType);
+                            profileAlgorithm("insertion Sort for Fake: ", "O(n^2)",  "O(n)", [&]() {
+                                sortedHead = algo.sortArticles(FakeUnsortedCopy, choice, sortType);
                             });
                         });
-                        Fake.DisplayArticles(Fake.gethead());
-                        algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
+                        Fake.DisplayArticles(sortedHead);
+                        algo.compareAndDisplayPerformance(Fake.gethead(), sortType, IntToString(field), result, 2);
                     }
+                    
                     
                     pauseProgram();  
                     break;
                 case 2: 
                     if (field == 1) {
+                        article* sortedHead = nullptr;
                         runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
-                            profileAlgorithm("Bubble Sort for True: ", "O(n^2)", "O(1)", [&]() {
-                                algo.sortArticles(True.gethead(), 4, sortType);
+                            profileAlgorithm("Bubble Sort for Fake: ", "O(n^2)", "O(n)", [&]() {
+                                sortedHead = algo.sortArticles(TrueUnsortedCopy, choice, sortType);
                             });
                         });
-
-                        True.DisplayArticles(True.gethead());
+                        True.DisplayArticles(sortedHead);
                         algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
-                } else {
-                    runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
-                        profileAlgorithm("Bubble Sort for Fake: ", "O(n^2)", "O(1)", [&]() {
-                            algo.sortArticles(Fake.gethead(), 4, sortType);
+                    }   else {
+                        article* sortedHead = nullptr;
+                        runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
+                            profileAlgorithm("Bubble Sort for True: ", "O(n^2)", "O(n)", [&]() {
+                                sortedHead = algo.sortArticles(FakeUnsortedCopy, choice, sortType);
+                            });
                         });
-                    });
-                    Fake.DisplayArticles(Fake.gethead());
-                    algo.compareAndDisplayPerformance(Fake.gethead(), sortType, IntToString(field), result, 2);
-                }
+                        Fake.DisplayArticles(sortedHead);
+                        algo.compareAndDisplayPerformance(Fake.gethead(), sortType, IntToString(field), result, 2);
+                    }
 
                     pauseProgram();  
                     break;
                 case 3: 
                     if (field == 1) {
+                        article* sortedHead = nullptr;
                         runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
-                            profileAlgorithm("Quick Sort for True: ", "O(n^2)", "O(1)", [&]() {
-                                algo.sortArticles(True.gethead(), 3, sortType);
+                            profileAlgorithm("Quick Sort for True: ", "O(n^2)", "O(n)", [&]() {
+                                sortedHead = algo.sortArticles(TrueUnsortedCopy, choice, sortType);
                             });
                         });
-
-                        True.DisplayArticles(True.gethead());
+                        True.DisplayArticles(sortedHead);
                         algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
                     } else {
+                        article* sortedHead = nullptr;
                         runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
-                            profileAlgorithm("Quick Sort for Fake: ", "O(n^2)", "O(1)", [&]() {
-                                algo.sortArticles(Fake.gethead(), 3, sortType);
+                            profileAlgorithm("Quick Sort for Fake: ", "O(n^2)", "O(n)", [&]() {
+                                sortedHead = algo.sortArticles(FakeUnsortedCopy, choice, sortType);
                             });
                         });
-
-                        Fake.DisplayArticles(Fake.gethead());
+                        Fake.DisplayArticles(sortedHead);
                         algo.compareAndDisplayPerformance(Fake.gethead(), sortType, IntToString(field), result, 2);
                     }
                     pauseProgram();  
                     break;
-                case 4: 
+                case 4: {
                     if (field == 1) {
+                        article* sortedHead = nullptr;
                         runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
-                            profileAlgorithm("Bottom Up Merge Sort for True: ", "O(n log n)", "O(n)", [&]() {
-                                algo.sortArticles(True.gethead(), 4, sortType);
+                            profileAlgorithm("Bottom Up Merge Sort for True: ", "O(n log n)", "O(1)", [&]() {
+                                sortedHead = algo.sortArticles(TrueUnsortedCopy, choice, sortType);
                             });
                         });
-                        True.DisplayArticles(True.gethead());
+                        True.DisplayArticles(sortedHead);
                         algo.compareAndDisplayPerformance(True.gethead(), sortType, IntToString(field), result, 2);
                     } else {
+                        article* sortedHead = nullptr;
                         runWithRedirectedOutput("dataSets/profile_output.txt", [&]() {
-                            profileAlgorithm("Bottom Up Merge Sort for Fake: ", "O(n log n)", "O(n)", [&]() {
-                                algo.sortArticles(Fake.gethead(), 4, sortType);
+                            profileAlgorithm("Bottom Up Merge Sort for Fake: ", "O(n log n)", "O(1)", [&]() {
+                                sortedHead = algo.sortArticles(FakeUnsortedCopy, choice, sortType);
                             });
                         });
-
-                        Fake.DisplayArticles(Fake.gethead());
+                        Fake.DisplayArticles(sortedHead);
                         algo.compareAndDisplayPerformance(Fake.gethead(), sortType, IntToString(field), result, 2);
                     }
                     pauseProgram();  
                     break;
+                }
                 case 5: 
                     cout << "Returning to Arrays Menu..." << endl;
                     return;

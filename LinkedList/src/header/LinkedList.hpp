@@ -59,6 +59,9 @@ class dataManagement{
         void DisplayArticles(article* head); //, int totalArticles);
         // void displayArticlesfromEnd();
         article *gethead();
+        
+        article* copyList(article* head);
+        
         void tokenizeWords(article * Node);
         void tokenizeWordsHash(article* Node);
         

@@ -399,7 +399,7 @@ article* LinkedListAlgo::recursiveSearch(article* current, const T& target, Comp
 }*/
 
 template <typename Comparator, typename T>
-article* LinkedListAlgo::recursiveSearch(article* current, const T& target, Comparator comp, int* position, int pos) {
+article* LinkedListAlgo::iterativeSearch(article* current, const T& target, Comparator comp, int* position, int pos) {
     if (!current) {
         if (position) *position = -1;
         return nullptr;
@@ -428,7 +428,7 @@ article* LinkedListAlgo::recursiveSearch(article* current, const T& target, Comp
         current = current->next;
         pos++;
     }
-
+    
     return matchedHead;
 }
 
@@ -437,7 +437,7 @@ article* LinkedListAlgo::recursiveSearch(article* current, const T& target, Comp
 template <typename Comparator, typename T>
 article* LinkedListAlgo::search(article* head, const T& target, Comparator comp, int* position) {
     // Start the recursive search from the head of the list
-    return recursiveSearch(head, target, comp, position, 0);
+    return iterativeSearch(head, target, comp, position, 0);
 }
 
 

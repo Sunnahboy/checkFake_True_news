@@ -55,7 +55,7 @@ class LinkedListAlgo{
         template <typename Comparator, typename T>
         article* linearSearch(article* head, const T& target, Comparator comp, int* position);
         template <typename Comparator, typename T>
-        article* recursiveSearch(article* current, const T& target, Comparator comp, int* position, int pos);
+        article* iterativeSearch(article* current, const T& target, Comparator comp, int* position, int pos);
         template <typename Comparator, typename T>
         article* search(article* head, const T& target, Comparator comp, int* position);
         static bool compareByTitleKeyword(article* a, const string& keyword);
