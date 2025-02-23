@@ -66,7 +66,7 @@ class dataManagement{
         void tokenizeWordsHash(article* Node);
         
         void calculatePoliticalFakePercentage(article* trueHead, article* fakeHead);
-        void analyzeMonthlyFakePoliticalNews(article* fakeHead);
+        void analyzeMonthlyFakePoliticalNews(article* fakeHead, article* trueHead);
 
 };
 #endif

@@ -49,33 +49,90 @@ void dataManagement::calculatePoliticalFakePercentage(article* trueHead, article
 }
 
 
-// This function calculates, for each month in 2016, 
-// the percentage of fake political articles (among the total fake political articles in 2016).
-void dataManagement::analyzeMonthlyFakePoliticalNews(article* fakeHead) {
-    // Track fake political articles for each month.
-    int monthlyCount[13] = {0};  
-    int totalFakePolitical2016 = 0;  
+// // This function calculates, for each month in 2016, 
+// // the percentage of fake political articles (among the total fake political articles in 2016).
+// void dataManagement::analyzeMonthlyFakePoliticalNews(article* fakeHead) {
+//     // Track fake political articles for each month.
+//     int monthlyCount[13] = {0};  
+//     int totalFakePolitical2016 = 0;  
     
 
-    // Traverse the fake news linked list.
+//     // Traverse the fake news linked list.
+//     article* current = fakeHead;
+//     while (current != nullptr) {
+//         // Check if the article is from 2016 and is political.
+//         if (current->year == 2016 && isPolitical(current->category)) {
+//             monthlyCount[current->month]++;
+//             totalFakePolitical2016++;
+//         }
+
+//         current = current->next;
+//     }
+
+//     // If we found no fake political articles in 2016, report and exit.
+//     if (totalFakePolitical2016 == 0) {
+//         cout << "No fake political articles found in 2016.\n";
+//         return;
+//     }
+
+//     // Array of month names for display (index 1..12).
+//     static const string MONTHS[13] = {
+//         "",
+//         "January", "February", "March", "April", "May",
+//         "June", "July", "August", "September", "October",
+//         "November", "December"
+//     };
+
+//     cout << "Percentage of Fake Political News Articles in 2016\n\n";
+
+//     // For each month, calculate the percentage of totalFakePolitical2016.
+//     for (int m = 1; m <= 12; m++) {
+//         double percentage = (monthlyCount[m] * 100.0) / totalFakePolitical2016;
+        
+//         // Build the bar string (one '*' per percent, integer part only).
+//         string bar;
+//         int starCount = static_cast<int>(percentage);
+//         for (int i = 0; i < starCount; i++) {
+//             bar.push_back('*');
+//         }
+        
+//         // Print the output in a single, well-aligned line.
+//         cout << setw(12) << left << MONTHS[m] << " | " << bar;
+//         // Print a space only if there are asterisks.
+//         if (!bar.empty())
+//             cout << " ";
+            
+//         // Print the percentage immediately following the asterisks (or the bar if empty).
+//         cout << fixed << setprecision(0) << percentage << "%" << endl;
+//     }
+//     cout << "\nNote: Each '*' represents 1% of fake political news articles." << endl << endl;
+// }
+
+
+void dataManagement::analyzeMonthlyFakePoliticalNews(article* fakeHead, article* trueHead) {
+    // Track both fake and true political articles for each month
+    int fakePolitical[13] = {0};
+    int truePolitical[13] = {0};
+
+    // Count fake political articles
     article* current = fakeHead;
     while (current != nullptr) {
-        // Check if the article is from 2016 and is political.
         if (current->year == 2016 && isPolitical(current->category)) {
-            monthlyCount[current->month]++;
-            totalFakePolitical2016++;
+            fakePolitical[current->month]++;
         }
-
         current = current->next;
     }
 
-    // If we found no fake political articles in 2016, report and exit.
-    if (totalFakePolitical2016 == 0) {
-        cout << "No fake political articles found in 2016.\n";
-        return;
+    // Count true political articles
+    current = trueHead;
+    while (current != nullptr) {
+        if (current->year == 2016 && isPolitical(current->category)) {
+            truePolitical[current->month]++;
+        }
+        current = current->next;
     }
 
-    // Array of month names for display (index 1..12).
+    // Array of month names for display (index 1..12)
     static const string MONTHS[13] = {
         "",
         "January", "February", "March", "April", "May",
@@ -85,26 +142,28 @@ void dataManagement::analyzeMonthlyFakePoliticalNews(article* fakeHead) {
 
     cout << "Percentage of Fake Political News Articles in 2016\n\n";
 
-    // For each month, calculate the percentage of totalFakePolitical2016.
+    // For each month, calculate the percentage of fake articles among total articles
     for (int m = 1; m <= 12; m++) {
-        double percentage = (monthlyCount[m] * 100.0) / totalFakePolitical2016;
+        int totalPolitical = fakePolitical[m] + truePolitical[m];
         
-        // Build the bar string (one '*' per percent, integer part only).
-        string bar;
-        int starCount = static_cast<int>(percentage);
-        for (int i = 0; i < starCount; i++) {
-            bar.push_back('*');
-        }
-        
-        // Print the output in a single, well-aligned line.
-        cout << setw(12) << left << MONTHS[m] << " | " << bar;
-        // Print a space only if there are asterisks.
-        if (!bar.empty())
-            cout << " ";
+        cout << setw(12) << left << MONTHS[m] << " | ";
+
+        if (totalPolitical == 0) {
+            cout << "0%" << endl;
+        } else {
+            double percentage = (static_cast<double>(fakePolitical[m]) / totalPolitical) * 100;
             
-        // Print the percentage immediately following the asterisks (or the bar if empty).
-        cout << fixed << setprecision(0) << percentage << "%" << endl;
+            // Build the bar string (one '*' per percent)
+            int stars = static_cast<int>(percentage);
+            for (int i = 0; i < stars; i++) {
+                cout << "*";
+            }
+            
+            // Print the percentage
+            cout << " " << fixed << setprecision(0) << percentage << "%" << endl;
+        }
     }
+    
     cout << "\nNote: Each '*' represents 1% of fake political news articles." << endl << endl;
 }
 

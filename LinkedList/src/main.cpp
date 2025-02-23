@@ -96,15 +96,13 @@ class AppInterface
                     profileAlgorithm("Calculate Fake News Percentage: ", "O(n)", "O(1)", [&]() {
                         True.calculatePoliticalFakePercentage(True.gethead(), Fake.gethead());
                     });
-                    
                     pauseProgram(); 
                     break;}
 
                 case 2:
                     profileAlgorithm("Calculate Fake News Precentage Monthly: ", "O(n)", "O(1)", [&]() {
-                        True.analyzeMonthlyFakePoliticalNews(Fake.gethead());
+                        True.analyzeMonthlyFakePoliticalNews(Fake.gethead(), True.gethead());
                     });
-                    
                     pauseProgram(); 
                     break;
 
