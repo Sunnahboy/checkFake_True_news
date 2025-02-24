@@ -36,7 +36,7 @@ void ArraysAlgo::calculateFakeNewsPercentage(string** trueNews, int trueSize, st
 
     cout << "Total Political News Articles in 2016: " << totalPolitical2016 << endl;
     cout << "Fake Political News Articles in 2016: " << fakePolitical2016 << endl;
-    cout << "Percentage of Fake Political News in 2016: " << fixed << setprecision(2) << percentage << "%" << endl;
+    cout << "Percentage of Fake Political News in 2016: " << fixed << setprecision(2) << percentage << "%" << endl << endl;
 }
 
 
@@ -94,5 +94,5 @@ void ArraysAlgo::displayFakeNewsPercentageByMonth(string** trueNews, int trueSiz
         }
     }
 
-    cout << "\nNote: Each '*' represents 1% of fake political news articles.\n";
+    cout << "\nNote: Each '*' represents 1% of fake political news articles." << endl << endl;
 }

@@ -25,6 +25,18 @@ dataManagement::dataManagement(){
     }
 }
 
+dataManagement::~dataManagement(){
+    cout << "List of " << ListName << " is removed from memory now" << endl;
+    article* current = head;
+    while (current != nullptr) {
+        article* temp = current;
+        current = current->next;
+        delete temp;
+    }
+    head = nullptr; // Avoid dangling pointer
+}
+
+
 article * dataManagement::CreateNewNode(string Title, string Content, string Category, int Day, int Month, int Year){
     article * newArticle=new article(Title, Content, Category, Day, Month, Year);
     return newArticle;
@@ -209,7 +221,6 @@ int dataManagement::StringToInt(string& str) {
 }
 
 
-
 int dataManagement::monthToNumber(string month) {
     if (month == "January" || month=="Jan") return 1;
     if (month == "February" || month=="Feb") return 2;
@@ -226,18 +237,6 @@ int dataManagement::monthToNumber(string month) {
     return -1; // Invalid month
 }
 
-dataManagement::~dataManagement(){
-    cout << "List of " << ListName << " is removed from memory now" << endl;
-    article* current = head;
-    while (current != nullptr) {
-        article* temp = current;
-        current = current->next;
-        delete temp;
-    }
-    head = nullptr; // Avoid dangling pointer
-}
-
-
 ifstream& dataManagement::getTrueData(){
     return TrueData;
 }
@@ -249,23 +248,17 @@ void dataManagement::DisplayArticles(article* head) {
     int rows;
     cout << "How many articles would you like to display? (Enter -1 for all): ";
     
-
-
     while (!(cin >> rows) || (rows < -1)) {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "Invalid input. Please enter a valid number." << endl;
         return;
     }
- 
 
-    cout << "Displaying articles..." << endl;
     int count = 0;
     article* temp = head;
 
     while (temp != nullptr) { // Always iterate through all articles
-        // Debugging: Check if the loop is running correctly
-        cout << "Debug: Visiting article " << count + 1 << " with date: " 
              << temp->year << "-" << temp->month << "-" << temp->day << endl;
 
         cout << "\n--- Article " << count + 1 << " ---\n";
@@ -281,7 +274,6 @@ void dataManagement::DisplayArticles(article* head) {
 
         // Stop after displaying the requested number of articles
         if (rows != -1 && count >= rows) {
-            cout << "Stopping after " << count << " articles." << endl; // Debug message
             break;
         }
 
@@ -293,6 +285,14 @@ void dataManagement::DisplayArticles(article* head) {
     }
 }
 
+string IntToString(int num) {
+    return to_string(num);
+}
+
+int StringToInt(string num) {
+    return stoi(num);
+}
+
 void dataManagement::deleteList(article* head) {
     article* current = head;
     article* next = nullptr;
@@ -302,15 +302,6 @@ void dataManagement::deleteList(article* head) {
         delete current;        // Delete node
         current = next;        
     }
-}
- 
-
-string IntToString(int num) {
-    return to_string(num);
-}
-
-int StringToInt(string num) {
-    return stoi(num);
 }
 
 article* dataManagement::copyList(article* head) {
@@ -370,8 +361,6 @@ void runWithRedirectedOutput(const string& filePath, const function<void()>& fun
 void LinkedListAlgo::compareAndDisplayPerformance(article* head, int SearchSortChoice, string SearchVar, article*& result, int FunctionChoice) {
     dataManagement data;
     
-    
-            
     int compareOption;
     ifstream profileIn("dataSets/profile_output.txt");
     if (profileIn.is_open()) {
@@ -427,7 +416,7 @@ void LinkedListAlgo::compareAndDisplayPerformance(article* head, int SearchSortC
                                 });
                                 break;
                             default:
-                                cout << "Invalid function choice.\n";
+                                cout << "Invalid function choice." << endl;
                         }
                         cout.rdbuf(origBuf);
                         profileAppend.close();
@@ -439,7 +428,7 @@ void LinkedListAlgo::compareAndDisplayPerformance(article* head, int SearchSortC
                         cout << "\nUpdated Performance Info (Comparison):\n";
                         string line;
                         while (getline(updatedProfile, line)) {
-                            cout << line << "\n";
+                            cout << line << endl;
                         }
                         updatedProfile.close();
                     }
@@ -561,7 +550,7 @@ void LinkedListAlgo::compareAndDisplayPerformance(article* head, int SearchSortC
                     int funcOption;
                     cout << "\nSelect a algorithm to compare performance:\n";
                     cout << "1. Linear search\n";
-                    cout << "2. Recursive search\n";
+                    cout << "2. Iterative search\n";
                     cout << "Enter your choice: ";
                     cin >> funcOption;
                     cin.ignore();
@@ -813,8 +802,6 @@ void LinkedListAlgo::userSearchAndSwitch(article* head, int SearchChoice) {
 
 void dataManagement::tokenizeWords(article * Node) {
     MasterList wordList; // Using MasterList instead of hashmap or arrays
-    
-    cout << "Inside Tokenise Words" << endl;
 
     // List of filler words to ignore
     const string filler_words[] = {
@@ -838,8 +825,6 @@ void dataManagement::tokenizeWords(article * Node) {
         "also", "even", "however", "furthermore", "nevertheless",
         "somewhere", "anywhere", "nowhere", "wherever"
     };
-    
-    
     
     
     int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
@@ -992,8 +977,6 @@ void dataManagement::tokenizeWordsHash(article* Node) {
 article* LinkedListAlgo::sortArticles(article* head, int choice, int sortType) {
     dataManagement data;
 
-    cout << "SORTING ARTICLES IN DATAMANAGEMENT!" << endl;
-
     switch (choice) {
         case 1:
             if (sortType == 1) {
@@ -1032,8 +1015,5 @@ article* LinkedListAlgo::sortArticles(article* head, int choice, int sortType) {
             break;
         
     }
-    
-    // data.DisplayArticles(head);
-        
     return head;
 }

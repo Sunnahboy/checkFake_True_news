@@ -1,0 +1,6 @@
+Algorithm: linear Search
+  Theoretical Worse Case Time Complexity: O(n)
+  Theoretical Worse Case Space Complexity: O(n)
+  Measured Time: 0.0162492 seconds
+  Measured Memory Change: 0 KB
+--------------------------------------------

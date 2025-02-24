@@ -152,6 +152,8 @@ class AppInterface
                     cout << "True Data Size: " << trueSize << endl;
                     cout << "Fake Data Size: " << fakeSize << endl;
                     cout << "Total Size of both datasets: " << trueSize + fakeSize << endl;
+                    
+                    pauseProgram();
                     break;
 
                 case 5:
@@ -314,7 +316,7 @@ class AppInterface
             prinTable(2);
             cout << "Select Searching Algorithm" << endl;
             cout << "1. Linear Search" << endl;
-            cout << "2. Recursive Search" << endl;
+            cout << "2. Iterative Search" << endl;
             cout << "3. Return to Main Menu" << endl;
             columns();     
             cout << "Please Enter your choice.... ";

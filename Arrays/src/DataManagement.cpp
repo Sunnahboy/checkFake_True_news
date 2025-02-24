@@ -240,17 +240,12 @@ string** dataManagement::StoreToArray(int size) {
     return arr;
 }
 
-
-
-
-
 void dataManagement::DeleteArray(string**& arr, int size) {
     for (int i = 0; i < size; i++) {
         delete[] arr[i];  // Delete each row
     }
     delete[] arr;  // Delete the main array
 }
-
 
 // an integer method that converts the strings to integers
 int dataManagement::StringToInt(string& str) {
@@ -307,6 +302,7 @@ void dataManagement::head(string ** arr, int rows){
         cout <<endl;
     }
 }
+
 //a void to view the contents of the struct created
 void dataManagement::DisplayArray(string** arr, int totalArticles) {
     int rows;
@@ -344,7 +340,6 @@ void dataManagement::DisplayArray(string** arr, int totalArticles) {
         cout << "No articles to display." << endl;
     }
 }
-
 
 void dataManagement::ApplySort(string**& array, int size, int field, int sortType) {
     if (field >= 3 || (field==1 && sortType==5)) {
@@ -398,10 +393,10 @@ void dataManagement::ApplySortH(string**& array, int size, int field, int sortTy
             default:
             cout << "Invalid sorting option: " << sortType << endl;
             break;
-        }
+    }
         
         
-        // Before deleting the old array, store it for use as source
+    // Before deleting the old array, store it for use as source
     string** sourceArray = array;
     if(sortType==5){
         array = SortToArrayHash(sourceArray, size, index);
@@ -485,8 +480,6 @@ void dataManagement::tokenizeWordsHash(string** array, int size) {
         "somewhere", "anywhere", "nowhere", "wherever"};   
     
     int filler_size = sizeof(filler_words) / sizeof(filler_words[0]);
-    
-    cout << "Size in Tokenisation Hash: " << size << endl;
     
     for (int i = 0; i < size; i++) {
         if(array[i][2].compare("Government News")!=0) continue;
@@ -805,36 +798,27 @@ void ArraysAlgo::compareAndDisplayPerformance(string** originalArr, int n, int a
                     if (!profileAppend.is_open()) {
                         cerr << "Error opening profile file for appending.\n";
                     } else {
-                        cout << "1. User Choice for Sort: " << funcOption << endl;
-                        
                         cout.rdbuf(profileAppend.rdbuf());
                         
-                        string algoName; //, timeComplexity, spaceComplexity;
+                        string algoName;
                         
                         // Here dataChoice: 1 means True dataset, 2 means False dataset.
                         switch (funcOption) {
                             case 1:
                             algoName = (dataChoice == 1 ? "Insertion Sort for True: " : "Insertion Sort for False: ");
-                                // timeComplexity = "O(n^2)";
-                                // spaceComplexity = "O(n)";
+                              
                                 profileAlgorithm(algoName, "O(n^2)", "O(n)", [&]() {
-                                    // Assumes ApplySort(string** arr, int n, int field, int sortAlgo)
                                     data.ApplySort(arr, n, basis, funcOption);
                                 });
                                 break;
                             case 2:
                                 algoName = (dataChoice == 1 ? "Bubble Sort for True: " : "Bubble Sort for False: ");
-                                // timeComplexity = "O(n^2)";
-                                // spaceComplexity = "O(n)";
                                 profileAlgorithm(algoName, "O(n^2)", "O(n)", [&]() {
                                     data.ApplySort(arr, n, basis, funcOption);
                                 });
                                 break;
                             case 3:
-                                cout << "Quick Sort Start!" << endl;
                                 algoName = (dataChoice == 1 ? "Quick Sort for True: " : "Quick Sort for False: ");
-                                
-                                cout << "Algo Name: " << algoName << endl;
                                 
                                 profileAlgorithm(algoName, "O(n^2)", "O(n log n)", [&]() {
                                     data.ApplySort(arr, n, basis, funcOption);
@@ -842,8 +826,6 @@ void ArraysAlgo::compareAndDisplayPerformance(string** originalArr, int n, int a
                                 break;
                             case 4:
                                 algoName = (dataChoice == 1 ? "Merge Sort for True: " : "Merge Sort for False: ");
-                                // timeComplexity = "O(n log n)";
-                                // spaceComplexity = "O(n)";
                                 profileAlgorithm(algoName, "O(n log n)", "O(n)", [&]() {
                                     data.ApplySort(arr, n, basis, funcOption);
                                 });

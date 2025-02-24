@@ -118,9 +118,7 @@ class AppInterface
 
             switch(FAQchoice) {
                 case 1:
-                    cout << "Sorting True Articles........" << endl;
                     True.ApplySort(trueArticles, trueSize, 3, 3);
-                    cout << "Sorting Fake Articles........" << endl;
                     Fake.ApplySort(fakeArticles, fakeSize, 3, 3);
                     
                     profileAlgorithm("Calculate Fake News Percentage: %", "O(n)", "O(1)", [&]() {
@@ -130,9 +128,7 @@ class AppInterface
                     break;
 
                 case 2:
-                    cout << "Sorting True Articles" << endl;
                     True.ApplySort(trueArticles, trueSize, 3, 4);
-                    cout << "Sorting Fake Articles" << endl;
                     Fake.ApplySort(fakeArticles, fakeSize, 3, 4);                    
                    
                     profileAlgorithm("Calculate Fake News Percentage: %", "O(n)", "O(1)", [&]() {
@@ -267,7 +263,6 @@ class AppInterface
                             });
                             True.DisplayArray(trueArticlesCopy, trueSize);
                             
-                            cout << "Insertion Sort dataChoice Field: " << field << endl;
                             algo.compareAndDisplayPerformance(trueArticles, trueSize, choice, " ", field, 2, basis-1);
                             True.DeleteArray(trueArticlesCopy, trueSize);
                         } else {

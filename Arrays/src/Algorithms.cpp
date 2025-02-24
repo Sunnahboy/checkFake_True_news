@@ -178,9 +178,6 @@ void ArraysAlgo::QuickSort(Type*& arr, int length, int*& temp, int order) {
 }
 
 
-
-
-
 //Searching Algorithms
 
 void ArraysAlgo::BinarySearch(string** arr, int index, string field, int size) {
@@ -246,9 +243,6 @@ void ArraysAlgo::BinarySearch(string** arr, int index, string field, int size) {
     cout << "Total Rows -> " << count << endl;
     delete[] temp;
 }
-
-
-
 
 // there should one linear search for the value and one for the keywords or two for loops
 void ArraysAlgo::LinearSearch(string** arr, int indx, string value, int size){

@@ -70,8 +70,6 @@ class LinkedListAlgo{
 
         void compareAndDisplayPerformance(article* head, int SearchChoice, string SearchVar, article*& result, int FunctionChoice);
         
-        //New
-        void linearSearch2(article * head ,int index, string value);
         string getFieldForlinearSearch(article * node, int index);
 
 };

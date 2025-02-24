@@ -50,17 +50,17 @@ class dataManagement{
         int getsize();
         int StringToInt(string& str);
         int monthToNumber(string month);
+        
         ifstream& getTrueData();
         ifstream& getFakeData();
+        
+        //create duplicate list and delete
+        article* copyList(article* head);
         void deleteList(article* head);
-        // void userSearchAndSwitch(article* head, int SearchChoice);
 
         // Display all articles
-        void DisplayArticles(article* head); //, int totalArticles);
-        // void displayArticlesfromEnd();
-        article *gethead();
-        
-        article* copyList(article* head);
+        void DisplayArticles(article* head);
+        article *gethead();        
         
         void tokenizeWords(article * Node);
         void tokenizeWordsHash(article* Node);
