@@ -259,7 +259,6 @@ void dataManagement::DisplayArticles(article* head) {
     article* temp = head;
 
     while (temp != nullptr) { // Always iterate through all articles
-             << temp->year << "-" << temp->month << "-" << temp->day << endl;
 
         cout << "\n--- Article " << count + 1 << " ---\n";
         cout << "Title: " << temp->title << "\n";
