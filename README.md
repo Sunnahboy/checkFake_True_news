@@ -81,7 +81,7 @@ This project implements a comprehensive news classification system that analyzes
 ## 📝 License
 
 ##For full documentation check here:
-### https://docs.google.com/document/d/1zQ6YcDHDv935BJfZMA8ZShav7r7PyKeGN5Wl8cOCnkg/edit?usp=sharing
+### https://docs.google.com/document/d/1zQ6YcDHDv935BJfZMA8ZShav7r7PyKeGN5Wl8cOCnkg/edit?tab=t.0
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
