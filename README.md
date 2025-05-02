@@ -74,7 +74,7 @@ This project implements a comprehensive news classification system that analyzes
 ## 👥 Contributors
 
 - [Your Name](https://github.com/yourusername)
-- [Team Member 1](Ahmed)
+- [Ahmed](https://github.com/1nuc)
 - [Team Member 2](Kashave)
 - [Team Member 3](Abdulwahb)
 
